@@ -14,7 +14,7 @@ urlpatterns = [
     path("", include("main.urls")),
     # path("", include("account.urls")),
     path("", RedirectView.as_view(url="account/", permanent=True)),
-    # path("", include("map.urls")),
+    path("", include("map.urls")),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

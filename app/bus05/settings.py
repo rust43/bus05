@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     "rest_framework_gis",
     "haversine",
     "main",
+    "map",
 ]
 
 MIDDLEWARE = [

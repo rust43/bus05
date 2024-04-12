@@ -1,0 +1,1 @@
+https://tools.geofabrik.de/calc/#type=geofabrik_standard&bbox=47.382238,42.893528,47.615258,43.061098&tab=1&proj=EPSG:4326&places=4

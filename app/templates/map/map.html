@@ -1,0 +1,35 @@
+{% extends 'base_generic.html' %}
+{% load static %}
+{% block title %}
+    <title>Карта</title>
+{% endblock %}
+{% block specific_styles %}
+    <style>
+        html,
+        body {
+            height: 100%;
+        }
+        .map {
+            width: 100%;
+            height: 100%;
+        }
+        .map .ol-rotate {
+            top: 2.5rem;
+        }
+    </style>
+    <link rel="stylesheet" href="{% static 'openlayers/ol.css' %}" type="text/css" />
+{% endblock %}
+{% block header %}
+
+{% endblock %}
+{% block content %}
+    <div id="map" class="map"></div>
+{% endblock %}
+{% block footer %}
+
+{% endblock %}
+{% block specific_scripts %}
+    <script src="{% static 'proj4js/proj4.js' %}"></script>
+    <script src="{% static 'openlayers/dist/ol.js' %}"></script>
+    <script src="{% static 'js/map/map.js' %}"></script>
+{% endblock %}

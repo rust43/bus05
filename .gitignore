@@ -20,3 +20,7 @@ local_settings.py
 # Development
 .vscode/
 .prettierrc
+
+# javascript libs
+app/static/openlayers/
+app/static/proj4js/
