@@ -1,0 +1,49 @@
+{% extends 'base_generic.html' %}
+{% load static %}
+{% block title %}
+    <title>Главная страница</title>
+{% endblock %}
+{% block specific_styles %}
+    <style>
+        html,
+        body {
+            height: 100%;
+            width: 100%;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+        .container {
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <div class="container my-auto">
+        <div class="d-flex flex-column m-auto">
+            <div class="text-center">
+                <img src="{% static '/pictures/logo.png' %}" alt="Logo" width="150px" height="150px" />
+            </div>
+            <h1 class="text-center border-bottom pb-2 mb-2">Зона упреждения</h1>
+            <div class="wrapper d-flex flex-wrap text-center">
+                <div class="card flex-column">
+                    <img class="mb-1" src="{% static '/pictures/add.png' %}" alt="" width="32px" height="32px" />
+                    <span>Создание рабочего участка</span>
+                    <a href="{% url 'zone-create' %}" class="stretched-link"></a>
+                </div>
+                <div class="card flex-column">
+                    <img class="mb-1" src="{% static '/pictures/archive.png' %}" alt="" width="32px" height="32px" />
+                    <span>Перейти к списку рабочих участков</span>
+                    <a href="{% url 'zone-list' %}" class="stretched-link"></a>
+                </div>
+                <div class="card flex-column">
+                    <img class="mb-1" src="{% static '/pictures/globe.png' %}" alt="" width="32px" height="32px" />
+                    <span>Открыть карту</span>
+                    <a href="{% url 'map' %}" class="stretched-link"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

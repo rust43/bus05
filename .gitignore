@@ -1,0 +1,22 @@
+# virtual environment
+venv/
+
+# OSX
+.DS_Store
+
+# Thumbnails
+._*
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Django
+*.log
+*.pot
+*.pyc
+local_settings.py
+
+# Development
+.vscode/
+.prettierrc
