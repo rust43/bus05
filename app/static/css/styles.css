@@ -1,0 +1,14 @@
+.map {
+    width: 100%;
+    height: 100%;
+}
+
+.map .ol-rotate {
+    top: 2.5rem;
+}
+
+.text-bg-violet {
+    color: #fff!important;
+    background-color: rgb(180, 61, 204)!important;
+}
+

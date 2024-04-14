@@ -108,7 +108,7 @@ const scaleControl = new ScaleLineControl({ units: "metric" });
 const zoomSliderControl = new ZoomSliderControl();
 const fullScreenControl = new FullScreenControl();
 const rotateControl = new RotateControl();
-const controls = [scaleControl, zoomSliderControl, rotateControl, fullScreenControl];
+const controls = [scaleControl, rotateControl, fullScreenControl];
 
 // --------------------------
 // Map interaction definition

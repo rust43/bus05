@@ -10,18 +10,49 @@
             height: 100%;
             width: 100%;
         }
-        body {
-            display: flex;
-            flex-direction: column;
-        }
-        .container {
-            height: 100%;
-            width: 100%;
-        }
     </style>
+    <link rel="stylesheet" href="{% static 'openlayers/ol.css' %}" type="text/css" />
+    <link rel="stylesheet" href="{% static 'css/bootstrap-icons.min.css' %}" type="text/css" />
+{% endblock %}
+{% block header %}
+
 {% endblock %}
 {% block content %}
-    <div class="container my-auto">
-        <h1>bus05</h1>
+    <div class="container-fluid h-100 d-flex flex-column flex-sm-row p-0">
+        <div class="col-12 col-sm-4 col-lg-3">
+            <div class="p-3">
+                <h5>Общественный транспорт Махачкалы</h5>
+            </div>
+            {% include 'transport_sidebar.html' %}
+            {% include 'routes_sidebar.html' %}
+        </div>
+        <div class="col-12 col-sm-8 col-lg-9 flex-grow-1">
+            <div id="map" class="map"></div>
+        </div>
     </div>
+{% endblock %}
+{% block footer %}
+
+{% endblock %}
+{% block specific_scripts %}
+    <script src="{% static 'proj4js/proj4.js' %}"></script>
+    <script src="{% static 'openlayers/dist/ol.js' %}"></script>
+    <script src="{% static 'js/map/map.js' %}"></script>
+    <script>
+        function selectTransport(transportType) {
+            if (transportType !== '') {
+                document.getElementById('transport-sidebar').classList.add('d-none');
+                document.getElementById('routes-sidebar').classList.remove('d-none');
+        
+                if (transportType === 'bus') {
+                    document.getElementById('transportType').innerText = 'Маршруты автобусов';
+                } else if (transportType === 'minibus') {
+                    document.getElementById('transportType').innerText = 'Движение маршруток';
+                }
+            } else {
+                document.getElementById('routes-sidebar').classList.add('d-none');
+                document.getElementById('transport-sidebar').classList.remove('d-none');
+            }
+        }
+    </script>
 {% endblock %}

@@ -24,3 +24,10 @@ local_settings.py
 # javascript libs
 app/static/openlayers/
 app/static/proj4js/
+
+# pictures
+app/static/pictures/
+
+# bootstrap icons lib
+app/static/css/bootstrap-icons.min.css
+app/static/css/fonts/
