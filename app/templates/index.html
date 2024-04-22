@@ -23,8 +23,8 @@
             <div class="p-3">
                 <h5>Общественный транспорт Махачкалы</h5>
             </div>
-            {% include 'transport_sidebar.html' %}
-            {% include 'routes_sidebar.html' %}
+            {% include 'map/transport_sidebar.html' %}
+            {% include 'map/routes_sidebar.html' %}
         </div>
         <div class="col-12 col-sm-8 col-lg-9 flex-grow-1">
             <div id="map" class="map"></div>
@@ -48,6 +48,8 @@
                     document.getElementById('transportType').innerText = 'Маршруты автобусов';
                 } else if (transportType === 'minibus') {
                     document.getElementById('transportType').innerText = 'Движение маршруток';
+                } else if (transportType === 'bus-stops') {
+                    document.getElementById('transportType').innerText = 'Список остановок';
                 }
             } else {
                 document.getElementById('routes-sidebar').classList.add('d-none');
