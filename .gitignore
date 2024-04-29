@@ -20,6 +20,7 @@ local_settings.py
 # Development
 .vscode/
 .prettierrc
+resources/
 
 # javascript libs
 app/static/openlayers/
@@ -31,3 +32,7 @@ app/static/pictures/
 # bootstrap icons lib
 app/static/css/bootstrap-icons.min.css
 app/static/css/fonts/
+
+# tiles
+app/static/tiles/2gis.mbtiles
+app/static/tiles/osm.mbtiles

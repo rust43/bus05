@@ -73,7 +73,7 @@ ol.proj.proj4.register(proj4);
 const host = "http://" + window.location.hostname + ':' + window.location.port;
 const staticURL = host + '/static';
 
-const defaultExtent = [47.3822, 42.8935, 47.6153, 43.0611];
+const defaultExtent = [47.384, 42.8972, 47.6176, 43.059];
 
 // -----------------
 // Layers definition
@@ -82,23 +82,14 @@ const defaultExtent = [47.3822, 42.8935, 47.6153, 43.0611];
 let tileLayer;
 
 let layerOSM = new TileLayer({
-    'title': 'osm',
-    source: new XYZSource({ url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png' }),
+    'title': 'osm', source: new XYZSource({ url: host + '/tiles/osm/{z}/{x}/{y}.png' }),
 });
 
 let layer2gis = new TileLayer({
-    'title': '2gis', source: new XYZSource({ url: 'http://tile2.maps.2gis.com/v2/?x={x}&y={y}&z={z}.png' }),
+    'title': '2gis', source: new XYZSource({ url: host + '/tiles/2gis/{z}/{x}/{y}.png' }),
 });
 
-let layerBingMaps = new TileLayer({
-    'title': 'Bing', source: new XYZSource({ url: host + '/tiles/bing/{z}/{x}/{y}.png' }),
-});
-
-let layerYandexMaps = new TileLayer({
-    'title': 'Yandex', source: new XYZSource({ url: host + '/tiles/yandex/{z}/{x}/{y}.png' }),
-});
-
-tileLayer = layerOSM;
+tileLayer = layer2gis;
 
 // ----------------------
 // Map control definition
@@ -211,10 +202,8 @@ function SetTileLayer(layerName) {
     map.removeLayer(tileLayer);
     if (layerName === "osm") {
         tileLayer = layerOSM;
-    } else if (layerName === "bing") {
-        tileLayer = layerBingMaps;
-    } else if (layerName === "here") {
-        tileLayer = layerHereMaps;
+    } else if (layerName === "2gis") {
+        tileLayer = layer2gis;
     }
     map.getLayers().insertAt(0, tileLayer)
 }

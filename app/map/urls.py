@@ -4,11 +4,11 @@ from . import views
 
 urlpatterns = [
     path("map/", views.map_view, name="map"),
+    path("tiles/<path:layer>/<int:z>/<int:x>/<int:y>.png", views.serve_tile, name="serve-tile"),
     # path("map/zone-list/", views.zone_list_view, name="zone-list"),
     # path("map/zone-create/", views.zone_create_view, name="zone-create"),
     # path("map/zone-view/<uuid:zone_id>/", views.zone_view_view, name="zone-view"),
     # path("map/zone-task/<uuid:zone_id>/", views.zone_task_view, name="zone-task"),
-    # path("tiles/<path:layer>/<int:z>/<int:x>/<int:y>.png", views.serve_tile, name="serve-tile"),
     # API paths
     # path("map/api/<uuid:zone_id>/", views.ZoneDetailApiView.as_view()),
     # path("map/api/<uuid:zone_id>/visibility/", views.GetVisibility.as_view()),

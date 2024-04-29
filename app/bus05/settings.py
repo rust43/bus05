@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     "rest_framework_gis",
     "haversine",
     "main",
+    "account",
     "map",
 ]
 
@@ -111,12 +112,13 @@ else:
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "media/"
 
-
 # Login urls
 
 LOGIN_REDIRECT_URL = "/"
 LOGIN_URL = "login/"
 
+# Define authentication for abstract user model
+AUTH_USER_MODEL = "account.User"
 
 # Default primary key field type
 
