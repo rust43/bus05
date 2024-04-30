@@ -8,15 +8,16 @@ from main.views import index
 from . import forms
 
 
-def login_view(request, message: str = ""):
+def login_view(request, message=""):
     if request.method == "POST":
         form = forms.LoginForm(data=request.POST)
         if form.is_valid():
             username = form.cleaned_data.get("username")
             password = form.cleaned_data.get("password")
             user = authenticate(request, username=username, password=password)
-            login(request, user)
-            return redirect(index)
+            if user is not None:
+                login(request, user)
+                return redirect(index)
         message = "Имя пользователя или пароль указаны неверно."
     else:
         form = forms.LoginForm()

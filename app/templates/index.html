@@ -12,7 +12,6 @@
         }
     </style>
     <link rel="stylesheet" href="{% static 'openlayers/ol.css' %}" type="text/css" />
-    <link rel="stylesheet" href="{% static 'css/bootstrap-icons.min.css' %}" type="text/css" />
 {% endblock %}
 {% block header %}
 
@@ -73,13 +72,13 @@
                                     </li>
                                 {% else %}
                                     <li>
-                                        <a class="dropdown-item" href="#">Войти</a>
+                                        <a class="dropdown-item" href="{% url 'login' %}">Войти</a>
                                     </li>
                                     <li>
                                         <hr class="dropdown-divider" />
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" href="#">Регистрация</a>
+                                        <a class="dropdown-item" href="{% url 'signup' %}">Регистрация</a>
                                     </li>
                                 {% endif %}
                             </ul>
@@ -88,7 +87,7 @@
                 </div>
             </header>
             <div class="p-3">
-                <h5>Общественный транспорт Махачкалы</h5>
+                <h5 class="fw-light text-secondary">Общественный транспорт Махачкалы</h5>
             </div>
             {% include 'map/transport_sidebar.html' %}
             {% include 'map/routes_sidebar.html' %}
