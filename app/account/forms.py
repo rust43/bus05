@@ -1,12 +1,11 @@
-from django import forms
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.forms import UserCreationForm
 
 from .models import User
 
 
-class LoginForm(forms.Form):
-    username = forms.CharField(max_length=100, required=True)
-    password = forms.CharField(max_length=100, required=True)
+class LoginForm(AuthenticationForm):
+    model = User
 
 
 class SignupForm(UserCreationForm):

@@ -28,7 +28,7 @@
 {% endblock %}
 
 {% block content %}
-    <main class="form-login w-100 m-auto">
+    <main class="form-login m-auto container">
         <div class="card shadow">
             <form action="{% url 'login' %}" method="post">
                 {% csrf_token %}

@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     "main",
     "account",
     "map",
+    "route",
 ]
 
 MIDDLEWARE = [
