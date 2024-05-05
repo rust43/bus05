@@ -36,6 +36,7 @@ function DrawRoute(routeName) {
         const feature = evt.feature;
         feature.set('arrow', 'true');
         feature.set('name', routeName);
+        feature.set('type', 'new-route');
         routeValidation(routeName, feature);
         map.removeInteraction(draw);
         map.removeInteraction(snap);
@@ -45,7 +46,7 @@ function DrawRoute(routeName) {
     });
     map.addInteraction(draw);
     map.addInteraction(snap);
-}
+};
 
 // ---------------------------
 // Route map style functions
@@ -59,7 +60,7 @@ function DefaultRouteStyleFunction(feature) {
     const styles = [new olStyle({ stroke: stroke })];
     feature.setStyle(styles);
     feature.changed();
-}
+};
 
 // ------------------------------
 // Route map validation functions
@@ -71,14 +72,14 @@ const routeValidation = function (routeName, feature) {
     flag.classList.add("text-bg-success");
     flag.innerText = "Указано";
     setRouteFeature(routeName, feature);
-}
+};
 
 const routeInvalidation = function (routeName) {
     const flag = document.getElementById(routeName + "-flag");
     flag.classList.remove("text-bg-success");
     flag.classList.add("text-bg-danger");
     flag.innerText = "Не указано";
-}
+};
 
 const setRouteFeature = function (routeName, feature) {
     if (routeName === 'route-path-a') {
@@ -93,7 +94,7 @@ const setRouteFeature = function (routeName, feature) {
         pathBInput.value = 'set';
         validationHelper(pathBInput);
     }
-}
+};
 
 function ClearNewRoutes() {
     routeNameInput.value = '';
@@ -110,13 +111,14 @@ function ClearNewRoutes() {
         pathBInput.value = '';
         feature_path_b = null;
     }
-}
+    selectedFeature = null;
+};
 
 function RouteFormValidation() {
     validationHelper(routeNameInput);
     validationHelper(pathAInput);
     validationHelper(pathBInput);
-}
+};
 
 const validationHelper = function (input) {
     if (input && input.value) {
@@ -127,8 +129,52 @@ const validationHelper = function (input) {
         input.classList.remove('is-valid');
         input.classList.add('is-invalid');
     }
-}
+};
 
 routeNameInput.onchange = function () {
     validationHelper(routeNameInput);
-}
+};
+
+// ----------------------------------
+// Route map delete feature functions
+// ----------------------------------
+
+function RemoveSelectedRouteFeature() {
+    let name = selectedFeature.get('name');
+    if (name == 'route-path-a') {
+        newRouteVectorSource.removeFeature(feature_path_a);
+        routeInvalidation('route-path-a');
+        pathAInput.value = '';
+        feature_path_a = null;
+    }
+    else if (name == 'route-path-b') {
+        newRouteVectorSource.removeFeature(feature_path_b);
+        routeInvalidation('route-path-b');
+        pathAInput.value = '';
+        feature_path_b = null;
+    }
+    selectedFeature = null;
+};
+
+const deleteRouteFeature = function (evt) {
+    if (evt.keyCode === 46) RemoveSelectedRouteFeature();
+};
+document.addEventListener('keydown', deleteRouteFeature, false);
+
+// ----------------------------------
+// Route map select feature functions
+// ----------------------------------
+
+function SelectNewRouteFeature(routeName) {
+    const flag = document.getElementById(routeName + "-flag");
+    flag.classList.remove("text-bg-success");
+    flag.classList.add("text-bg-primary");
+    flag.innerText = "Выбрано";
+};
+
+function UnselectNewRouteFeature(routeName) {
+    const flag = document.getElementById(routeName + "-flag");
+    flag.classList.remove("text-bg-primary");
+    flag.classList.add("text-bg-success");
+    flag.innerText = "Указано";
+};

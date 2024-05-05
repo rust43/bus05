@@ -14,12 +14,16 @@ let selectedFeature = null;
 const selectFunction = function () {
     const feature = select.getFeatures().getArray()[0];
     if (selectedFeature !== null) {
+        UnselectNewRouteFeature(selectedFeature.get('name'));
         selectedFeature.setStyle(undefined);
         selectedFeature = null;
     }
     if (!feature) return;
+    const feature_name = feature.get('name');
+    const feature_type = feature.get('type');
     selectedFeature = feature;
     SetFeatureSelectedStyle(feature);
+    if (feature_type === 'new-route') SelectNewRouteFeature(feature_name);
 };
 
 select.on('select', selectFunction);
@@ -85,7 +89,6 @@ function DrawShape(type) {
 function RemoveSelectedFeature() {
     select.getFeatures().forEach(function (feature) {
         objectVectorSource.removeFeature(feature);
-        routeVectorSource.removeFeature(feature);
     });
 }
 
