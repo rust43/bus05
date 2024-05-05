@@ -21,6 +21,7 @@ class UserAdmin(UserAdmin):
                 )
             },
         ),
-        ("Служебные", {"fields": ("is_staff", "date_joined", "last_login")}),
+        ("Служебные", {"fields": ("is_staff", "date_joined", "last_login", "groups")}),
     )
     list_display = ("username", "last_login")
+    filter_horizontal = ("groups", "user_permissions")

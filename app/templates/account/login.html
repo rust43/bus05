@@ -12,6 +12,7 @@
             height: 100%;
             width: 100%;
         }
+
         body {
             display: flex;
             text-align: center;
@@ -33,20 +34,23 @@
             <form action="{% url 'login' %}" method="post">
                 {% csrf_token %}
                 <div class="mt-3 d-flex flex-column align-items-center">
-                    <a href="{% url 'index' %}"><img src="{% static 'pictures/logo.png' %}" alt="" class="" width="120" height="auto" /></a>
-                    <span class="text-uppercase fs-6 fw-light text-secondary">Общественный транспорт Махачкалы</span>
+                    <a href="{% url 'index' %}"><img src="{% static 'pictures/logo.png' %}" alt="" class="" width="120"
+                                                     height="auto" /></a>
+                    <span class="p-2 text-uppercase fs-small text-secondary">Общественный транспорт Махачкалы</span>
                 </div>
                 <div class="p-4">
                     <div class="mb-3 text-start">
                         <div class="mb-3">
                             <label class="form-label" for="username">Имя пользователя</label>
-                            <input class="form-control" type="text" name="username" id="username" value="{% if form.username.value %}{{ form.username.value }}{% endif %}" required />
+                            <input class="form-control" type="text" name="username" id="username"
+                                   value="{% if form.username.value %}{{ form.username.value }}{% endif %}" required />
                         </div>
                         <div class="mb-3">
                             <label class="form-label" for="password">Пароль</label>
                             <div class="input-group">
                                 <input type="password" name="password" id="password" class="form-control" />
-                                <button type="button" class="btn btn-outline-secondary input-group-text" id="togglePasswordButton">
+                                <button type="button" class="btn btn-outline-secondary input-group-text"
+                                        id="togglePasswordButton">
                                     <i class="bi bi-eye" id="togglePasswordIcon"></i>
                                     <span class="visually-hidden">Button</span>
                                 </button>
@@ -76,12 +80,12 @@
         togglePasswordButton = document.getElementById('togglePasswordButton');
         togglePasswordIcon = document.getElementById('togglePasswordIcon');
         passwordInput = document.getElementById('password');
-        
-        togglePasswordButton.addEventListener('click', function () {
+
+        togglePasswordButton.addEventListener('click', function() {
             // toggle the type attribute
             const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
             passwordInput.setAttribute('type', type);
-        
+
             // toggle the eye icon
             togglePasswordIcon.classList.toggle('bi-eye');
             togglePasswordIcon.classList.toggle('bi-eye-slash');

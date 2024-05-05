@@ -12,6 +12,7 @@
             height: 100%;
             width: 100%;
         }
+
         body {
             display: flex;
             text-align: center;
@@ -33,17 +34,20 @@
             <form name="signupForm" action="{% url 'signup' %}" method="post" onsubmit="return validateForm()">
                 {% csrf_token %}
                 <div class="d-flex flex-column align-items-center">
-                    <a href="{% url 'index' %}"><img src="{% static 'pictures/logo.png' %}" alt="" class="" width="64" height="auto" /></a>
-                    <span class="text-uppercase fs-6 fw-light text-secondary">Общественный транспорт Махачкалы</span>
+                    <a href="{% url 'index' %}"><img src="{% static 'pictures/logo.png' %}" alt="" class="" width="64"
+                                                     height="auto" /></a>
+                    <span
+                        class="px-2 text-uppercase fs-5 fw-light text-secondary">Общественный транспорт Махачкалы</span>
                 </div>
-                <div class="mt-1">
-                    <small class="text-body-secondary px-3 mb-3 lh-sm">Регистрация на сайте</small>
+                <div class="mt-1 mb-2">
+                    <span class="text-body-secondary px-3">Регистрация на сайте</span>
                 </div>
                 <div class="p-4 pt-1">
                     <div class="mb-3 text-start">
                         <div class="mb-3">
                             <label class="form-label" for="username">Имя пользователя</label>
-                            <input class="form-control" type="text" name="username" id="username" value="{% if form.username.value %}{{ form.username.value }}{% endif %}" required />
+                            <input class="form-control" type="text" name="username" id="username"
+                                   value="{% if form.username.value %}{{ form.username.value }}{% endif %}" required />
                         </div>
                         <div class="mb-3">
                             <label class="form-label" for="password1">Пароль</label>
@@ -101,6 +105,7 @@
                 }
             }
         }
+
         function validateForm() {
             let msg = document.getElementById('errorMsg');
             let x = document.forms['signupForm']['username'].value;

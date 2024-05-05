@@ -7,66 +7,67 @@ const olMap = ol.Map;
 const olView = ol.View;
 
 // Overlay components
-const Overlay = ol.Overlay;
+const olOverlay = ol.Overlay;
 
 // Source components
-const XYZSource = ol.source.XYZ;
-const VectorSource = ol.source.Vector;
+const olXYZSource = ol.source.XYZ;
+const olVectorSource = ol.source.Vector;
 
 // Layer components
-const VectorLayer = ol.layer.Vector;
-const TileLayer = ol.layer.Tile;
+const olVectorLayer = ol.layer.Vector;
+const olTileLayer = ol.layer.Tile;
 
 // Extent components
-const transformExtent = ol.proj.transformExtent;
-const getExtentCenter = ol.extent.getCenter;
+const olTransformExtent = ol.proj.transformExtent;
+const olGetExtentCenter = ol.extent.getCenter;
 
 // Control components
-const defaultControls = ol.control.defaults;
-const ScaleLineControl = ol.control.ScaleLine;
-const ZoomSliderControl = ol.control.ZoomSlider;
-const FullScreenControl = ol.control.FullScreen;
-const RotateControl = ol.control.Rotate;
+const olDefaultControls = ol.control.defaults;
+const olScaleLineControl = ol.control.ScaleLine;
+const olZoomSliderControl = ol.control.ZoomSlider;
+const olFullScreenControl = ol.control.FullScreen;
+const olRotateControl = ol.control.Rotate;
 
 // Interaction components
-const defaultInteractions = ol.interaction.defaults;
-const ExtentInteraction = ol.interaction.Extent;
-const DragRotateInteraction = ol.interaction.DragRotate;
-const SelectInteraction = ol.interaction.Select;
-const DrawInteraction = ol.interaction.Draw;
-const ModifyInteraction = ol.interaction.Modify;
-const TranslateInteraction = ol.interaction.Translate;
+const olDefaultInteractions = ol.interaction.defaults;
+const olExtentInteraction = ol.interaction.Extent;
+const olDragRotateInteraction = ol.interaction.DragRotate;
+const olSelectInteraction = ol.interaction.Select;
+const olSnapInteraction = ol.interaction.Snap;
+const olDrawInteraction = ol.interaction.Draw;
+const olModifyInteraction = ol.interaction.Modify;
+const olTranslateInteraction = ol.interaction.Translate;
 
 // Proj components
-const transform = ol.proj.transform;
-const fromLonLat = ol.proj.fromLonLat;
+const olTransform = ol.proj.transform;
+const olFromLonLat = ol.proj.fromLonLat;
 
 // Styling components
-const Style = ol.style.Style;
-const IconStyle = ol.style.Icon;
-const FillStyle = ol.style.Fill;
-const CircleStyle = ol.style.Circle;
-const StrokeStyle = ol.style.Stroke;
+const olStyle = ol.style.Style;
+const olIconStyle = ol.style.Icon;
+const olFillStyle = ol.style.Fill;
+const olCircleStyle = ol.style.Circle;
+const olStrokeStyle = ol.style.Stroke;
 const olSize = ol.size;
 
 // Geometry components
-const PointGeometry = ol.geom.Point;
-const CircleGeometry = ol.geom.Circle;
-const PolygonGeometry = ol.geom.Polygon;
-const LineStringGeometry = ol.geom.LineString;
+const olPointGeometry = ol.geom.Point;
+const olCircleGeometry = ol.geom.Circle;
+const olPolygonGeometry = ol.geom.Polygon;
+const olLineStringGeometry = ol.geom.LineString;
 
 // Sphere components
-const Sphere = ol.Sphere;
-const getArea = ol.sphere.getArea;
-const getLength = ol.sphere.getLength;
-const getDistance = ol.sphere.getDistance;
+const olSphere = ol.Sphere;
+const olGetArea = ol.sphere.getArea;
+const olGetLength = ol.sphere.getLength;
+const olGetDistance = ol.sphere.getDistance;
 
 // Feature components
-const Feature = ol.Feature;
+const olFeature = ol.Feature;
 
 // Condition components
-const ShiftKeyOnly = ol.events.condition.shiftKeyOnly;
-const unByKey = ol.Observable;
+const olShiftKeyOnly = ol.events.condition.shiftKeyOnly;
+const olUnByKey = ol.Observable;
 
 ol.proj.proj4.register(proj4);
 
@@ -81,12 +82,12 @@ const defaultExtent = [47.384, 42.8972, 47.6176, 43.059];
 
 let tileLayer;
 
-let layerOSM = new TileLayer({
-    'title': 'osm', source: new XYZSource({ url: host + '/tiles/osm/{z}/{x}/{y}.png' }),
+let layerOSM = new olTileLayer({
+    'title': 'osm', source: new olXYZSource({ url: host + '/tiles/osm/{z}/{x}/{y}.png' }),
 });
 
-let layer2gis = new TileLayer({
-    'title': '2gis', source: new XYZSource({ url: host + '/tiles/2gis/{z}/{x}/{y}.png' }),
+let layer2gis = new olTileLayer({
+    'title': '2gis', source: new olXYZSource({ url: host + '/tiles/2gis/{z}/{x}/{y}.png' }),
 });
 
 tileLayer = layer2gis;
@@ -95,17 +96,17 @@ tileLayer = layer2gis;
 // Map control definition
 // ----------------------
 
-const scaleControl = new ScaleLineControl({ units: "metric" });
-const zoomSliderControl = new ZoomSliderControl();
-const fullScreenControl = new FullScreenControl();
-const rotateControl = new RotateControl();
+const scaleControl = new olScaleLineControl({ units: "metric" });
+const zoomSliderControl = new olZoomSliderControl();
+const fullScreenControl = new olFullScreenControl();
+const rotateControl = new olRotateControl();
 const controls = [scaleControl, rotateControl, fullScreenControl];
 
 // --------------------------
 // Map interaction definition
 // --------------------------
 
-const dragRotateInteraction = new DragRotateInteraction();
+const dragRotateInteraction = new olDragRotateInteraction();
 const interactions = [dragRotateInteraction];
 
 // --------------
@@ -113,8 +114,8 @@ const interactions = [dragRotateInteraction];
 // --------------
 
 let map = new olMap({
-    controls: defaultControls.defaults({ attribution: false }).extend(controls),
-    interactions: defaultInteractions.defaults().extend(interactions),
+    controls: olDefaultControls.defaults({ attribution: false }).extend(controls),
+    interactions: olDefaultInteractions.defaults().extend(interactions),
     target: 'map',
     layers: [tileLayer],
     view: GetExtentView(defaultExtent),
@@ -136,7 +137,7 @@ function SetExtent(webExtent) {
 
 function GetExtentView(webExtent) {
     const mapExtent = ol.proj.transformExtent(webExtent, 'EPSG:4326', 'EPSG:3857');
-    const viewCenter = getExtentCenter(mapExtent);
+    const viewCenter = olGetExtentCenter(mapExtent);
     return new olView({
         center: viewCenter,
         constrainResolution: true,
@@ -176,7 +177,7 @@ function ConvertToGeoJSON(vectorSource) {
             const center = feature.getGeometry().getCenter();
             const radius = feature.getGeometry().getRadius();
             const new_circle_feature = new Feature({
-                geometry: new PointGeometry(center),
+                geometry: new olPointGeometry(center),
                 radius: radius,
                 type: 'Circle',
                 name: feature.get('name'),

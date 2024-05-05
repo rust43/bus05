@@ -5,12 +5,17 @@ from bus05 import local_settings
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = "django-insecure-es3f&n%)yv1=ul8($t3eg3-5o)+fag0$kzb3e9xhfm)4(ke805"
+SECRET_KEY = local_settings.SECRET_KEY
 
 DEBUG = True
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", "192.168.1.7"]
 
+if os.name == "nt":
+    GDAL_LIBRARY_PATH = os.path.join(BASE_DIR, "..\\..\\..\\postgres\\bin\\libgdal-33.dll")
+    GEOS_LIBRARY_PATH = os.path.join(BASE_DIR, "..\\..\\..\\postgres\\bin\\libgeos_c.dll")
+    os.environ["PATH"] = os.path.join(BASE_DIR, "..\\venv\\Lib\\site-packages\\osgeo") + ";" + os.environ["PATH"]
+    os.environ["PROJ_LIB"] = os.path.join(BASE_DIR, "..\\venv\\Lib\\site-packages\\osgeo\\data\\proj") + ";" + os.environ["PATH"]
 
 # Application definition
 

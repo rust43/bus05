@@ -2,8 +2,8 @@
 // Map layers definition
 // ---------------------
 
-let objectVectorSource = new VectorSource({wrapX: false});
-let objectVectorLayer = new VectorLayer({source: objectVectorSource, style: DefaultStyleFunction});
+let objectVectorSource = new olVectorSource({ wrapX: false });
+let objectVectorLayer = new olVectorLayer({ source: objectVectorSource, style: DefaultStyleFunction });
 map.addLayer(objectVectorLayer);
 
 if (document.getElementById("zone_id") !== null) {
@@ -48,25 +48,25 @@ function DrawZoneObjects(zone_data, vectorSource) {
             case "Circle": {
                 db_id = map_object.circle.id;
                 coordinates = map_object.circle.geom.coordinates;
-                geometry = new CircleGeometry(coordinates, 1);
+                geometry = new olCircleGeometry(coordinates, 1);
                 break;
             }
             case "Point": {
                 db_id = map_object.point.id;
                 coordinates = map_object.point.geom.coordinates;
-                geometry = new PointGeometry(coordinates);
+                geometry = new olPointGeometry(coordinates);
                 break;
             }
             case "LineString": {
                 db_id = map_object.line.id;
                 coordinates = map_object.line.geom.coordinates;
-                geometry = new LineStringGeometry(coordinates);
+                geometry = new olLineStringGeometry(coordinates);
                 break;
             }
             case "Polygon": {
                 db_id = map_object.polygon.id;
                 coordinates = map_object.polygon.geom.coordinates;
-                geometry = new PolygonGeometry(coordinates);
+                geometry = new olPolygonGeometry(coordinates);
                 break;
             }
             default: {
@@ -78,7 +78,7 @@ function DrawZoneObjects(zone_data, vectorSource) {
         if (type === "Circle") {
             geometry.setRadius(parseFloat(props["radius"]));
         }
-        let new_feature = new Feature({
+        let new_feature = new olFeature({
             geometry: geometry, type: type, name: map_object['name'],
         });
         new_feature.set('db_id', db_id);
@@ -108,12 +108,12 @@ function DefaultStyleFunction(feature) {
     if (strokeWidth === undefined) strokeWidth = 1.25;
     if (objectIcon === undefined) objectIcon = "default";
 
-    const fill = new FillStyle({color: fillColor});
-    const stroke = new StrokeStyle({color: strokeColor, width: strokeWidth});
+    const fill = new olFillStyle({ color: fillColor });
+    const stroke = new olStrokeStyle({ color: strokeColor, width: strokeWidth });
 
     if (objectIcon !== "default") {
-        return new Style({
-            image: new IconStyle({
+        return new olStyle({
+            image: new olIconStyle({
                 anchor: [0.5, 250],
                 anchorXUnits: 'fraction',
                 anchorYUnits: 'pixels',
@@ -123,10 +123,14 @@ function DefaultStyleFunction(feature) {
             }),
         });
     } else {
-        return new Style({
-            image: new CircleStyle({
-                fill: fill, stroke: stroke, radius: 5,
-            }), fill: fill, stroke: stroke,
+        return new olStyle({
+            image: new olCircleStyle({
+                fill: fill,
+                stroke: stroke,
+                radius: 5,
+            }),
+            fill: fill,
+            stroke: stroke,
         });
     }
 }

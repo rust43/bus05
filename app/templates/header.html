@@ -1,2 +1,51 @@
 {% load static %}
-<header class="header">header</header>
+<header class="p-3 border-bottom">
+    <div class="container">
+        <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+            <a href="{% url 'index' %}" class="d-flex align-items-center">
+                <img class="me-2" src="{% static 'pictures/logo.png' %}" alt="" width="40px" height="40px" />
+                <span></span>
+            </a>
+            <form class="col-8 ms-3 ms-lg-auto me-3 col-lg-auto" role="search">
+                <input type="search" class="form-control" placeholder="Найти..." />
+            </form>
+            <div class="dropdown text-end">
+                <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown">
+                    <span class="text-secondary fs-3"><i class="bi bi-person-circle"></i></span>
+                    <span></span>
+                </a>
+                <ul class="dropdown-menu text-small">
+                    {% if request.user.is_authenticated %}
+                        {% if request.user.is_staff %}
+                            <li>
+                                <a class="dropdown-item" href="{% url 'map-edit' %} ">Редактирование</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="#">Настройки</a>
+                            </li>
+                        {% endif %}
+                        <li>
+                            <a class="dropdown-item" href="#">Профиль</a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider" />
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'logout' %}">Выйти</a>
+                        </li>
+                    {% else %}
+                        <li>
+                            <a class="dropdown-item" href="{% url 'login' %}">Войти</a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider" />
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{% url 'signup' %}">Регистрация</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</header>

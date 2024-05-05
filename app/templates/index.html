@@ -27,12 +27,15 @@
                             <li>
                                 <a class="dropdown-item active" href="#" aria-current="page">Карта</a>
                             </li>
-                            <li>
-                                <a class="dropdown-item" href="#">Маршруты</a>
-                            </li>
+                            {% comment %} <li>
+                                <a class="dropdown-item" href="{% url 'route-list' %}">Маршруты</a>
+                            </li> {% endcomment %}
+                            {% comment %}
                             <li>
                                 <a class="dropdown-item" href="#">Остановки</a>
                             </li>
+                            {% endcomment %}
+                            {% comment %}
                             <li>
                                 <hr class="dropdown-divider" />
                             </li>
@@ -42,6 +45,7 @@
                             <li>
                                 <a class="dropdown-item" href="#">Аналитика</a>
                             </li>
+                            {% endcomment %}
                         </ul>
                     </div>
 
@@ -55,7 +59,7 @@
                                 {% if request.user.is_authenticated %}
                                     {% if request.user.is_staff %}
                                         <li>
-                                            <a class="dropdown-item" href="#">Новый маршрут...</a>
+                                            <a class="dropdown-item" href="{% url 'map-edit' %} ">Редактирование</a>
                                         </li>
                                         <li>
                                             <a class="dropdown-item" href="#">Настройки</a>
