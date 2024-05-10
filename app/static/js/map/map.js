@@ -64,6 +64,7 @@ const olGetDistance = ol.sphere.getDistance;
 
 // Feature components
 const olFeature = ol.Feature;
+const olGeoJSON = ol.format.GeoJSON;
 
 // Condition components
 const olShiftKeyOnly = ol.events.condition.shiftKeyOnly;

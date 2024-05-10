@@ -1,6 +1,7 @@
 import json
 
 from django.contrib.auth.decorators import login_required
+from django.contrib.gis.geos import LineString
 from django.http import HttpResponseNotFound
 from django.shortcuts import render
 from rest_framework import status
@@ -41,22 +42,46 @@ class RouteApiView(APIView):
         """
         Create new route
         """
-        route_geojson_data = request.POST.get("routeGeoJSONData", "")
-        # process geoJSON drawn route features data
-        # process_geo_json(route_geojson_data, route_id)
-        data = {
-            "name": request.data.get("name"),
-            "path_a": request.data.get("path_a"),
-            "path_b": request.data.get("path_b"),
-            "borderline": request.data.get("borderline"),
-            "user": request.user.id,
-        }
-        serializer = RouteSerializer(data=data)
-        # if serializer.is_valid():
-        #     serializer.save()
-        #     return Response(serializer.data, status=status.HTTP_201_CREATED)
+        new_route_name = request.data.get("name")
+        new_route_features = request.data.get("geojson_data")
+        new_route_stops = request.data.get("assigned_stops")
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        path_a, path_b = process_newroute_geojson(new_route_features)
+
+        if None not in (path_a, path_b):
+            return Response(status=status.HTTP_201_CREATED)
+
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+def process_newroute_geojson(new_route_features):
+
+    route_data = json.loads(new_route_features)
+
+    path_a = None
+    path_b = None
+
+    for feature in route_data["features"]:
+        name = feature["properties"]["name"]
+        coordinates = feature["geometry"]["coordinates"]
+        geometry_type = feature["geometry"]["type"]
+
+        if geometry_type != "LineString":
+            continue
+
+        for coordinate in coordinates:
+            coordinate = list(map(float, coordinate))
+
+        line_string = LineString(coordinates, srid=4326)
+
+        if name == "route-path-a":
+            path_a = line_string
+        elif name == "route-path-b":
+            path_b = line_string
+        else:
+            continue
+
+    return path_a, path_b
 
 
 # def process_geo_json(data, route):

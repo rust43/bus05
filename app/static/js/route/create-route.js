@@ -36,7 +36,6 @@ function DrawRoute(routeName) {
         const feature = evt.feature;
         feature.set('arrow', 'true');
         feature.set('name', routeName);
-        feature.set('type', 'new-route');
         routeValidation(routeName, feature);
         map.removeInteraction(draw);
         map.removeInteraction(snap);
@@ -115,19 +114,23 @@ function ClearNewRoutes() {
 };
 
 function RouteFormValidation() {
-    validationHelper(routeNameInput);
-    validationHelper(pathAInput);
-    validationHelper(pathBInput);
+    let result = true;
+    result *= validationHelper(routeNameInput);
+    result *= validationHelper(pathAInput);
+    result *= validationHelper(pathBInput);
+    return result;
 };
 
 const validationHelper = function (input) {
     if (input && input.value) {
         input.classList.remove('is-invalid');
         input.classList.add('is-valid');
+        return true;
     }
     else {
         input.classList.remove('is-valid');
         input.classList.add('is-invalid');
+        return false;
     }
 };
 
@@ -178,3 +181,55 @@ function UnselectNewRouteFeature(routeName) {
     flag.classList.add("text-bg-success");
     flag.innerText = "Указано";
 };
+
+// ----------------------------------
+// Route map save functions
+// ----------------------------------
+
+function RouteFormSave() {
+
+    if (!RouteFormValidation()) {
+        alert("Проверьте данные нового маршрута!");
+        return;
+    }
+
+    let features = [feature_path_a, feature_path_b];
+    let geoJSONwriter = new olGeoJSON();
+    let geoJSONdata = geoJSONwriter.writeFeatures(
+        features,
+        { dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857' }
+    );
+
+    console.log(geoJSONdata);
+
+    const route_data = {
+        "name": routeNameInput.value,
+        "geojson_data": geoJSONdata,
+        "assigned_stops": []
+    };
+
+    PostRoute(route_data).then(respond => {
+        alert("Маршрут сохранен!");
+    });
+};
+
+async function PostRoute(route_data) {
+    const url = host + "/api/v1/routes/";
+    const response = await fetch(
+        url,
+        {
+            method: "post",
+            credentials: "same-origin",
+            headers: {
+                "X-CSRFToken": getCookie("csrftoken"),
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(route_data),
+        });
+    if (response.ok) {
+        return await response.json();
+    } else {
+        console.log("Ошибка HTTP: " + response.status);
+    }
+}
