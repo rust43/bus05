@@ -1,4 +1,5 @@
-from django.contrib import admin
+from django.contrib.gis import admin
+from django.contrib.gis.forms.widgets import OSMWidget
 
 from .models import MapObject
 from .models import MapObjectProp
@@ -7,6 +8,21 @@ from .models import ObjectLineString
 from .models import ObjectPoint
 from .models import ObjectPolygon
 from .models import ObjectType
+
+
+class CustomGeoWidget(OSMWidget):
+    template_name = "gis/openlayers-osm.html"
+
+
+class CustomGeoModelAdmin(admin.GISModelAdmin):
+    gis_widget = CustomGeoWidget
+    gis_widget_kwargs = {
+        "attrs": {
+            # "default_zoom": 14,
+            # "default_lon": 3.4825,
+            # "default_lat": 50.1906,
+        },
+    }
 
 
 @admin.register(MapObjectProp)
@@ -29,7 +45,7 @@ class CircleAdmin(admin.ModelAdmin):
 
 
 @admin.register(ObjectLineString)
-class LineAdmin(admin.ModelAdmin):
+class LineAdmin(CustomGeoModelAdmin):
     model = ObjectLineString
     list_display = ("id", "map_object", "geom")
 
@@ -40,14 +56,14 @@ class PolygonAdmin(admin.ModelAdmin):
     list_display = ("id", "map_object", "geom")
 
 
-class PointInline(admin.TabularInline):
-    model = ObjectPoint
+# class PointInline(admin.TabularInline):
+# model = ObjectPoint
 
 
 @admin.register(MapObject)
 class MapObjectAdmin(admin.ModelAdmin):
     list_display = ("name", "object_type")
-    inlines = [PointInline]
+    # inlines = [PointInline]
 
 
 class MapObjectInline(admin.TabularInline):

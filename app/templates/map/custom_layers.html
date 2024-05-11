@@ -1,0 +1,10 @@
+{% extends "gis/openlayers-osm.html" %}
+{% load l10n %}
+
+{% block base_layer %}
+const host = "http://" + window.location.hostname + ':' + window.location.port;
+var base_layer = new ol.layer.Tile({
+    'title': 'osm',
+    source: new ol.source.XYZ({ url: host + '/tiles/osm/{z}/{x}/{y}.png' }),
+});
+{% endblock %}
