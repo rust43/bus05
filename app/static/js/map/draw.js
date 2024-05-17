@@ -14,7 +14,8 @@ let selectedFeature = null;
 const selectFunction = function () {
     const feature = select.getFeatures().getArray()[0];
     if (selectedFeature !== null) {
-        UnselectNewRouteFeature(selectedFeature.get('name'));
+        if (selectedFeature.get('type') === 'new-route')
+            UnselectNewRouteFeature(selectedFeature.get('name'));
         selectedFeature.setStyle(undefined);
         selectedFeature = null;
     }
@@ -23,7 +24,8 @@ const selectFunction = function () {
     const feature_type = feature.get('type');
     selectedFeature = feature;
     SetFeatureSelectedStyle(feature);
-    if (feature_type === 'new-route') SelectNewRouteFeature(feature_name);
+    if (feature_type === 'new-route')
+        SelectNewRouteFeature(feature_name);
 };
 
 select.on('select', selectFunction);

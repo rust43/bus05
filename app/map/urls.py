@@ -4,6 +4,7 @@ from . import views
 
 urlpatterns = [
     path("map/", views.map_view, name="map"),
+    path("map-edit/", views.map_edit_view, name="map-edit"),
     path("tiles/<path:layer>/<int:z>/<int:x>/<int:y>.png", views.serve_tile, name="serve-tile"),
     # path("map/zone-list/", views.zone_list_view, name="zone-list"),
     # path("map/zone-create/", views.zone_create_view, name="zone-create"),

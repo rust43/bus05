@@ -48,27 +48,18 @@ class MapObjectSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MapObject
-        fields = [
-            "name",
-            "object_type",
-            "point",
-            "circle",
-            "line",
-            "polygon",
-            "props",
-            "description",
-        ]
+        fields = ["name", "object_type", "point", "circle", "line", "polygon", "props"]
 
-
-# class ZoneDetailSerializer(serializers.ModelSerializer):
-#     map_objects = MapObjectSerializer(many=True, read_only=True)
-
-#     class Meta:
-#         model = Zone
-#         fields = ["id", "name", "user", "map_objects"]
-
-
-# class ZoneSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Zone
-#         fields = ["id", "name", "user"]
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if data["point"] is None:
+            data.pop("point")
+        if data["circle"] is None:
+            data.pop("circle")
+        if data["polygon"] is None:
+            data.pop("polygon")
+        if data["line"] is None:
+            data.pop("line")
+        if len(data["props"]) == 0:
+            data.pop("props")
+        return data

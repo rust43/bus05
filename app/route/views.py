@@ -1,6 +1,5 @@
 import json
 
-from django.contrib.auth.decorators import login_required
 from django.contrib.gis.geos import LineString
 from django.http import HttpResponseNotFound
 from django.shortcuts import render
@@ -16,13 +15,6 @@ from .models import BusStop
 from .models import Route
 from .permissions import HasGroupPermission
 from .serializers import RouteSerializer
-
-
-@login_required
-def map_edit_view(request):
-    if not request.user.groups.filter(name="map_admins").exists():
-        return HttpResponseNotFound("У вас нет доступа к данной странице.")
-    return render(request, "route/map_edit.html", {})
 
 
 class RouteApiView(APIView):
@@ -54,7 +46,6 @@ class RouteApiView(APIView):
         if None not in (path_a, path_b) and isinstance(path_a, LineString) and isinstance(path_b, LineString):
             create_route(new_route_name, new_route_stops, path_a, path_b)
             return Response(status=status.HTTP_201_CREATED)
-
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 

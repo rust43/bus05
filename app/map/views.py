@@ -2,6 +2,7 @@ import os
 import sqlite3
 
 from bus05.settings import BASE_DIR
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.http import HttpResponseNotFound
 from django.shortcuts import render
@@ -9,6 +10,13 @@ from django.shortcuts import render
 
 def map_view(request):
     return render(request, "map/map.html", context={})
+
+
+@login_required
+def map_edit_view(request):
+    if not request.user.groups.filter(name="map_admins").exists():
+        return HttpResponseNotFound("У вас нет доступа к данной странице.")
+    return render(request, "map/map_edit.html", {})
 
 
 def serve_tile(request, layer, z, x, y):

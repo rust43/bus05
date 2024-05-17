@@ -36,6 +36,7 @@ function DrawRoute(routeName) {
         const feature = evt.feature;
         feature.set('arrow', 'true');
         feature.set('name', routeName);
+        feature.set('type', 'new-route');
         routeValidation(routeName, feature);
         map.removeInteraction(draw);
         map.removeInteraction(snap);
@@ -208,8 +209,14 @@ function RouteFormSave() {
         "assigned_stops": []
     };
 
-    PostRoute(route_data).then(respond => {
+    PostRoute(route_data).then(response => {
         alert("Маршрут сохранен!");
+        try {
+            LoadRoutes();
+        }
+        catch (err) {
+            alert("Ошибка при загрузке новых маршрутов!");
+        }
     });
 };
 
@@ -228,8 +235,25 @@ async function PostRoute(route_data) {
             body: JSON.stringify(route_data),
         });
     if (response.ok) {
-        return await response.json();
+        return true;
     } else {
         console.log("Ошибка HTTP: " + response.status);
     }
 }
+
+const createRouteSelectFunction = function () {
+    const feature = select.getFeatures().getArray()[0];
+    if (selectedFeature !== null) {
+        if (feature_type === 'new-route')
+            UnselectNewRouteFeature(selectedFeature.get('name'));
+        selectedFeature.setStyle(undefined);
+        selectedFeature = null;
+    }
+    if (!feature) return;
+    const feature_name = feature.get('name');
+    const feature_type = feature.get('type');
+    selectedFeature = feature;
+    SetFeatureSelectedStyle(feature);
+    if (feature_type === 'new-route')
+        SelectNewRouteFeature(feature_name);
+};
