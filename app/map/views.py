@@ -9,14 +9,14 @@ from django.shortcuts import render
 
 
 def map_view(request):
-    return render(request, "map/map.html", context={})
+    return render(request, "map/view.html", context={})
 
 
 @login_required
 def map_edit_view(request):
     if not request.user.groups.filter(name="map_admins").exists():
         return HttpResponseNotFound("У вас нет доступа к данной странице.")
-    return render(request, "map/map_edit.html", {})
+    return render(request, "map/edit.html", {})
 
 
 def serve_tile(request, layer, z, x, y):

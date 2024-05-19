@@ -9,7 +9,7 @@ const pathBInput = document.getElementById('route-path-b');
 // ---------------------------
 
 let newRouteVectorSource = new olVectorSource({ wrapX: false });
-let newRouteVectorLayer = new olVectorLayer({ source: newRouteVectorSource, style: DefaultRouteStyleFunction });
+let newRouteVectorLayer = new olVectorLayer({ source: newRouteVectorSource, style: setFeatureStyle });
 map.addLayer(newRouteVectorLayer);
 
 // ----------------------------
@@ -24,42 +24,31 @@ let feature_path_b = null;
 // ---------------------------
 
 function DrawRoute(routeName) {
-    map.removeInteraction(select);
-    map.removeInteraction(modify);
-    map.removeInteraction(translate);
-    if (draw) map.removeInteraction(draw);
-    draw = new olDrawInteraction({
+    map.removeInteraction(mapSelectInteraction);
+    map.removeInteraction(mapModifyInteraction);
+    map.removeInteraction(mapTranslateInteraction);
+    map.removeInteraction(mapDrawInteraction);
+    map.removeInteraction(mapSnapInteraction);
+
+    mapDrawInteraction = new olDrawInteraction({
         source: newRouteVectorSource, type: 'LineString', pixelTolerance: 50
     });
-    snap = new olSnapInteraction({ source: newRouteVectorSource });
-    draw.on('drawend', function (evt) {
+
+    mapSnapInteraction = new olSnapInteraction({ source: newRouteVectorSource });
+
+    mapDrawInteraction.on('drawend', function (evt) {
         const feature = evt.feature;
-        feature.set('arrow', 'true');
         feature.set('name', routeName);
-        feature.set('type', 'new-route');
+        feature.set('type', 'new-path');
         routeValidation(routeName, feature);
-        map.removeInteraction(draw);
-        map.removeInteraction(snap);
-        map.addInteraction(select);
-        map.addInteraction(modify);
-        map.addInteraction(translate);
+        map.removeInteraction(mapDrawInteraction);
+        map.removeInteraction(mapSnapInteraction);
+        map.addInteraction(mapSelectInteraction);
+        map.addInteraction(mapModifyInteraction);
+        map.addInteraction(mapTranslateInteraction);
     });
-    map.addInteraction(draw);
-    map.addInteraction(snap);
-};
-
-// ---------------------------
-// Route map style functions
-// ---------------------------
-
-function DefaultRouteStyleFunction(feature) {
-    if (!feature) return;
-    const strokeColor = '#308C00';
-    const strokeWidth = 3;
-    const stroke = new olStrokeStyle({ color: strokeColor, width: strokeWidth });
-    const styles = [new olStyle({ stroke: stroke })];
-    feature.setStyle(styles);
-    feature.changed();
+    map.addInteraction(mapDrawInteraction);
+    map.addInteraction(mapSnapInteraction);
 };
 
 // ------------------------------
@@ -143,7 +132,7 @@ routeNameInput.onchange = function () {
 // Route map delete feature functions
 // ----------------------------------
 
-function RemoveSelectedRouteFeature() {
+function RemoveSelectedNewRouteFeature() {
     let name = selectedFeature.get('name');
     if (name == 'route-path-a') {
         newRouteVectorSource.removeFeature(feature_path_a);
@@ -160,10 +149,10 @@ function RemoveSelectedRouteFeature() {
     selectedFeature = null;
 };
 
-const deleteRouteFeature = function (evt) {
-    if (evt.keyCode === 46) RemoveSelectedRouteFeature();
+const deleteNewRouteFeature = function (evt) {
+    if (evt.keyCode === 46) RemoveSelectedNewRouteFeature();
 };
-document.addEventListener('keydown', deleteRouteFeature, false);
+document.addEventListener('keydown', deleteNewRouteFeature, false);
 
 // ----------------------------------
 // Route map select feature functions
@@ -200,8 +189,6 @@ function RouteFormSave() {
         features,
         { dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857' }
     );
-
-    console.log(geoJSONdata);
 
     const route_data = {
         "name": routeNameInput.value,
@@ -240,20 +227,3 @@ async function PostRoute(route_data) {
         console.log("Ошибка HTTP: " + response.status);
     }
 }
-
-const createRouteSelectFunction = function () {
-    const feature = select.getFeatures().getArray()[0];
-    if (selectedFeature !== null) {
-        if (feature_type === 'new-route')
-            UnselectNewRouteFeature(selectedFeature.get('name'));
-        selectedFeature.setStyle(undefined);
-        selectedFeature = null;
-    }
-    if (!feature) return;
-    const feature_name = feature.get('name');
-    const feature_type = feature.get('type');
-    selectedFeature = feature;
-    SetFeatureSelectedStyle(feature);
-    if (feature_type === 'new-route')
-        SelectNewRouteFeature(feature_name);
-};
