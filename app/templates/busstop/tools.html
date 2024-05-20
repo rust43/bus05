@@ -1,0 +1,29 @@
+{% load static %}
+<div id="busstop-tools" class="d-none w-100">
+    <div class="d-flex flex-column">
+        <a class="btn btn-light rounded-0 w-100" onclick="selectToolSidebar('tools');">
+            <div class="d-flex align-items-center">
+                <span class="text-secondary fs-5 rounded"><i class="bi-arrow-left m-2"></i></span>
+                <span class="ms-3">Назад</span>
+            </div>
+        </a>
+        <div class="d-flex align-items-center p-3">
+            <span class="text-bg-secondary fs-5 rounded"><i class="bi bi-signpost-fill m-2"></i></span>
+            <span class="ms-3">Остановки</span>
+        </div>
+        <a class="btn btn-light rounded-0 w-100" onclick="selectToolSidebar('busstop-new');">
+            <div class="d-flex align-items-center">
+                <span class="text-bg-secondary fs-5 rounded"><i class="bi bi-plus-square m-2"></i></span>
+                <span class="ms-3">Создать новую</span>
+                <span class="ms-auto text-secondary"><i class="bi bi-caret-right-fill"></i></span>
+            </div>
+        </a>
+        <a class="btn btn-light rounded-0 w-100" onclick="selectToolSidebar('busstop-list');">
+            <div class="d-flex align-items-center">
+                <span class="text-bg-secondary fs-5 rounded"><i class="bi bi-list m-2"></i></span>
+                <span class="ms-3">Список остановок</span>
+                <span class="ms-auto text-secondary"><i class="bi-caret-right-fill"></i></span>
+            </div>
+        </a>
+    </div>
+</div>

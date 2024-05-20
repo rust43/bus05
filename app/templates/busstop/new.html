@@ -1,0 +1,42 @@
+{% load static %}
+<div id="busstop-new" class="d-none">
+    <div class="d-flex flex-column">
+        <a class="btn btn-light rounded-0 w-100" onclick="selectToolSidebar('busstop-tools');">
+            <div class="d-flex align-items-center">
+                <span class="text-secondary fs-5 rounded"><i class="bi bi-arrow-left m-2"></i></span>
+                <span class="ms-3">Назад</span>
+            </div>
+        </a>
+        <div id="busstop-new-data" class="p-3">
+            <div class="mb-3">
+                <label for="busstop-new-name" class="form-label">Название остановки</label>
+                <input type="text" class="form-control" id="busstop-new-name" required />
+                <div class="invalid-feedback">Укажите название остановки.</div>
+            </div>
+            <div class="input-group has-validation mb-3">
+                <span class="form-control">Расположение</span>
+                <input type="hidden" id="busstopn-new-location" />
+                <span class="input-group-text text-bg-danger" id="busstop-new-location">Не указано</span>
+                <div class="invalid-feedback">Укажите расположение на карте</div>
+            </div>
+        </div>
+        <a class="btn btn-light rounded-0 w-100" onclick="DrawBusstop('busstop-new-location');">
+            <div class="d-flex align-items-center">
+                <span class="text-bg-primary fs-5 rounded"><i class="bi bi-signpost-fill m-2"></i></span>
+                <span class="ms-3">Указать расположение на карте</span>
+            </div>
+        </a>
+        <a class="btn btn-light rounded-0 w-100" onclick="ClearNewRoutes();">
+            <div class="d-flex align-items-center">
+                <span class="text-bg-danger fs-5 rounded"><i class="bi bi-x-square m-2"></i></span>
+                <span class="ms-3">Очистить</span>
+            </div>
+        </a>
+        <a class="btn btn-light rounded-0 w-100" onclick="RouteFormSave();">
+            <div class="d-flex align-items-center">
+                <span class="text-bg-success fs-5 rounded"><i class="bi bi-floppy-fill m-2"></i></span>
+                <span class="ms-3">Сохранить</span>
+            </div>
+        </a>
+    </div>
+</div>

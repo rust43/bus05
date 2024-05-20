@@ -1,22 +1,26 @@
 {% load static %}
-<div id="routes-tools-sidebar" class="d-none w-100">
+<div id="route-tools" class="d-none w-100">
     <div class="d-flex flex-column">
-        <a class="btn btn-light rounded-0 w-100" onclick="selectToolSidebar('tools-sidebar');">
+        <a class="btn btn-light rounded-0 w-100" onclick="selectToolSidebar('tools');">
             <div class="d-flex align-items-center">
                 <span class="text-secondary fs-5 rounded"><i class="bi-arrow-left m-2"></i></span>
                 <span class="ms-3">Назад</span>
             </div>
         </a>
-        <a class="btn btn-light rounded-0 w-100" onclick="selectToolSidebar('new-route-sidebar');">
+        <div class="d-flex align-items-center p-3">
+            <span class="text-bg-violet fs-5 rounded"><i class="bi bi-bus-front-fill m-2"></i></span>
+            <span class="ms-3">Маршруты</span>
+        </div>
+        <a class="btn btn-light rounded-0 w-100" onclick="selectToolSidebar('route-new');">
             <div class="d-flex align-items-center">
-                <span class="text-bg-primary fs-5 rounded"><i class="bi bi-plus-square m-2"></i></span>
+                <span class="text-bg-violet fs-5 rounded"><i class="bi bi-plus-square m-2"></i></span>
                 <span class="ms-3">Создать новый</span>
                 <span class="ms-auto text-secondary"><i class="bi bi-caret-right-fill"></i></span>
             </div>
         </a>
-        <a class="btn btn-light rounded-0 w-100" onclick="selectToolSidebar('routes-list-sidebar');">
+        <a class="btn btn-light rounded-0 w-100" onclick="selectToolSidebar('route-list');">
             <div class="d-flex align-items-center">
-                <span class="text-bg-primary fs-5 rounded"><i class="bi bi-list m-2"></i></span>
+                <span class="text-bg-violet fs-5 rounded"><i class="bi bi-list m-2"></i></span>
                 <span class="ms-3">Список маршрутов</span>
                 <span class="ms-auto text-secondary"><i class="bi-caret-right-fill"></i></span>
             </div>
