@@ -208,7 +208,7 @@ function RouteFormSave() {
 };
 
 async function PostRoute(route_data) {
-    const url = host + "/api/v1/routes/";
+    const url = host + "/api/v1/route/";
     const response = await fetch(
         url,
         {

@@ -12,7 +12,7 @@ function LoadRoutes() {
 }
 
 async function GetRoutes() {
-    const url = host + "/api/v1/routes/";
+    const url = host + "/api/v1/route/";
     let response = await fetch(
         url,
         {
