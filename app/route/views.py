@@ -30,12 +30,13 @@ class RouteApiView(APIView):
         "GET": ["__all__"],
         "POST": ["map_admins"],
         "PUT": ["map_admins"],
+        "DELETE": ["map_admins"],
     }
 
     @staticmethod
     def get(request, *args, **kwargs):
         """
-        List all routes
+        List all Routes
         """
         routes = Route.objects.all()
         serializer = RouteSerializer(routes, many=True)
@@ -44,45 +45,23 @@ class RouteApiView(APIView):
     @staticmethod
     def post(request, *args, **kwargs):
         """
-        Create new route
+        Create new Route
         """
         name = request.data.get("name")
-        geojson = request.data.get("geojson_data")
         stops = request.data.get("assigned_stops")
+        geojson = request.data.get("geojson_data")
         path_data = parse_geojson(geojson)
 
         if path_data.get("route-path-a") and path_data.get("route-path-b"):
             path_a = path_data["route-path-a"]
-            path_b = path_data["route-path-b"]
             path_a.name = "route-" + name + "-path-a"
-            path_b.name = "route-" + name + "-path-b"
             path_a.save()
+            path_b = path_data["route-path-b"]
+            path_b.name = "route-" + name + "-path-b"
             path_b.save()
             Route.objects.create(name=name, path_a=path_a, path_b=path_b)
             return Response(status=status.HTTP_201_CREATED)
         return Response(status=status.HTTP_400_BAD_REQUEST)
-
-
-def process_newroute_geojson(new_route_features):
-    route_data = json.loads(new_route_features)
-    path_a = None
-    path_b = None
-    for feature in route_data["features"]:
-        name = feature["properties"]["name"]
-        coordinates = feature["geometry"]["coordinates"]
-        geometry_type = feature["geometry"]["type"]
-        if geometry_type != "LineString":
-            continue
-        for coordinate in coordinates:
-            coordinate = list(map(float, coordinate))
-        line_string = LineString(coordinates, srid=4326)
-        if name == "route-path-a":
-            path_a = line_string
-        elif name == "route-path-b":
-            path_b = line_string
-        else:
-            continue
-    return path_a, path_b
 
 
 def parse_geojson(features):
@@ -114,23 +93,10 @@ def parse_geojson(features):
             geom = Polygon(coordinates[0], srid=4326)
             ObjectPolygon.objects.create(map_object=map_object, geom=geom)
         parsed_data[str(name)] = map_object
-        for prop, value in feature["properties"].items():
-            MapObjectProp.objects.create(map_object=map_object, prop=prop, value=value)
+        # parsing props
+        # for prop, value in feature["properties"].items():
+        #     MapObjectProp.objects.create(map_object=map_object, prop=prop, value=value)
     return parsed_data
-
-
-def create_route(name: str, stops: list, path_a: LineString, path_b: LineString):
-    # routes linestrings
-    map_path_object_type = ObjectType.objects.get_or_create(name="LineString")[0]
-    path_a_map_object = MapObject.objects.create(name="route-" + name + "-path-a", object_type=map_path_object_type)
-    ObjectLineString.objects.create(map_object=path_a_map_object, geom=path_a)
-    path_b_map_object = MapObject.objects.create(name="route-" + name + "-path-b", object_type=map_path_object_type)
-    ObjectLineString.objects.create(map_object=path_b_map_object, geom=path_b)
-
-    new_route = Route.objects.create(name=name, path_a=path_a_map_object, path_b=path_b_map_object)
-
-    # assigned_stops points
-    # map_point_object_type = ObjectType.objects.get_or_create(name="Point")[0]
 
 
 class BusStopApiView(APIView):
@@ -139,12 +105,13 @@ class BusStopApiView(APIView):
         "GET": ["__all__"],
         "POST": ["map_admins"],
         "PUT": ["map_admins"],
+        "DELETE": ["map_admins"],
     }
 
     @staticmethod
     def get(request, *args, **kwargs):
         """
-        List all busstops
+        List all BusStops
         """
         stops = BusStop.objects.all()
         serializer = BusStopSerializer(stops, many=True)
@@ -153,11 +120,12 @@ class BusStopApiView(APIView):
     @staticmethod
     def post(request, *args, **kwargs):
         """
-        Create new busstop
+        Create new BusStop
         """
         name = request.data.get("name")
         city = request.data.get("city")
-        feature = request.data.get("geojson_data")
+        geojson = request.data.get("geojson_data")
+        map_data = parse_geojson(geojson)
 
         # map_stop_object_type = ObjectType.objects.get_or_create(name="Point")[0]
         # stop_map_object = MapObject.objects.create(name="busstop-" + name, object_type=map_stop_object_type)

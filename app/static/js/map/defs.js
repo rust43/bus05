@@ -45,6 +45,7 @@ const olFromLonLat = ol.proj.fromLonLat;
 // Styling components
 const olStyle = ol.style.Style;
 const olIconStyle = ol.style.Icon;
+const olTextStyle = ol.style.Text;
 const olFillStyle = ol.style.Fill;
 const olCircleStyle = ol.style.Circle;
 const olStrokeStyle = ol.style.Stroke;

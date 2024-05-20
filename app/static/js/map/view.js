@@ -14,6 +14,8 @@ const mapSelectFunction = function () {
     if (selectedFeature !== null) {
         if (selectedFeature.get('type') === 'new-path')
             UnselectNewRouteFeature(selectedFeature.get('name'));
+        else if (selectedFeature.get('type') === 'new-busstop')
+            UnselectNewBusStopFeature(selectedFeature.get('name'));
         selectedFeature.setStyle(setFeatureStyle(selectedFeature));
         selectedFeature = null;
     }
@@ -22,6 +24,8 @@ const mapSelectFunction = function () {
     setFeatureSelectedStyle(feature);
     if (selectedFeature.get('type') === 'new-path')
         SelectNewRouteFeature(selectedFeature.get('name'));
+    else if (selectedFeature.get('type') === 'new-busstop')
+        SelectNewBusStopFeature(selectedFeature.get('name'));
 };
 
 // Binding select function
@@ -40,7 +44,7 @@ function SelectPathFeatureByID(pathFeatureId) {
         type: 'select',
         selected: [pathFeature],
         deselected: []
-     });
+    });
 }
 
 // Styles dict
@@ -70,6 +74,30 @@ const mapViewStyles = {
     'selected-new-path':
         new olStyle({
             stroke: new olStrokeStyle({ color: '#0d6efd', width: 4 }),
+        }),
+    'busstop':
+        new olStyle({
+            stroke: new olStrokeStyle({ color: '#0d6efd', width: 4 }),
+        }),
+    'new-busstop':
+        new olStyle({
+            image: new olIconStyle({
+                crossOrigin: 'anonymous',
+                src: staticURL + '/pictures/bus-stop.png',
+                anchor: [0.5, 0.5],
+                width: 30,
+                height: 30,
+            }),
+        }),
+    'selected-new-busstop':
+        new olStyle({
+            image: new olIconStyle({
+                crossOrigin: 'anonymous',
+                src: staticURL + '/pictures/bus-stop-selected.png',
+                anchor: [0.5, 0.95],
+                width: 60,
+                height: 60,
+            }),
         }),
 };
 

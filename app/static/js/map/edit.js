@@ -6,6 +6,8 @@
 
 const mapModifyInteraction = new olModifyInteraction({
     features: mapSelectInteraction.getFeatures(),
+    // hitDetection: [newBusStopVectorLayer],
+    // source: [newBusStopVectorSource],
 });
 
 // Translate interaction
