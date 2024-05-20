@@ -27,7 +27,6 @@ let mapDrawInteraction = null;
 let mapSnapInteraction = null;
 
 function DrawShape(type) {
-
     map.removeInteraction(mapSelectInteraction);
     map.removeInteraction(mapModifyInteraction);
     map.removeInteraction(mapTranslateInteraction);

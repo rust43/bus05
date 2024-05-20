@@ -30,6 +30,19 @@ mapSelectInteraction.on('select', mapSelectFunction);
 // Add interactions
 map.addInteraction(mapSelectInteraction);
 
+// Select function for feature id
+function SelectPathFeatureByID(pathFeatureId) {
+    const pathFeature = routesVectorSource.getFeatureById(pathFeatureId);
+    if (!pathFeature) return;
+    mapSelectInteraction.getFeatures().clear();
+    mapSelectInteraction.getFeatures().push(pathFeature);
+    mapSelectInteraction.dispatchEvent({
+        type: 'select',
+        selected: [pathFeature],
+        deselected: []
+     });
+}
+
 // Styles dict
 const mapViewStyles = {
     'default':

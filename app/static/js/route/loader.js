@@ -3,6 +3,8 @@ let routesVectorSource = new olVectorSource({ wrapX: false });
 let routesVectorLayer = new olVectorLayer({ source: routesVectorSource, style: setFeatureStyle });
 map.addLayer(routesVectorLayer);
 
+let loadedRoutes = null;
+
 function LoadRoutes() {
     GetRoutes().then(routes => {
         DisplayRoutes(routes);
@@ -28,10 +30,11 @@ async function GetRoutes() {
 }
 
 function DisplayRoutes(routes) {
+    loadedRoutes = routes;
     for (let i = 0; i < routes.length; i++) {
         const route = routes[i];
-        DisplayPath(route["id"], route["name"], route["path_a"].line.geom);
-        DisplayPath(route["id"], route["name"], route["path_b"].line.geom);
+        DisplayPath(route["path_a"].line.id, route["name"], route["path_a"].line.geom);
+        DisplayPath(route["path_b"].line.id, route["name"], route["path_b"].line.geom);
     }
 }
 
@@ -41,7 +44,7 @@ function DisplayPath(id, name, geomLine) {
     const routeFeature = new olFeature({
         geometry: coordinates, type: geomLine.type, name: name,
     });
-    routeFeature.set("db_id", id);
+    routeFeature.setId(id);
     routeFeature.set("type", "path");
     routesVectorSource.addFeature(routeFeature);
 }
