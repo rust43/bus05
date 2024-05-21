@@ -34,7 +34,7 @@ mapSelectInteraction.on('select', mapSelectFunction);
 // Add interactions
 map.addInteraction(mapSelectInteraction);
 
-// Select function for feature id
+// Select function for path feature id
 function SelectPathFeatureByID(pathFeatureId) {
     const pathFeature = routesVectorSource.getFeatureById(pathFeatureId);
     if (!pathFeature) return;
@@ -45,6 +45,21 @@ function SelectPathFeatureByID(pathFeatureId) {
         selected: [pathFeature],
         deselected: []
     });
+    PanToFeature(pathFeature);
+}
+
+// Select function for busstop feature id
+function SelectBusStopFeatureByID(busStopFeatureId) {
+    const busStopFeature = busStopsVectorSource.getFeatureById(busStopFeatureId);
+    if (!busStopFeature) return;
+    mapSelectInteraction.getFeatures().clear();
+    mapSelectInteraction.getFeatures().push(busStopFeature);
+    mapSelectInteraction.dispatchEvent({
+        type: 'select',
+        selected: [busStopFeature],
+        deselected: []
+    });
+    PanToFeature(busStopFeature);
 }
 
 // Styles dict
@@ -77,7 +92,23 @@ const mapViewStyles = {
         }),
     'busstop':
         new olStyle({
-            stroke: new olStrokeStyle({ color: '#0d6efd', width: 4 }),
+            image: new olIconStyle({
+                crossOrigin: 'anonymous',
+                src: staticURL + '/pictures/bus-stop.png',
+                anchor: [0.5, 0.5],
+                width: 30,
+                height: 30,
+            }),
+        }),
+    'selected-busstop':
+        new olStyle({
+            image: new olIconStyle({
+                crossOrigin: 'anonymous',
+                src: staticURL + '/pictures/bus-stop-selected.png',
+                anchor: [0.5, 0.95],
+                width: 60,
+                height: 60,
+            }),
         }),
     'new-busstop':
         new olStyle({
@@ -149,3 +180,8 @@ function DrawArrows(feature, height, width) {
     feature.setStyle(currentStyles);
     feature.changed();
 }
+
+function PanToFeature(feature) {
+    map.getView().fit(feature.getGeometry(), { duration: 500 });
+}
+

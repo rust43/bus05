@@ -87,6 +87,7 @@
                 {% include 'route/list.html' %}
                 {% include 'busstop/tools.html' %}
                 {% include 'busstop/new.html' %}
+                {% include 'busstop/list.html' %}
             </div>
             <div class="p-3">
                 <a class="btn btn-outline-secondary w-100 d-flex align-items-center" onclick="ToggleSidebar();">
@@ -134,11 +135,14 @@
             document.getElementById('tools'),
             document.getElementById('route-tools'),
             document.getElementById('route-new'),
-            document.getElementById('route-list'),
+            document.getElementById('route-list-sidebar'),
             document.getElementById('busstop-tools'),
-            document.getElementById('busstop-new')
+            document.getElementById('busstop-new'),
+            document.getElementById('busstop-list-sidebar')
         ];
         function selectToolSidebar(sidebar) {
+            DeleteNewBusStop();
+            ClearNewRoutes();
             for (let i = 0; i < sidebars.length; i++) {
                 sidebars[i].classList.add('d-none');
             }
@@ -163,6 +167,20 @@
             };
             document.getElementById('show-route-path-b').onclick = function () {
                 SelectPathFeatureByID(selectedRoute.path_b.line.id);
+            };
+        }
+    </script>
+    <script>
+        function SelectBusStopData(busstopId) {
+            if (busstopId === '') return;
+            let selectedBusStop = null;
+            for (let i = 0; i < loadedBusStops.length; i++) {
+                if (loadedBusStops[i].id === busstopId) selectedBusStop = loadedBusStops[i];
+            }
+            document.getElementById('busstop-data').classList.remove('d-none');
+            document.getElementById('selected-busstop-name').innerText = selectedBusStop.name;
+            document.getElementById('show-busstop-location-button').onclick = function () {
+                SelectBusStopFeatureByID(selectedBusStop.location.point.id);
             };
         }
     </script>

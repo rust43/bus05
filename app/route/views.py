@@ -3,11 +3,7 @@ import json
 from django.contrib.gis.geos import LineString
 from django.contrib.gis.geos import Point
 from django.contrib.gis.geos import Polygon
-
-# from django.http import HttpResponseNotFound
-# from django.shortcuts import render
 from map.models import MapObject
-from map.models import MapObjectProp
 from map.models import ObjectCircle
 from map.models import ObjectLineString
 from map.models import ObjectPoint
@@ -53,13 +49,16 @@ class RouteApiView(APIView):
         path_data = parse_geojson(geojson)
 
         if path_data.get("route-path-a") and path_data.get("route-path-b"):
+            new_route = Route(name=name)
             path_a = path_data["route-path-a"]
-            path_a.name = "route-" + name + "-path-a"
+            path_a.name = "route-" + str(new_route.id) + "-path-a"
             path_a.save()
             path_b = path_data["route-path-b"]
-            path_b.name = "route-" + name + "-path-b"
+            path_b.name = "route-" + str(new_route.id) + "-path-b"
             path_b.save()
-            Route.objects.create(name=name, path_a=path_a, path_b=path_b)
+            new_route.path_a = path_a
+            new_route.path_b = path_b
+            new_route.save()
             return Response(status=status.HTTP_201_CREATED)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
@@ -127,15 +126,15 @@ class BusStopApiView(APIView):
         geojson = request.data.get("geojson_data")
         map_data = parse_geojson(geojson)
 
-        # map_stop_object_type = ObjectType.objects.get_or_create(name="Point")[0]
-        # stop_map_object = MapObject.objects.create(name="busstop-" + name, object_type=map_stop_object_type)
-        # ObjectPoint.objects.create(map_object=stop_map_object, geom=path_a)
-
-        # path_a, path_b = process_newroute_geojson(new_route_features)
-        # if None not in (path_a, path_b) and isinstance(path_a, LineString) and isinstance(path_b, LineString):
-        #     create_route(new_route_name, new_route_stops, path_a, path_b)
-        #     return Response(status=status.HTTP_201_CREATED)
-        # return Response(status=status.HTTP_400_BAD_REQUEST)
+        if map_data.get("busstop-new-location"):
+            new_busstop = BusStop(name=name)
+            map_object = map_data["busstop-new-location"]
+            map_object.name = "busstop-" + str(new_busstop.id)
+            map_object.save()
+            new_busstop.location = map_object
+            new_busstop.save()
+            return Response(status=status.HTTP_201_CREATED)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 # def process_geo_json(data, route):

@@ -10,7 +10,7 @@ from route.models import Route
 
 
 def map_view(request):
-    return render(request, "map/view.html", context={})
+    return render(request, "map/view.html")
 
 
 @login_required
@@ -20,7 +20,7 @@ def map_edit_view(request):
 
     routes = Route.objects.all()
 
-    return render(request, "map/edit.html", {"routes": routes})
+    return render(request, "map/edit.html")
 
 
 def serve_tile(request, layer, z, x, y):

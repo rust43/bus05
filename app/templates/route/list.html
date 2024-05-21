@@ -1,5 +1,5 @@
 {% load static %}
-<div id="route-list" class="d-none">
+<div id="route-list-sidebar" class="d-none">
     <div class="d-flex flex-column overflow-auto">
         <a class="btn btn-light rounded-0 w-100" onclick="selectToolSidebar('route-tools');">
             <div class="d-flex align-items-center">
@@ -9,11 +9,7 @@
         </a>
         <span class="p-3">Список маршрутов</span>
         <small class="text-body-secondary px-3 mb-3 lh-sm">Выберите маршут из списка для редактирования и просмотра.</small>
-        <div class="d-flex mb-3 px-3">
-            {% for route in routes %}
-                <button type="button" onclick="SelectRouteData('{{ route.id }}')" class="btn badge text-bg-success me-1">{{ route.name }}</button>
-            {% endfor %}
-        </div>
+        <div class="d-flex flex-wrap gap-1 mb-3 px-3" id="route-list"></div>
         {% include 'route/data.html' %}
     </div>
 </div>

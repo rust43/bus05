@@ -80,13 +80,13 @@ const setBusStopFeature = function (BusStopName, feature) {
 };
 
 function DeleteNewBusStop() {
-    newBusStopLocationInput.value = '';
-    newBusStopLocationInput.classList.remove('is-valid');
+    newBusStopNameInput.value = '';
+    newBusStopNameInput.classList.remove('is-valid');
     if (newBusStopLocationFeature !== null) {
         newBusStopVectorSource.removeFeature(newBusStopLocationFeature);
         BusStopInvalidation('busstop-new-location');
         newBusStopLocationInput.value = '';
-        newBusStopVectorSource = null;
+        newBusStopLocationFeature = null;
     }
     selectedFeature = null;
 };
@@ -159,13 +159,14 @@ function BusStopFormSave() {
     );
 
     const busstop_data = {
-        "name": newBusStopLocationInput.value,
+        "name": newBusStopNameInput.value,
         "geojson_data": geoJSONdata,
     };
 
-    PostBusStop(busstop_data).then(response => {
+    PostBusStop(busstop_data).then(function () {
         alert("Остановка сохранена!");
         try {
+            DeleteNewBusStop();
             LoadBusStops();
         }
         catch (err) {

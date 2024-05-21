@@ -31,13 +31,28 @@ async function GetBusStops() {
 
 function DisplayBusStops(busStops) {
     loadedBusStops = busStops;
+    const busstopListContainer = document.getElementById('busstop-list');
+    busstopListContainer.innerHTML = '';
     for (let i = 0; i < busStops.length; i++) {
         const busStop = busStops[i];
-        console.log(busStop);
+        let coordinates = new olPointGeometry(busStop.location.point.geom.coordinates);
+        coordinates = coordinates.transform("EPSG:4326", "EPSG:3857");
+        const busStopFeature = new olFeature({
+            geometry: coordinates, type: busStop.location.point.geom.type, name: busStop.name,
+        });
+        busStopFeature.setId(busStop.location.point.id);
+        busStopFeature.set("type", "busstop");
+        busStopsVectorSource.addFeature(busStopFeature);
 
-
-        // DisplayPath(route["path_a"].line.id, route["name"], route["path_a"].line.geom);
-        // DisplayPath(route["path_b"].line.id, route["name"], route["path_b"].line.geom);
+        // add button to view route
+        const busstopButton = document.createElement("BUTTON");
+        const busstopButtonText = document.createTextNode(busStop.name);
+        busstopButton.appendChild(busstopButtonText);
+        busstopButton.classList.add('btn', 'badge', 'text-bg-success');
+        busstopButton.onclick = function () {
+            SelectBusStopData(busStop.id);
+        };
+        busstopListContainer.appendChild(busstopButton);
     }
 }
 

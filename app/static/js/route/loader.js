@@ -31,10 +31,22 @@ async function GetRoutes() {
 
 function DisplayRoutes(routes) {
     loadedRoutes = routes;
+    const routeListContainer = document.getElementById('route-list');
+    routeListContainer.innerHTML = '';
     for (let i = 0; i < routes.length; i++) {
         const route = routes[i];
         DisplayPath(route["path_a"].line.id, route["name"], route["path_a"].line.geom);
         DisplayPath(route["path_b"].line.id, route["name"], route["path_b"].line.geom);
+
+        // add button to view route
+        const routeButton = document.createElement("BUTTON");
+        const routeButtonText = document.createTextNode(route.name);
+        routeButton.appendChild(routeButtonText);
+        routeButton.classList.add('btn', 'badge', 'text-bg-success');
+        routeButton.onclick = function () {
+            SelectRouteData(route.id);
+        };
+        routeListContainer.appendChild(routeButton);
     }
 }
 

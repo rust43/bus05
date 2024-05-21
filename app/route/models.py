@@ -15,7 +15,7 @@ class BusStop(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     city = models.OneToOneField(City, related_name="city", on_delete=models.SET_NULL, null=True, blank=True)
     name = models.CharField(max_length=255)
-    location = models.OneToOneField(MapObject, on_delete=models.SET_NULL, null=True, blank=True)
+    location = models.OneToOneField(MapObject, on_delete=models.CASCADE, null=True, blank=True)
 
 
 class Route(models.Model):

@@ -196,9 +196,10 @@ function RouteFormSave() {
         "assigned_stops": []
     };
 
-    PostRoute(route_data).then(response => {
+    PostRoute(route_data).then(function () {
         alert("Маршрут сохранен!");
         try {
+            ClearNewRoutes();
             LoadRoutes();
         }
         catch (err) {
