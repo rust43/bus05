@@ -9,14 +9,14 @@ const mapSelectInteraction = new olSelectInteraction({ wrapX: false, hitToleranc
 let selectedFeature = null;
 
 // Select function
-const mapSelectFunction = function () {
+const mapSelectFunction = function() {
     const feature = mapSelectInteraction.getFeatures().item(0);
     if (selectedFeature !== null) {
         if (selectedFeature.get('type') === 'new-path')
             UnselectNewRouteFeature(selectedFeature.get('name'));
         else if (selectedFeature.get('type') === 'new-busstop')
             UnselectNewBusStopFeature(selectedFeature.get('name'));
-        selectedFeature.setStyle(setFeatureStyle(selectedFeature));
+        setFeatureStyle(selectedFeature);
         selectedFeature = null;
     }
     if (!feature) return;
@@ -69,26 +69,26 @@ const mapViewStyles = {
             image: new olCircleStyle({
                 fill: new olFillStyle({ color: 'rgba(255,255,255,0.4)' }),
                 stroke: new olStrokeStyle({ color: '#3399CC', width: 1.25 }),
-                radius: 5,
+                radius: 5
             }),
             fill: new olFillStyle({ color: 'rgba(255,255,255,0.4)' }),
-            stroke: new olStrokeStyle({ color: '#3399CC', width: 1.25 }),
+            stroke: new olStrokeStyle({ color: '#3399CC', width: 1.25 })
         }),
     'path':
         new olStyle({
-            stroke: new olStrokeStyle({ color: '#308C00', width: 3 }),
+            stroke: new olStrokeStyle({ color: '#308C00', width: 3 })
         }),
     'selected-path':
         new olStyle({
-            stroke: new olStrokeStyle({ color: '#20c200', width: 4 }),
+            stroke: new olStrokeStyle({ color: '#20c200', width: 4 })
         }),
     'new-path':
         new olStyle({
-            stroke: new olStrokeStyle({ color: '#029dbf', width: 4 }),
+            stroke: new olStrokeStyle({ color: '#029dbf', width: 4 })
         }),
     'selected-new-path':
         new olStyle({
-            stroke: new olStrokeStyle({ color: '#0d6efd', width: 4 }),
+            stroke: new olStrokeStyle({ color: '#0d6efd', width: 4 })
         }),
     'busstop':
         new olStyle({
@@ -97,8 +97,8 @@ const mapViewStyles = {
                 src: staticURL + '/pictures/bus-stop.png',
                 anchor: [0.5, 0.5],
                 width: 30,
-                height: 30,
-            }),
+                height: 30
+            })
         }),
     'selected-busstop':
         new olStyle({
@@ -107,8 +107,8 @@ const mapViewStyles = {
                 src: staticURL + '/pictures/bus-stop-selected.png',
                 anchor: [0.5, 0.95],
                 width: 60,
-                height: 60,
-            }),
+                height: 60
+            })
         }),
     'new-busstop':
         new olStyle({
@@ -117,8 +117,8 @@ const mapViewStyles = {
                 src: staticURL + '/pictures/bus-stop.png',
                 anchor: [0.5, 0.5],
                 width: 30,
-                height: 30,
-            }),
+                height: 30
+            })
         }),
     'selected-new-busstop':
         new olStyle({
@@ -127,20 +127,22 @@ const mapViewStyles = {
                 src: staticURL + '/pictures/bus-stop-selected.png',
                 anchor: [0.5, 0.95],
                 width: 60,
-                height: 60,
-            }),
-        }),
+                height: 60
+            })
+        })
 };
 
-const setFeatureStyle = function (feature) {
+const setFeatureStyle = function(feature, drawArrows = true) {
     if (!feature) return;
     const featureType = feature.get('type');
     feature.setStyle(mapViewStyles[featureType]);
-    if (featureType === 'path' || featureType === 'new-path')
-        DrawArrows(feature, 10, 10);
+    if (drawArrows) {
+        if (featureType === 'path' || featureType === 'new-path')
+            DrawArrows(feature, 10, 10);
+    }
 };
 
-const setFeatureSelectedStyle = function (feature) {
+const setFeatureSelectedStyle = function(feature) {
     if (!feature) return;
     const featureType = feature.get('type');
     feature.setStyle(mapViewStyles['selected-' + featureType]);
@@ -152,19 +154,19 @@ function DrawArrows(feature, height, width) {
     const featureStyles = feature.getStyle();
     const strokeColor = featureStyles.getStroke().getColor();
     const currentStyles = [featureStyles];
-    const arrowImage = function (rotation) {
+    const arrowImage = function(rotation) {
         return new olIconStyle({
             crossOrigin: 'anonymous',
-            src: staticURL + "/pictures/arrow.png",
+            src: staticURL + '/pictures/arrow.png',
             color: strokeColor,
             width: width,
             height: height,
             anchor: [0.5, 0.5],
             rotateWithView: true,
-            rotation: -rotation,
+            rotation: -rotation
         });
     };
-    feature.getGeometry().forEachSegment(function (start, end) {
+    feature.getGeometry().forEachSegment(function(start, end) {
         const dx = end[0] - start[0];
         const dy = end[1] - start[1];
         const rotation = Math.atan2(dy, dx);
@@ -173,8 +175,8 @@ function DrawArrows(feature, height, width) {
         currentStyles.push(
             new olStyle({
                 geometry: new olPointGeometry(center),
-                image: arrowImage(rotation),
-            }),
+                image: arrowImage(rotation)
+            })
         );
     });
     feature.setStyle(currentStyles);

@@ -19,7 +19,9 @@ local_settings.py
 
 # Development
 .vscode/
+.idea/
 .prettierrc
+database/
 resources/
 
 # javascript libs

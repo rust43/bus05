@@ -69,4 +69,7 @@ const olGeoJSON = ol.format.GeoJSON;
 
 // Condition components
 const olShiftKeyOnly = ol.events.condition.shiftKeyOnly;
+const olAltKeyOnly = ol.events.condition.altKeyOnly;
+const olAltShiftKeysOnly = ol.events.condition.altShiftKeysOnly;
+const olSingleClick = ol.events.condition.singleClick;
 const olUnByKey = ol.Observable;

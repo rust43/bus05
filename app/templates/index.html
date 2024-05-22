@@ -22,29 +22,33 @@
             <header class="py-3 border-bottom">
                 <div class="container-fluid d-grid gap-3 align-items-center" style="grid-template-columns: 1fr 2fr;">
                     <div class="dropdown">
-                        <a href="#" class="d-flex align-items-center col-lg-4 mb-2 mb-lg-0 link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><img src="{% static 'pictures/logo.png' %}" alt="" width="40px" height="40px" /></a>
+                        <a href="#"
+                           class="d-flex align-items-center col-lg-4 mb-2 mb-lg-0 link-body-emphasis text-decoration-none dropdown-toggle"
+                           data-bs-toggle="dropdown" aria-expanded="false"><img src="{% static 'pictures/logo.png' %}"
+                                                                                alt="" width="40px" height="40px" /></a>
                         <ul class="dropdown-menu text-small shadow">
                             <li>
-                                <a class="dropdown-item active" href="#" aria-current="page">Карта</a>
+                                <a class="dropdown-item active" href="{% url 'index' %}" aria-current="page">Карта</a>
                             </li>
-                            {% comment %} <li>
-                                <a class="dropdown-item" href="{% url 'route-list' %}">Маршруты</a>
-                            </li> {% endcomment %}
                             {% comment %}
-                            <li>
-                                <a class="dropdown-item" href="#">Остановки</a>
-                            </li>
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'route-list' %}">Маршруты</a>
+                                </li> {% endcomment %}
+                            {% comment %}
+                                <li>
+                                    <a class="dropdown-item" href="#">Остановки</a>
+                                </li>
                             {% endcomment %}
                             {% comment %}
-                            <li>
-                                <hr class="dropdown-divider" />
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="#">Отчёты</a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="#">Аналитика</a>
-                            </li>
+                                <li>
+                                    <hr class="dropdown-divider" />
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">Отчёты</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">Аналитика</a>
+                                </li>
                             {% endcomment %}
                         </ul>
                     </div>
@@ -53,7 +57,10 @@
                             <input type="search" class="form-control" placeholder="Найти..." />
                         </form>
                         <div class="flex-shrink-0 dropdown">
-                            <a href="#" class="d-flex justify-content-center align-items-center link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown"><span class="text-secondary fs-3"><i class="bi bi-person-circle"></i></span></a>
+                            <a href="#"
+                               class="d-flex justify-content-center align-items-center link-body-emphasis text-decoration-none dropdown-toggle"
+                               data-bs-toggle="dropdown"><span class="text-secondary fs-3"><i
+                                class="bi bi-person-circle"></i></span></a>
                             <ul class="dropdown-menu text-small shadow">
                                 {% if request.user.is_authenticated %}
                                     {% if request.user.is_staff %}
@@ -110,12 +117,13 @@
     <script src="{% static 'js/map/config.js' %}"></script>
     <script src="{% static 'js/map/view.js' %}"></script>
     <script src="{% static 'js/route/loader.js' %}"></script>
+    <script src="{% static 'js/busstop/loader.js' %}"></script>
     <script>
         function selectTransport(transportType) {
             if (transportType !== '') {
                 document.getElementById('transport-sidebar').classList.add('d-none');
                 document.getElementById('routes-sidebar').classList.remove('d-none');
-        
+
                 if (transportType === 'bus') {
                     document.getElementById('transportType').innerText = 'Маршруты автобусов';
                 } else if (transportType === 'minibus') {
