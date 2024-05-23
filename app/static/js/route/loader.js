@@ -1,5 +1,5 @@
 let routesVectorSource = new olVectorSource({ wrapX: false });
-let routesVectorLayer = new olVectorLayer({ source: routesVectorSource, style: setFeatureStyle });
+let routesVectorLayer = new olVectorLayer({ source: routesVectorSource, style: mapStyleFunction });
 map.addLayer(routesVectorLayer);
 
 let loadedRoutes = null;
@@ -43,7 +43,7 @@ function DisplayRoutes(routes) {
         if (routeListContainer) {
             routeButton.appendChild(routeButtonText);
             routeButton.classList.add('btn', 'badge', 'text-bg-success');
-            routeButton.onclick = function() {
+            routeButton.onclick = function () {
                 SelectRouteData(route.id);
             };
             routeListContainer.appendChild(routeButton);
