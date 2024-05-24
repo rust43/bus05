@@ -1,14 +1,56 @@
+// ----------------------
+// Map edit functions
+// ----------------------
+
+// Modify interaction
+const mapModifyInteraction = new olModifyInteraction({
+    features: mapSelectInteraction.getFeatures(),
+    style: mapOverlayStyleFunction,
+});
+
+let mapDrawInteraction = null;
+let mapSnapInteraction = null;
+
+// Variable for save selected feature
+let selectedFeature = null;
+
+// Select function
+const mapSelectFunction = function () {
+    const feature = mapSelectInteraction.getFeatures().item(0);
+    if (selectedFeature !== null) {
+        if (selectedFeature.get('type') === 'new-path')
+            UnselectNewRouteFeature(selectedFeature.get('name'));
+        else if (selectedFeature.get('type') === 'new-busstop')
+            UnselectNewBusStopFeature(selectedFeature.get('name'));
+        map.removeInteraction(mapModifyInteraction);
+        selectedFeature = null;
+    }
+    if (!feature) return;
+    selectedFeature = feature;
+    if (selectedFeature.get('type') === 'new-path') {
+        SelectNewRouteFeature(selectedFeature.get('name'));
+        map.addInteraction(mapModifyInteraction);
+    }
+    else if (selectedFeature.get('type') === 'new-busstop') {
+        SelectNewBusStopFeature(selectedFeature.get('name'));
+        map.addInteraction(mapModifyInteraction);
+    }
+};
+
+// Binding select function
+mapSelectInteraction.on('select', mapSelectFunction);
+
 // ------------------
 // Keydown functions
 // ------------------
 
-let cancelEditMode = function(evt) {
+let cancelEditMode = function (evt) {
     if (evt.keyCode === 27) {
         map.removeInteraction(mapDrawInteraction);
         map.removeInteraction(mapSnapInteraction);
+        map.removeInteraction(mapModifyInteraction);
+        // map.removeInteraction(mapTranslateInteraction);
         map.addInteraction(mapSelectInteraction);
-        // map.addInteraction(mapModifyInteraction);
-        // map.addInteraction(mapTranslateInteraction);
     }
 };
 document.addEventListener('keydown', cancelEditMode, false);

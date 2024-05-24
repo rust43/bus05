@@ -1,5 +1,5 @@
 let busStopsVectorSource = new olVectorSource({ wrapX: false });
-let busStopsVectorLayer = new olVectorLayer({ source: busStopsVectorSource, style: setFeatureStyle });
+let busStopsVectorLayer = new olVectorLayer({ source: busStopsVectorSource, style: mapStyleFunction });
 map.addLayer(busStopsVectorLayer);
 
 let loadedBusStops = null;
@@ -30,11 +30,9 @@ async function GetBusStops() {
 
 function DisplayBusStops(busStops) {
     loadedBusStops = busStops;
-
     const busstopListContainer = document.getElementById('busstop-list');
     if (busstopListContainer)
         busstopListContainer.innerHTML = '';
-
     for (let i = 0; i < busStops.length; i++) {
         const busStop = busStops[i];
         let coordinates = new olPointGeometry(busStop.location.point.geom.coordinates);
@@ -52,7 +50,7 @@ function DisplayBusStops(busStops) {
         if (busstopListContainer) {
             busstopButton.appendChild(busstopButtonText);
             busstopButton.classList.add('btn', 'badge', 'text-bg-success');
-            busstopButton.onclick = function() {
+            busstopButton.onclick = function () {
                 SelectBusStopData(busStop.id);
             };
             busstopListContainer.appendChild(busstopButton);
@@ -61,3 +59,17 @@ function DisplayBusStops(busStops) {
 }
 
 LoadBusStops();
+
+// Select function for busstop feature id
+function SelectBusStopFeatureByID(busStopFeatureId) {
+    const busStopFeature = busStopsVectorSource.getFeatureById(busStopFeatureId);
+    if (!busStopFeature) return;
+    mapSelectInteraction.getFeatures().clear();
+    mapSelectInteraction.getFeatures().push(busStopFeature);
+    mapSelectInteraction.dispatchEvent({
+        type: 'select',
+        selected: [busStopFeature],
+        deselected: []
+    });
+    PanToFeature(busStopFeature);
+}

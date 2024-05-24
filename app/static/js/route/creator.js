@@ -12,40 +12,6 @@ let newRouteVectorSource = new olVectorSource({ wrapX: false });
 let newRouteVectorLayer = new olVectorLayer({ source: newRouteVectorSource, style: mapStyleFunction });
 map.addLayer(newRouteVectorLayer);
 
-// ----------------------
-// Map edit functions
-// ----------------------
-
-// Modify interaction
-
-const newRouteModifyInteraction = new olModifyInteraction({
-    // source: newRouteVectorSource,
-    // hitDetection: newRouteVectorSource,
-    features: mapSelectInteraction.getFeatures(),
-    style: mapOverlayStyleFunction,
-});
-
-function newRouteModifyStart(event) {
-    // console.log(event);
-    // const feature = event.features.item(0);
-    // const featureType = feature.get('type');
-    // feature.setStyle(mapViewStyles[featureType]);
-
-    // if (selectedFeature !== feature) {
-    //     setFeatureStyle(feature);
-    // }
-    // newRouteModifyInteraction.getOverlay().setStyle(overlayStyle);
-}
-
-function newRouteModifyEnd(event) {
-    // setFeatureStyle(event.features.item(0));
-    // setFeatureSelectedStyle(mapSelectInteraction.getFeatures().item(0));
-    // event.features.item(0).setStyle(overlayStyle);
-}
-
-newRouteModifyInteraction.on('modifystart', newRouteModifyStart);
-newRouteModifyInteraction.on('modifyend', newRouteModifyEnd);
-
 // ----------------------------
 // Vars for keep route features
 // ----------------------------
@@ -57,33 +23,29 @@ let feature_path_b = null;
 // Route map draw functions
 // ---------------------------
 
-let newRouteMapDrawInteraction = null;
-let newRouteMapSnapInteraction = null;
-
 function DrawRoute(routeName) {
 
     // removing interactions before draw
     map.removeInteraction(mapSelectInteraction);
-    map.removeInteraction(newRouteModifyInteraction);
-    map.removeInteraction(newRouteMapDrawInteraction);
-    map.removeInteraction(newRouteMapSnapInteraction);
+    map.removeInteraction(mapModifyInteraction);
+    map.removeInteraction(mapDrawInteraction);
+    map.removeInteraction(mapSnapInteraction);
 
-    newRouteMapDrawInteraction = new olDrawInteraction({
+    mapDrawInteraction = new olDrawInteraction({
         source: newRouteVectorSource, type: 'LineString', pixelTolerance: 50
     });
-    newRouteMapSnapInteraction = new olSnapInteraction({ source: newRouteVectorSource });
+    mapSnapInteraction = new olSnapInteraction({ source: newRouteVectorSource });
 
-    newRouteMapDrawInteraction.on('drawend', function (evt) {
+    mapDrawInteraction.on('drawend', function (evt) {
         const feature = evt.feature;
         feature.set('name', routeName);
         feature.set('type', 'new-path');
         routeValidation(routeName, feature);
-        map.removeInteraction(newRouteMapDrawInteraction);
-        map.removeInteraction(newRouteMapSnapInteraction);
-        map.addInteraction(newRouteModifyInteraction);
+        map.removeInteraction(mapDrawInteraction);
+        map.removeInteraction(mapSnapInteraction);
         map.addInteraction(mapSelectInteraction);
     });
-    map.getInteractions().extend([newRouteMapDrawInteraction, newRouteMapSnapInteraction]);
+    map.getInteractions().extend([mapDrawInteraction, mapSnapInteraction]);
 }
 
 // ------------------------------
@@ -172,13 +134,14 @@ function RemoveSelectedNewRouteFeature() {
         routeInvalidation('route-path-a');
         pathAInput.value = '';
         feature_path_a = null;
+        selectedFeature = null;
     } else if (name === 'route-path-b') {
         newRouteVectorSource.removeFeature(feature_path_b);
         routeInvalidation('route-path-b');
         pathAInput.value = '';
         feature_path_b = null;
+        selectedFeature = null;
     }
-    selectedFeature = null;
 }
 
 const deleteNewRouteFeature = function (evt) {
@@ -209,25 +172,21 @@ function UnselectNewRouteFeature(routeName) {
 // ----------------------------------
 
 function RouteFormSave() {
-
     if (!RouteFormValidation()) {
         alert('Проверьте данные нового маршрута!');
         return;
     }
-
     let features = [feature_path_a, feature_path_b];
     let geoJSONwriter = new olGeoJSON();
     let geoJSONdata = geoJSONwriter.writeFeatures(
         features,
         { dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857' }
     );
-
     const route_data = {
         'name': routeNameInput.value,
         'geojson_data': geoJSONdata,
         'assigned_stops': []
     };
-
     PostRoute(route_data).then(function () {
         alert('Маршрут сохранен!');
         try {

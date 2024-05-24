@@ -63,3 +63,17 @@ function DisplayPath(id, name, geomLine) {
 }
 
 LoadRoutes();
+
+// Select function for path feature id
+function SelectPathFeatureByID(pathFeatureId) {
+    const pathFeature = routesVectorSource.getFeatureById(pathFeatureId);
+    if (!pathFeature) return;
+    mapSelectInteraction.getFeatures().clear();
+    mapSelectInteraction.getFeatures().push(pathFeature);
+    mapSelectInteraction.dispatchEvent({
+        type: 'select',
+        selected: [pathFeature],
+        deselected: []
+    });
+    PanToFeature(pathFeature);
+}

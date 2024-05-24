@@ -8,7 +8,7 @@ const newBusStopLocationInput = document.getElementById('busstop-new-location');
 // ---------------------------
 
 let newBusStopVectorSource = new olVectorSource({ wrapX: false });
-let newBusStopVectorLayer = new olVectorLayer({ source: newBusStopVectorSource, style: setFeatureStyle });
+let newBusStopVectorLayer = new olVectorLayer({ source: newBusStopVectorSource, style: mapStyleFunction });
 map.addLayer(newBusStopVectorLayer);
 
 // ------------------------------
@@ -26,15 +26,11 @@ function DrawBusStop(BusStopName) {
     // removing interactions
     map.removeInteraction(mapSelectInteraction);
     map.removeInteraction(mapModifyInteraction);
-    map.removeInteraction(mapTranslateInteraction);
     map.removeInteraction(mapDrawInteraction);
-    map.removeInteraction(mapSnapInteraction);
 
     mapDrawInteraction = new olDrawInteraction({
         source: newBusStopVectorSource, type: 'Point', pixelTolerance: 50
     });
-
-    mapSnapInteraction = new olSnapInteraction({ source: newBusStopVectorSource });
 
     mapDrawInteraction.on('drawend', function (evt) {
         const feature = evt.feature;
@@ -44,11 +40,8 @@ function DrawBusStop(BusStopName) {
         map.removeInteraction(mapDrawInteraction);
         map.removeInteraction(mapSnapInteraction);
         map.addInteraction(mapSelectInteraction);
-        map.addInteraction(mapModifyInteraction);
-        map.addInteraction(mapTranslateInteraction);
     });
-    map.addInteraction(mapDrawInteraction);
-    map.addInteraction(mapSnapInteraction);
+    map.getInteractions().extend([mapDrawInteraction]);
 };
 
 // --------------------------------
@@ -113,8 +106,8 @@ function RemoveSelectedNewBusStopFeature() {
         BusStopInvalidation('busstop-new-location');
         newBusStopLocationInput.value = '';
         newBusStopLocationFeature = null;
+        selectedFeature = null;
     }
-    selectedFeature = null;
 };
 
 const deleteNewBusStopFeature = function (evt) {
