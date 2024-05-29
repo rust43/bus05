@@ -21,7 +21,9 @@ from .serializers import RouteSerializer
 
 
 class RouteApiView(APIView):
+
     permission_classes = [HasGroupPermission]
+
     required_groups = {
         "GET": ["__all__"],
         "POST": ["map_admins"],
@@ -44,44 +46,121 @@ class RouteApiView(APIView):
         Create new Route
         """
         name = request.data.get("name")
-        stops = request.data.get("assigned_stops")
+        path_a_stops = request.data.get("path_a_stops")
+        path_b_stops = request.data.get("path_b_stops")
         geojson = request.data.get("geojson_data")
-        path_data = parse_geojson(geojson)
+        map_data = parse_geojson(geojson)
 
-        if path_data.get("route-path-a") and path_data.get("route-path-b"):
-            new_route = Route(name=name)
-            path_a = path_data["route-path-a"]
-            path_a.name = "route-" + str(new_route.id) + "-path-a"
-            path_a.save()
-            path_b = path_data["route-path-b"]
-            path_b.name = "route-" + str(new_route.id) + "-path-b"
-            path_b.save()
-            new_route.path_a = path_a
-            new_route.path_b = path_b
-            new_route.save()
+        if map_data:
+            route = Route(name=name)
+            # path data parse
+            for path in map_data[0]:
+                if "path-a" in path.name:
+                    path.name = "route-" + str(route.id) + "-path-a"
+                    path.save()
+                    path.line.save()
+                    route.path_a = path
+                elif "path-b" in path.name:
+                    path.name = "route-" + str(route.id) + "-path-b"
+                    path.save()
+                    path.line.save()
+                    route.path_b = path
+            route.save()
+            # busstop data parse
+            for busstop_data in path_a_stops:
+                busstop = BusStop.objects.get(pk=busstop_data)
+                route.path_a_stops.add(busstop)
+            for busstop_data in path_b_stops:
+                busstop = BusStop.objects.get(pk=busstop_data)
+                route.path_b_stops.add(busstop)
+            route.save()
             return Response(status=status.HTTP_201_CREATED)
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    @staticmethod
+    def put(request, *args, **kwargs):
+        """
+        Edit Route data
+        """
+        name = request.data.get("name")
+        geojson = request.data.get("geojson_data")
+        path_a_stops = request.data.get("path_a_stops")
+        path_b_stops = request.data.get("path_b_stops")
+        map_data = parse_geojson(geojson)
+        if map_data:
+            for route_data in map_data.items():
+                route = Route.objects.get(pk=route_data[0])
+                for path in route_data[1]:
+                    if "path-a" in path.name:
+                        route.path_a.delete()
+                        path.save()
+                        path.line.save()
+                        route.path_a = path
+                    elif "path-b" in path.name:
+                        route.path_b.delete()
+                        path.save()
+                        path.line.save()
+                        route.path_b = path
+                route.name = name
+                route.save()
+                # busstop data parse
+                route.path_a_stops.clear()
+                for busstop_data in path_a_stops:
+                    busstop = BusStop.objects.get(pk=busstop_data)
+                    route.path_a_stops.add(busstop)
+                route.path_b_stops.clear()
+                for busstop_data in path_b_stops:
+                    busstop = BusStop.objects.get(pk=busstop_data)
+                    route.path_b_stops.add(busstop)
+                route.save()
+            return Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    @staticmethod
+    def delete(request, *args, **kwargs):
+        """
+        Delete Route
+        """
+        route_id = request.data.get("route_id")
+        try:
+            route = Route.objects.get(pk=route_id)
+            route.path_a.delete()
+            route.path_b.delete()
+            route.delete()
+            return Response(status=status.HTTP_200_OK)
+        except Route.DoesNotExist:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 def parse_geojson(features):
     data = json.loads(features)
-    parsed_data = {}
+    parsed_features = {}
     for feature in data["features"]:
         name = feature["properties"]["name"]
         coordinates = feature["geometry"]["coordinates"]
         geometry_type = feature["geometry"]["type"]
+
+        # check if object newly created or exists in database
+        if feature["properties"].get("map_object_id"):
+            map_object_id = feature["properties"]["map_object_id"]
+        else:
+            map_object_id = 0
+
         map_object_type = ObjectType.objects.get_or_create(name=geometry_type)[0]
-        map_object = MapObject.objects.create(name=name, object_type=map_object_type)
+        map_object = MapObject(name=name, object_type=map_object_type)
+        # map_object = MapObject.objects.create(name=name, object_type=map_object_type)
         geom = None
         if geometry_type == "Point":
             coordinates = list(map(float, coordinates))
             geom = Point((coordinates[0], coordinates[1]), srid=4326)
-            ObjectPoint.objects.create(map_object=map_object, geom=geom)
+            ObjectPoint(map_object=map_object, geom=geom)
+            # ObjectPoint.objects.create(map_object=map_object, geom=geom)
         elif geometry_type == "LineString":
             for coordinate in coordinates:
                 coordinate = list(map(float, coordinate))
             geom = LineString(coordinates, srid=4326)
-            ObjectLineString.objects.create(map_object=map_object, geom=geom)
+            ObjectLineString(map_object=map_object, geom=geom)
+            # ObjectLineString.objects.create(map_object=map_object, geom=geom)
         elif geometry_type == "Circle":
             coordinates = list(map(float, coordinates))
             geom = Point((coordinates[0], coordinates[1]), srid=4326)
@@ -91,11 +170,15 @@ def parse_geojson(features):
                 coordinate = list(map(float, coordinate))
             geom = Polygon(coordinates[0], srid=4326)
             ObjectPolygon.objects.create(map_object=map_object, geom=geom)
-        parsed_data[str(name)] = map_object
+
+        if parsed_features.get(map_object_id):
+            parsed_features[map_object_id].append(map_object)
+        else:
+            parsed_features[map_object_id] = [map_object]
         # parsing props
         # for prop, value in feature["properties"].items():
         #     MapObjectProp.objects.create(map_object=map_object, prop=prop, value=value)
-    return parsed_data
+    return parsed_features
 
 
 class BusStopApiView(APIView):
@@ -136,39 +219,6 @@ class BusStopApiView(APIView):
             return Response(status=status.HTTP_201_CREATED)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
-
-# def process_geo_json(data, route):
-#     data = json.loads(data)
-#     for feature in data["features"]:
-#         coordinates = feature["geometry"]["coordinates"]
-#         if "name" in feature["properties"]:
-#             feature_name = feature["properties"]["name"]
-#         else:
-#             feature_name = "неименованный объект карты"
-#         geometry_type = feature["properties"]["type"]
-#         map_object_type = ObjectType.objects.get_or_create(name=geometry_type)[0]
-#         map_object = MapObject.objects.create(name=feature_name, zone=zone, object_type=map_object_type)
-#         if geometry_type == "Point":
-#             coordinates = list(map(float, coordinates))
-#             point = Point((coordinates[0], coordinates[1]), srid=4326)
-#             ObjectPoint.objects.create(map_object=map_object, geom=point)
-
-#         elif geometry_type == "Circle":
-#             coordinates = list(map(float, coordinates))
-#             circle = Point((coordinates[0], coordinates[1]), srid=4326)
-#             ObjectCircle.objects.create(map_object=map_object, geom=circle)
-
-#         elif geometry_type == "LineString":
-#             for coordinate in coordinates:
-#                 coordinate = list(map(float, coordinate))
-#             line_string = LineString(coordinates, srid=4326)
-#             ObjectLineString.objects.create(map_object=map_object, geom=line_string)
-
-#         elif geometry_type == "Polygon":
-#             for coordinate in coordinates[0]:
-#                 coordinate = list(map(float, coordinate))
-#             polygon = Polygon(coordinates[0], srid=4326)
-#             ObjectPolygon.objects.create(map_object=map_object, geom=polygon)
-
-#         for prop, value in feature["properties"].items():
-#             MapObjectProp.objects.create(map_object=map_object, prop=prop, value=value)
+    @staticmethod
+    def put(request, *args, **kwargs):
+        pass

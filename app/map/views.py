@@ -6,7 +6,6 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.http import HttpResponseNotFound
 from django.shortcuts import render
-from route.models import Route
 
 
 def map_view(request):
@@ -17,9 +16,6 @@ def map_view(request):
 def map_edit_view(request):
     if not request.user.groups.filter(name="map_admins").exists():
         return HttpResponseNotFound("У вас нет доступа к данной странице.")
-
-    routes = Route.objects.all()
-
     return render(request, "map/edit.html")
 
 

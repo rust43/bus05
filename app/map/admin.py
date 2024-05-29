@@ -62,7 +62,8 @@ class PolygonAdmin(admin.ModelAdmin):
 
 @admin.register(MapObject)
 class MapObjectAdmin(admin.ModelAdmin):
-    list_display = ("name", "object_type")
+    list_display = ("name", "object_type", "id")
+    ordering = ("name",)
     # inlines = [PointInline]
 
 
@@ -72,4 +73,4 @@ class MapObjectInline(admin.TabularInline):
 
 @admin.register(ObjectType)
 class ObjectTypeAdmin(admin.ModelAdmin):
-    pass
+    model = ObjectType

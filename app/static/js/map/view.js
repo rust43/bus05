@@ -155,3 +155,35 @@ function DrawArrows(feature, style, height, width) {
 function PanToFeature(feature) {
     map.getView().fit(feature.getGeometry(), { duration: 500 });
 }
+
+// ----------------------
+// Map popup functions
+// ----------------------
+
+const popupContainer = document.getElementById('popup');
+const popupContent = document.getElementById('popup-content');
+const popupCloser = document.getElementById('popup-closer');
+
+/**
+ * Create an overlay to anchor the popup to the map.
+ */
+const mapOverlay = new olOverlay({
+    element: popupContainer,
+    autoPan: {
+        animation: {
+            duration: 250,
+        },
+    },
+});
+
+map.addOverlay(mapOverlay);
+
+/**
+ * Add a click handler to hide the popup.
+ * @return {boolean} Don't follow the href.
+ */
+popupCloser.onclick = function () {
+    mapOverlay.setPosition(undefined);
+    popupCloser.blur();
+    return false;
+};

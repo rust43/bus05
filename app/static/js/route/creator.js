@@ -3,6 +3,8 @@
 const routeNameInput = document.getElementById('route-name');
 const pathAInput = document.getElementById('route-path-a');
 const pathBInput = document.getElementById('route-path-b');
+const NewPathABusStopListContainer = document.getElementById('new-route-path-a-stops-container');
+const NewPathBBusStopListContainer = document.getElementById('new-route-path-b-stops-container');
 
 // ---------------------------
 // Route map layers definition
@@ -18,6 +20,8 @@ map.addLayer(newRouteVectorLayer);
 
 let feature_path_a = null;
 let feature_path_b = null;
+let new_route_path_a_stops = {};
+let new_route_path_b_stops = {};
 
 // ---------------------------
 // Route map draw functions
@@ -81,7 +85,7 @@ const setRouteFeature = function (routeName, feature) {
     }
 };
 
-function ClearNewRoutes() {
+function ClearNewRoute() {
     routeNameInput.value = '';
     routeNameInput.classList.remove('is-valid');
     if (feature_path_a !== null) {
@@ -97,6 +101,18 @@ function ClearNewRoutes() {
         feature_path_b = null;
     }
     selectedFeature = null;
+    for (var prop in new_route_path_a_stops) {
+        if (new_route_path_a_stops.hasOwnProperty(prop)) {
+            delete new_route_path_a_stops[prop];
+        }
+    }
+    for (var prop in new_route_path_b_stops) {
+        if (new_route_path_b_stops.hasOwnProperty(prop)) {
+            delete new_route_path_b_stops[prop];
+        }
+    }
+    FillBusStopsContainer(new_route_path_a_stops, NewPathABusStopListContainer, 'new-route');
+    FillBusStopsContainer(new_route_path_b_stops, NewPathBBusStopListContainer, 'new-route');
 }
 
 function RouteFormValidation() {
@@ -167,11 +183,33 @@ function UnselectNewRouteFeature(routeName) {
     flag.innerText = 'Указано';
 }
 
+function SelectNewRouteBusStopFeature(PathDirection) {
+    if (PathDirection === "path-a") {
+        editMode = 'new-route-add-busstop-path-a';
+    }
+    else if (PathDirection === "path-b") {
+        editMode = 'new-route-add-busstop-path-b';
+    }
+}
+
+function AddNewRouteBusstop(BusStopFeature, PathDirection) {
+    if (PathDirection === 'path-a') {
+        if (new_route_path_b_stops) delete new_route_path_b_stops[BusStopFeature.get('map_object_id')];
+        new_route_path_a_stops[BusStopFeature.get('map_object_id')] = BusStopFeature.get('name');
+    }
+    else if (PathDirection === 'path-b') {
+        if (new_route_path_a_stops) delete new_route_path_a_stops[BusStopFeature.get('map_object_id')];
+        new_route_path_b_stops[BusStopFeature.get('map_object_id')] = BusStopFeature.get('name');
+    }
+    FillBusStopsContainer(new_route_path_a_stops, NewPathABusStopListContainer, 'new-route');
+    FillBusStopsContainer(new_route_path_b_stops, NewPathBBusStopListContainer, 'new-route');
+}
+
 // ----------------------------------
 // Route map save functions
 // ----------------------------------
 
-function RouteFormSave() {
+function SaveNewRoute() {
     if (!RouteFormValidation()) {
         alert('Проверьте данные нового маршрута!');
         return;
@@ -185,12 +223,13 @@ function RouteFormSave() {
     const route_data = {
         'name': routeNameInput.value,
         'geojson_data': geoJSONdata,
-        'assigned_stops': []
+        'path_a_stops': new_route_path_a_stops,
+        'path_b_stops': new_route_path_b_stops,
     };
-    PostRoute(route_data).then(function () {
+    PostNewRoute(route_data).then(function () {
         alert('Маршрут сохранен!');
         try {
-            ClearNewRoutes();
+            ClearNewRoute();
             LoadRoutes();
         } catch (err) {
             alert('Ошибка при загрузке новых маршрутов!');
@@ -198,7 +237,7 @@ function RouteFormSave() {
     });
 }
 
-async function PostRoute(route_data) {
+async function PostNewRoute(route_data) {
     const url = host + '/api/v1/route/';
     const response = await fetch(
         url,
@@ -217,4 +256,15 @@ async function PostRoute(route_data) {
     } else {
         console.log('Ошибка HTTP: ' + response.status);
     }
+}
+
+function DeleteNewRouteBusStop(busStopId, badgeId) {
+    if (new_route_path_a_stops) {
+        delete new_route_path_a_stops[busStopId];
+    }
+    if (new_route_path_b_stops) {
+        delete new_route_path_b_stops[busStopId];
+    }
+    FillBusStopsContainer(new_route_path_a_stops, NewPathABusStopListContainer, 'new-route');
+    FillBusStopsContainer(new_route_path_b_stops, NewPathBBusStopListContainer, 'new-route');
 }

@@ -14,15 +14,18 @@ let mapSnapInteraction = null;
 // Variable for save selected feature
 let selectedFeature = null;
 
+let editMode = null;
+
 // Select function
 const mapSelectFunction = function () {
+    map.removeInteraction(mapModifyInteraction);
+    mapOverlay.setPosition(undefined);
     const feature = mapSelectInteraction.getFeatures().item(0);
     if (selectedFeature !== null) {
         if (selectedFeature.get('type') === 'new-path')
             UnselectNewRouteFeature(selectedFeature.get('name'));
         else if (selectedFeature.get('type') === 'new-busstop')
             UnselectNewBusStopFeature(selectedFeature.get('name'));
-        map.removeInteraction(mapModifyInteraction);
         selectedFeature = null;
     }
     if (!feature) return;
@@ -35,7 +38,33 @@ const mapSelectFunction = function () {
         SelectNewBusStopFeature(selectedFeature.get('name'));
         map.addInteraction(mapModifyInteraction);
     }
+    else if (selectedFeature.get('type') === 'busstop') {
+        // ShowBusStopPopup(selectedFeature);
+        if (editMode === 'new-route-add-busstop-path-a') {
+            AddNewRouteBusstop(feature, 'path-a');
+        }
+        else if (editMode === 'new-route-add-busstop-path-b') {
+            AddNewRouteBusstop(feature, 'path-b');
+        }
+        else if (editMode === 'route-add-busstop-path-a') {
+            AddRouteBusstop(feature, 'path-a');
+        }
+        else if (editMode === 'route-add-busstop-path-b') {
+            AddRouteBusstop(feature, 'path-b');
+        }
+    }
+    if (editMode === 'route-path-edit') {
+        map.addInteraction(mapModifyInteraction);
+    }
+    editMode = null;
 };
+
+function ShowBusStopPopup(BusStopFeature) {
+    const name = BusStopFeature.get('name');
+    const coordinate = olGetExtentCenter(BusStopFeature.getGeometry().getExtent());
+    popupContent.innerHTML = '<p>Название остановки: ' + name + '</p>';
+    mapOverlay.setPosition(coordinate);
+}
 
 // Binding select function
 mapSelectInteraction.on('select', mapSelectFunction);

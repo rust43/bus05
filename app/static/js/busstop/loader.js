@@ -6,6 +6,8 @@ let loadedBusStops = null;
 
 function LoadBusStops() {
     GetBusStops().then(busStops => {
+        loadedBusStops = busStops;
+        busStopsVectorSource.clear();
         DisplayBusStops(busStops);
     });
 }
@@ -29,7 +31,6 @@ async function GetBusStops() {
 }
 
 function DisplayBusStops(busStops) {
-    loadedBusStops = busStops;
     const busstopListContainer = document.getElementById('busstop-list');
     if (busstopListContainer)
         busstopListContainer.innerHTML = '';
@@ -42,6 +43,7 @@ function DisplayBusStops(busStops) {
         });
         busStopFeature.setId(busStop.location.point.id);
         busStopFeature.set('type', 'busstop');
+        busStopFeature.set('map_object_id', busStop.id);
         busStopsVectorSource.addFeature(busStopFeature);
 
         // add button to view route
@@ -64,6 +66,7 @@ LoadBusStops();
 function SelectBusStopFeatureByID(busStopFeatureId) {
     const busStopFeature = busStopsVectorSource.getFeatureById(busStopFeatureId);
     if (!busStopFeature) return;
+    editMode = true;
     mapSelectInteraction.getFeatures().clear();
     mapSelectInteraction.getFeatures().push(busStopFeature);
     mapSelectInteraction.dispatchEvent({
