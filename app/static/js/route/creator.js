@@ -111,8 +111,8 @@ function ClearNewRoute() {
             delete new_route_path_b_stops[prop];
         }
     }
-    FillBusStopsContainer(new_route_path_a_stops, NewPathABusStopListContainer, 'new-route');
-    FillBusStopsContainer(new_route_path_b_stops, NewPathBBusStopListContainer, 'new-route');
+    FillBusStopsContainer(new_route_path_a_stops, NewPathABusStopListContainer, true);
+    FillBusStopsContainer(new_route_path_b_stops, NewPathBBusStopListContainer, true);
 }
 
 function RouteFormValidation() {
@@ -201,8 +201,8 @@ function AddNewRouteBusstop(BusStopFeature, PathDirection) {
         if (new_route_path_a_stops) delete new_route_path_a_stops[BusStopFeature.get('map_object_id')];
         new_route_path_b_stops[BusStopFeature.get('map_object_id')] = BusStopFeature.get('name');
     }
-    FillBusStopsContainer(new_route_path_a_stops, NewPathABusStopListContainer, 'new-route');
-    FillBusStopsContainer(new_route_path_b_stops, NewPathBBusStopListContainer, 'new-route');
+    FillBusStopsContainer(new_route_path_a_stops, NewPathABusStopListContainer, true);
+    FillBusStopsContainer(new_route_path_b_stops, NewPathBBusStopListContainer, true);
 }
 
 // ----------------------------------
@@ -258,13 +258,13 @@ async function PostNewRoute(route_data) {
     }
 }
 
-function DeleteNewRouteBusStop(busStopId, badgeId) {
+function DeleteNewRouteBusStop(busStopId) {
     if (new_route_path_a_stops) {
         delete new_route_path_a_stops[busStopId];
     }
     if (new_route_path_b_stops) {
         delete new_route_path_b_stops[busStopId];
     }
-    FillBusStopsContainer(new_route_path_a_stops, NewPathABusStopListContainer, 'new-route');
-    FillBusStopsContainer(new_route_path_b_stops, NewPathBBusStopListContainer, 'new-route');
+    FillBusStopsContainer(new_route_path_a_stops, NewPathABusStopListContainer, true);
+    FillBusStopsContainer(new_route_path_b_stops, NewPathBBusStopListContainer, true);
 }
