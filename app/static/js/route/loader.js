@@ -51,7 +51,7 @@ function DisplayRoutes(routes) {
         if (routeListContainer) {
             routeButton.appendChild(routeButtonText);
             routeButton.classList.add('btn', 'badge', 'text-bg-success');
-            routeButton.onclick = function () {
+            routeButton.onclick = function() {
                 SelectRouteData(route.id);
             };
             routeListContainer.appendChild(routeButton);

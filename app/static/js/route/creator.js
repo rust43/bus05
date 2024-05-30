@@ -40,7 +40,7 @@ function DrawRoute(routeName) {
     });
     mapSnapInteraction = new olSnapInteraction({ source: newRouteVectorSource });
 
-    mapDrawInteraction.on('drawend', function (evt) {
+    mapDrawInteraction.on('drawend', function(evt) {
         const feature = evt.feature;
         feature.set('name', routeName);
         feature.set('type', 'new-path');
@@ -56,7 +56,7 @@ function DrawRoute(routeName) {
 // Route map validation functions
 // ------------------------------
 
-const routeValidation = function (routeName, feature) {
+const routeValidation = function(routeName, feature) {
     const flag = document.getElementById(routeName + '-flag');
     flag.classList.remove('text-bg-danger');
     flag.classList.add('text-bg-success');
@@ -64,14 +64,14 @@ const routeValidation = function (routeName, feature) {
     setRouteFeature(routeName, feature);
 };
 
-const routeInvalidation = function (routeName) {
+const routeInvalidation = function(routeName) {
     const flag = document.getElementById(routeName + '-flag');
     flag.classList.remove('text-bg-success');
     flag.classList.add('text-bg-danger');
     flag.innerText = 'Не указано';
 };
 
-const setRouteFeature = function (routeName, feature) {
+const setRouteFeature = function(routeName, feature) {
     if (routeName === 'route-path-a') {
         if (feature_path_a !== null) newRouteVectorSource.removeFeature(feature_path_a);
         feature_path_a = feature;
@@ -123,7 +123,7 @@ function RouteFormValidation() {
     return result;
 }
 
-const validationHelper = function (input) {
+const validationHelper = function(input) {
     if (input && input.value) {
         input.classList.remove('is-invalid');
         input.classList.add('is-valid');
@@ -135,7 +135,7 @@ const validationHelper = function (input) {
     }
 };
 
-routeNameInput.onchange = function () {
+routeNameInput.onchange = function() {
     validationHelper(routeNameInput);
 };
 
@@ -160,7 +160,7 @@ function RemoveSelectedNewRouteFeature() {
     }
 }
 
-const deleteNewRouteFeature = function (evt) {
+const deleteNewRouteFeature = function(evt) {
     if (evt.keyCode === 46) RemoveSelectedNewRouteFeature();
 };
 document.addEventListener('keydown', deleteNewRouteFeature, false);
@@ -184,10 +184,9 @@ function UnselectNewRouteFeature(routeName) {
 }
 
 function SelectNewRouteBusStopFeature(PathDirection) {
-    if (PathDirection === "path-a") {
+    if (PathDirection === 'path-a') {
         editMode = 'new-route-add-busstop-path-a';
-    }
-    else if (PathDirection === "path-b") {
+    } else if (PathDirection === 'path-b') {
         editMode = 'new-route-add-busstop-path-b';
     }
 }
@@ -196,8 +195,7 @@ function AddNewRouteBusstop(BusStopFeature, PathDirection) {
     if (PathDirection === 'path-a') {
         if (new_route_path_b_stops) delete new_route_path_b_stops[BusStopFeature.get('map_object_id')];
         new_route_path_a_stops[BusStopFeature.get('map_object_id')] = BusStopFeature.get('busstop_name');
-    }
-    else if (PathDirection === 'path-b') {
+    } else if (PathDirection === 'path-b') {
         if (new_route_path_a_stops) delete new_route_path_a_stops[BusStopFeature.get('map_object_id')];
         new_route_path_b_stops[BusStopFeature.get('map_object_id')] = BusStopFeature.get('busstop_name');
     }
@@ -224,9 +222,9 @@ function SaveNewRoute() {
         'name': routeNameInput.value,
         'geojson_data': geoJSONdata,
         'path_a_stops': new_route_path_a_stops,
-        'path_b_stops': new_route_path_b_stops,
+        'path_b_stops': new_route_path_b_stops
     };
-    PostNewRoute(route_data).then(function () {
+    PostNewRoute(route_data).then(function() {
         alert('Маршрут сохранен!');
         try {
             ClearNewRoute();

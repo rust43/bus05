@@ -10,7 +10,7 @@ class BusStopSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BusStop
-        fields = ["id", "name", "city", "location"]
+        fields = ["id", "name", "location"]
 
 
 class BusStopSimpleSerializer(serializers.ModelSerializer):

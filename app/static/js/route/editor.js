@@ -31,12 +31,12 @@ function SaveRoute() {
         'name': route_name,
         'geojson_data': geoJSONdata,
         'path_a_stops': edit_route_path_a_stops,
-        'path_b_stops': edit_route_path_b_stops,
+        'path_b_stops': edit_route_path_b_stops
     };
-    SaveRouteRequest(route_data).then(function () {
+    SaveRouteRequest(route_data).then(function() {
         alert('Изменения сохранены!');
         try {
-            LoadRoutes().then(function () {
+            LoadRoutes().then(function() {
                 SelectRouteData(editedRoute.id);
             });
         } catch (err) {
@@ -73,9 +73,9 @@ async function SaveRouteRequest(route_data) {
 function DeleteRoute() {
     let routeId = document.getElementById('selected-route-id').value;
     const route_data = {
-        'route_id': routeId,
+        'route_id': routeId
     };
-    DeleteRouteRequest(route_data).then(function () {
+    DeleteRouteRequest(route_data).then(function() {
         alert('Маршрут удален!');
         try {
             document.getElementById('route-data').classList.add('d-none');
@@ -144,10 +144,10 @@ function SelectRouteData(routeId) {
     FillBusStopsContainer(edit_route_path_a_stops, PathABusStopListContainer, false);
     FillBusStopsContainer(edit_route_path_b_stops, PathBBusStopListContainer, false);
 
-    document.getElementById('show-route-path-a').onclick = function () {
+    document.getElementById('show-route-path-a').onclick = function() {
         EditPathFeature(editedRoute.path_a.line.id);
     };
-    document.getElementById('show-route-path-b').onclick = function () {
+    document.getElementById('show-route-path-b').onclick = function() {
         EditPathFeature(editedRoute.path_b.line.id);
     };
 }
@@ -158,12 +158,11 @@ function FillBusStopsContainer(stopsDict, container, newRoute) {
     let busstopBadgeText = null;
     if (Object.keys(stopsDict).length === 0) {
         busstopBadge = document.createElement('SPAN');
-        busstopBadgeText = document.createTextNode("Отсутствуют");
+        busstopBadgeText = document.createTextNode('Отсутствуют');
         busstopBadge.appendChild(busstopBadgeText);
         busstopBadge.classList.add('badge', 'text-bg-secondary');
         container.appendChild(busstopBadge);
-    }
-    else {
+    } else {
         for (let key in stopsDict) {
             busstopBadge = document.createElement('SPAN');
             busstopBadgeText = document.createTextNode(stopsDict[key]);
@@ -173,14 +172,13 @@ function FillBusStopsContainer(stopsDict, container, newRoute) {
             busstopBadge.appendChild(busstopBadgeButton);
             busstopBadge.classList.add('badge', 'text-bg-success', 'd-flex', 'align-items-center');
             if (newRoute) {
-                busstopBadge.onclick = function () {
+                busstopBadge.onclick = function() {
                     DeleteNewRouteBusStop(key);
-                }
-            }
-            else {
-                busstopBadge.onclick = function () {
+                };
+            } else {
+                busstopBadge.onclick = function() {
                     DeleteRouteBusStop(key);
-                }
+                };
             }
             container.appendChild(busstopBadge);
         }
@@ -195,10 +193,9 @@ function DeleteRouteBusStop(busStopId) {
 }
 
 function SelectRouteBusStopFeature(PathDirection) {
-    if (PathDirection === "path-a") {
+    if (PathDirection === 'path-a') {
         editMode = 'route-add-busstop-path-a';
-    }
-    else if (PathDirection === "path-b") {
+    } else if (PathDirection === 'path-b') {
         editMode = 'route-add-busstop-path-b';
     }
 }
@@ -207,8 +204,7 @@ function AddRouteBusstop(BusStopFeature, PathDirection) {
     if (PathDirection === 'path-a') {
         delete edit_route_path_b_stops[BusStopFeature.get('map_object_id')];
         edit_route_path_a_stops[BusStopFeature.get('map_object_id')] = BusStopFeature.get('busstop_name');
-    }
-    else if (PathDirection === 'path-b') {
+    } else if (PathDirection === 'path-b') {
         delete edit_route_path_a_stops[BusStopFeature.get('map_object_id')];
         edit_route_path_b_stops[BusStopFeature.get('map_object_id')] = BusStopFeature.get('busstop_name');
     }

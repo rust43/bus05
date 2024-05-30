@@ -10,7 +10,7 @@ function SelectBusStopData(busStopId) {
     editedBusStop = GetSelectedBusStop(busStopId);
     document.getElementById('busstop-data').classList.remove('d-none');
     document.getElementById('selected-busstop-name').value = editedBusStop.name;
-    document.getElementById('show-busstop-location-button').onclick = function () {
+    document.getElementById('show-busstop-location-button').onclick = function() {
         EditBusStopFeature(editedBusStop.location.point.id);
     };
 }
@@ -61,12 +61,12 @@ function SaveBusStop() {
     );
     const busstop_data = {
         'name': name,
-        'geojson_data': geoJSONdata,
+        'geojson_data': geoJSONdata
     };
-    SaveBusStopRequest(busstop_data).then(function () {
+    SaveBusStopRequest(busstop_data).then(function() {
         alert('Изменения сохранены!');
         try {
-            LoadBusStops().then(function () {
+            LoadBusStops().then(function() {
                 SelectBusStopData(editedBusStop.id);
             });
         } catch (err) {
@@ -105,9 +105,9 @@ function DeleteBusStop() {
         return;
     let busStopId = editedBusStop.id;
     const busstop_data = {
-        'busstop_id': busStopId,
+        'busstop_id': busStopId
     };
-    DeleteBusStopRequest(busstop_data).then(function () {
+    DeleteBusStopRequest(busstop_data).then(function() {
         alert('Остановка удалена!');
         try {
             document.getElementById('busstop-data').classList.add('d-none');
