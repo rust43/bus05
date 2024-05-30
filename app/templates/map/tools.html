@@ -21,7 +21,7 @@
                 <span class="ms-3">Экспорт данных</span>
             </div>
         </a>
-        <a class="btn btn-light rounded-0 w-100" onclick="" data-bs-toggle="modal" data-bs-target="#exportModal">
+        <a class="btn btn-light rounded-0 w-100" onclick="ShowImportModal();">
             <div class="d-flex align-items-center">
                 <span class="text-bg-success fs-5 rounded"><i class="bi bi-upload m-2"></i></span>
                 <span class="ms-3">Импорт данных</span>
@@ -30,7 +30,7 @@
     </div>
 </div>
 
-<div class="modal fade" id="exportModal" tabindex="-1">
+<div class="modal fade" id="importModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -38,24 +38,18 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form action="/api/v1/data/" method="post"
-                      class="dropzone dz-clickable rounded-4 border m-5 p-0"
-                      id="file-import-dropzone">
+                <form action="/api/v1/data/" method="post" class="dropzone dz-clickable rounded-4 border m-5 p-0" id="file-import-dropzone">
                     {% csrf_token %}
                     <div class="dz-message" id="file-upload-start-message">
                         <h1>Выберите файл</h1>
-                        <p>Перетащите файл в это поле или нажмите <strong>здесь</strong> для выбора файла.</p>
-                    </div>
-                    <div class="dz-message d-none" id="file-upload-success-message">
-                        <p>Файл был успешно загружен</p>
-                        <br>
-                        <span class="text-bg-success p-3 fs-2 rounded">
-                            <i class="bi bi-check-circle-fill m-2"></i>
-                        </span>
+                        <p>
+                            Перетащите файл в это поле или нажмите <strong>здесь</strong> для выбора файла.
+                        </p>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
+                <button type="submit" form="file-import-dropzone" class="btn btn-success" id="upload-file">Загрузить</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
             </div>
         </div>
@@ -65,33 +59,44 @@
 <script src="{% static 'js/dropzone.min.js' %}"></script>
 
 <script>
-    {#let myDropzone = new Dropzone('#file-import-dropzone');#}
+    function ShowImportModal() {
+        document.getElementById('upload-file').classList.remove('d-none');
+        Dropzone.forElement('#file-import-dropzone').removeAllFiles(true);
+        const importModalWindow = new bootstrap.Modal('#importModal', {
+            backdrop: true,
+            focus: true,
+            keyboard: true
+        });
+        importModalWindow.show();
+    }
+</script>
+
+<script>
     Dropzone.options.fileImportDropzone = {
-        // autoProcessQueue: false,
+        autoProcessQueue: false,
         maxFiles: 1,
         paramName: 'file',
-        maxFilesize: 20, // MB
-
+        maxFilesize: 10, // MB
+    
         // The setting up of the dropzone
-        init: function() {
-            this.on('complete', function() {
-                document.getElementById('file-upload-start-message').classList.add('d-none');
-                document.getElementById('file-upload-success-message').classList.remove('d-none');
+        init: function () {
+            this.hiddenFileInput.removeAttribute('multiple');
+            let myDropzone = this;
+            let submitButton = document.getElementById('upload-file');
+    
+            submitButton.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                myDropzone.processQueue();
             });
-
-            // Listen to the sendingmultiple event. In this case, it's the sendingmultiple event instead
-            // of the sending event because uploadMultiple is set to true.
-            this.on('sendingmultiple', function() {
-                // Gets triggered when the form is actually being sent.
-                // Hide the success button or the complete form.
+    
+            this.on('maxfilesexceeded', function (file) {
+                this.removeAllFiles();
+                this.addFile(file);
             });
-            this.on('successmultiple', function(files, response) {
-                // Gets triggered when the files have successfully been sent.
-                // Redirect user or notify of success.
-            });
-            this.on('errormultiple', function(files, response) {
-                // Gets triggered when there was an error sending the files.
-                // Maybe show form again, and notify user of error
+    
+            this.on('complete', function () {
+                submitButton.classList.add('d-none');
             });
         }
     };
