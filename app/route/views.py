@@ -278,36 +278,11 @@ class DataApiView(APIView):
     @staticmethod
     def post(request, *args, **kwargs):
         """
-        Create new Route
+        Import new data to system
         """
-        name = request.data.get("name")
-        path_a_stops = request.data.get("path_a_stops")
-        path_b_stops = request.data.get("path_b_stops")
-        geojson = request.data.get("geojson_data")
-        map_data = parse_geojson(geojson)
+        file = request.data.get("file")
+        # map_data = parse_geojson(geojson)
 
-        if map_data:
-            route = Route(name=name)
-            # path data parse
-            for path in map_data[0]:
-                if "path-a" in path.name:
-                    path.name = "route-" + str(route.id) + "-path-a"
-                    path.save()
-                    path.line.save()
-                    route.path_a = path
-                elif "path-b" in path.name:
-                    path.name = "route-" + str(route.id) + "-path-b"
-                    path.save()
-                    path.line.save()
-                    route.path_b = path
-            route.save()
-            # busstop data parse
-            for busstop_data in path_a_stops:
-                busstop = BusStop.objects.get(pk=busstop_data)
-                route.path_a_stops.add(busstop)
-            for busstop_data in path_b_stops:
-                busstop = BusStop.objects.get(pk=busstop_data)
-                route.path_b_stops.add(busstop)
-            route.save()
+        if file:
             return Response(status=status.HTTP_201_CREATED)
         return Response(status=status.HTTP_400_BAD_REQUEST)
