@@ -205,20 +205,52 @@ class BusStopApiView(APIView):
         Create new BusStop
         """
         name = request.data.get("name")
-        city = request.data.get("city")
+        # city = request.data.get("city")
         geojson = request.data.get("geojson_data")
         map_data = parse_geojson(geojson)
 
-        if map_data.get("busstop-new-location"):
-            new_busstop = BusStop(name=name)
-            map_object = map_data["busstop-new-location"]
-            map_object.name = "busstop-" + str(new_busstop.id)
-            map_object.save()
-            new_busstop.location = map_object
-            new_busstop.save()
+        if map_data:
+            busstop = BusStop(name=name)
+            location = map_data[0][0]
+            location.name = "busstop-" + str(busstop.id)
+            location.save()
+            location.point.save()
+            busstop.location = location
+            busstop.save()
             return Response(status=status.HTTP_201_CREATED)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
     @staticmethod
     def put(request, *args, **kwargs):
-        pass
+        """
+        Edit BusStop data
+        """
+        name = request.data.get("name")
+        geojson = request.data.get("geojson_data")
+        map_data = parse_geojson(geojson)
+        if map_data:
+            busstop = next(iter(map_data))
+            location = map_data[busstop][0]
+            busstop = BusStop.objects.get(pk=busstop)
+            busstop.location.delete()
+            location.save()
+            location.point.save()
+            busstop.location = location
+            busstop.name = name
+            busstop.save()
+            return Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    @staticmethod
+    def delete(request, *args, **kwargs):
+        """
+        Delete BusStop
+        """
+        busstop_id = request.data.get("busstop_id")
+        try:
+            busstop = BusStop.objects.get(pk=busstop_id)
+            busstop.location.delete()
+            busstop.delete()
+            return Response(status=status.HTTP_200_OK)
+        except BusStop.DoesNotExist:
+            return Response(status=status.HTTP_400_BAD_REQUEST)

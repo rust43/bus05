@@ -1,15 +1,28 @@
 {% load static %}
 <div id="busstop-data" class="d-none">
     <div class="d-flex flex-column border-top">
-        <span class="px-3 mt-3 mb-3">Данные остановки</span>
+        <span class="px-3 mt-2 mb-2">Данные остановки</span>
         <div class="px-3 mb-3">
-            <span class="text-body-tertiary">Название</span>
-            <span id="selected-busstop-name">Название</span>
+            <label for="selected-busstop-name" class="form-label text-body-tertiary">Название остановки</label>
+            <input type="text" class="form-control" id="selected-busstop-name" required />
+            <div class="invalid-feedback">Укажите название маршрута.</div>
         </div>
         <a class="btn btn-light rounded-0 w-100" onclick="" id="show-busstop-location-button">
             <div class="d-flex align-items-center">
                 <span class="text-bg-secondary fs-5 rounded"><i class="bi bi-signpost-fill m-2"></i></span>
                 <span class="ms-3">Расположение</span>
+            </div>
+        </a>
+        <a class="btn btn-light rounded-0 w-100" onclick="SaveBusStop();">
+            <div class="d-flex align-items-center">
+                <span class="text-bg-success fs-5 rounded"><i class="bi bi-floppy-fill m-2"></i></span>
+                <span class="ms-3">Сохранить</span>
+            </div>
+        </a>
+        <a class="btn btn-light rounded-0 w-100" onclick="DeleteBusStop();">
+            <div class="d-flex align-items-center">
+                <span class="text-bg-danger fs-5 rounded"><i class="bi bi-x-square m-2"></i></span>
+                <span class="ms-3">Удалить</span>
             </div>
         </a>
     </div>

@@ -129,6 +129,7 @@
     <script src="{% static 'js/route/editor.js' %}"></script>
     <script src="{% static 'js/busstop/loader.js' %}"></script>
     <script src="{% static 'js/busstop/creator.js' %}"></script>
+    <script src="{% static 'js/busstop/editor.js' %}"></script>
     <script src="{% static 'js/django-csrf.js' %}"></script>
     <script>
         function ToggleSidebar() {
@@ -158,20 +159,6 @@
             } else {
                 document.getElementById('tools').classList.remove('d-none');
             }
-        }
-    </script>
-    <script>
-        function SelectBusStopData(busstopId) {
-            if (busstopId === '') return;
-            let selectedBusStop = null;
-            for (let i = 0; i < loadedBusStops.length; i++) {
-                if (loadedBusStops[i].id === busstopId) selectedBusStop = loadedBusStops[i];
-            }
-            document.getElementById('busstop-data').classList.remove('d-none');
-            document.getElementById('selected-busstop-name').innerText = selectedBusStop.name;
-            document.getElementById('show-busstop-location-button').onclick = function () {
-                SelectBusStopFeatureByID(selectedBusStop.location.point.id);
-            };
         }
     </script>
 {% endblock %}

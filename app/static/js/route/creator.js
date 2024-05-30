@@ -195,11 +195,11 @@ function SelectNewRouteBusStopFeature(PathDirection) {
 function AddNewRouteBusstop(BusStopFeature, PathDirection) {
     if (PathDirection === 'path-a') {
         if (new_route_path_b_stops) delete new_route_path_b_stops[BusStopFeature.get('map_object_id')];
-        new_route_path_a_stops[BusStopFeature.get('map_object_id')] = BusStopFeature.get('name');
+        new_route_path_a_stops[BusStopFeature.get('map_object_id')] = BusStopFeature.get('busstop_name');
     }
     else if (PathDirection === 'path-b') {
         if (new_route_path_a_stops) delete new_route_path_a_stops[BusStopFeature.get('map_object_id')];
-        new_route_path_b_stops[BusStopFeature.get('map_object_id')] = BusStopFeature.get('name');
+        new_route_path_b_stops[BusStopFeature.get('map_object_id')] = BusStopFeature.get('busstop_name');
     }
     FillBusStopsContainer(new_route_path_a_stops, NewPathABusStopListContainer, true);
     FillBusStopsContainer(new_route_path_b_stops, NewPathBBusStopListContainer, true);

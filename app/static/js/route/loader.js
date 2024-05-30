@@ -1,15 +1,17 @@
+//
+// Route layer loader file
+//
+
 let routesVectorSource = new olVectorSource({ wrapX: false });
 let routesVectorLayer = new olVectorLayer({ source: routesVectorSource, style: mapStyleFunction });
 map.addLayer(routesVectorLayer);
 
 let loadedRoutes = null;
 
-function LoadRoutes() {
-    GetRoutes().then(routes => {
-        loadedRoutes = routes;
-        routesVectorSource.clear();
-        DisplayRoutes(routes);
-    });
+async function LoadRoutes() {
+    loadedRoutes = await GetRoutes();
+    routesVectorSource.clear();
+    DisplayRoutes(loadedRoutes);
 }
 
 async function GetRoutes() {

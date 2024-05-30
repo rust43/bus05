@@ -36,7 +36,9 @@ function SaveRoute() {
     SaveRouteRequest(route_data).then(function () {
         alert('Изменения сохранены!');
         try {
-            LoadRoutes();
+            LoadRoutes().then(function () {
+                SelectRouteData(editedRoute.id);
+            });
         } catch (err) {
             alert('Ошибка при загрузке новых маршрутов!');
         }
@@ -204,11 +206,11 @@ function SelectRouteBusStopFeature(PathDirection) {
 function AddRouteBusstop(BusStopFeature, PathDirection) {
     if (PathDirection === 'path-a') {
         delete edit_route_path_b_stops[BusStopFeature.get('map_object_id')];
-        edit_route_path_a_stops[BusStopFeature.get('map_object_id')] = BusStopFeature.get('name');
+        edit_route_path_a_stops[BusStopFeature.get('map_object_id')] = BusStopFeature.get('busstop_name');
     }
     else if (PathDirection === 'path-b') {
         delete edit_route_path_a_stops[BusStopFeature.get('map_object_id')];
-        edit_route_path_b_stops[BusStopFeature.get('map_object_id')] = BusStopFeature.get('name');
+        edit_route_path_b_stops[BusStopFeature.get('map_object_id')] = BusStopFeature.get('busstop_name');
     }
     FillBusStopsContainer(edit_route_path_a_stops, PathABusStopListContainer, false);
     FillBusStopsContainer(edit_route_path_b_stops, PathBBusStopListContainer, false);

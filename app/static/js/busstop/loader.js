@@ -1,15 +1,17 @@
+//
+// BusStop layer loader file
+//
+
 let busStopsVectorSource = new olVectorSource({ wrapX: false });
 let busStopsVectorLayer = new olVectorLayer({ source: busStopsVectorSource, style: mapStyleFunction });
 map.addLayer(busStopsVectorLayer);
 
 let loadedBusStops = null;
 
-function LoadBusStops() {
-    GetBusStops().then(busStops => {
-        loadedBusStops = busStops;
-        busStopsVectorSource.clear();
-        DisplayBusStops(busStops);
-    });
+async function LoadBusStops() {
+    loadedBusStops = await GetBusStops();
+    busStopsVectorSource.clear();
+    DisplayBusStops(loadedBusStops);
 }
 
 async function GetBusStops() {
@@ -39,11 +41,14 @@ function DisplayBusStops(busStops) {
         let coordinates = new olPointGeometry(busStop.location.point.geom.coordinates);
         coordinates = coordinates.transform('EPSG:4326', 'EPSG:3857');
         const busStopFeature = new olFeature({
-            geometry: coordinates, type: busStop.location.point.geom.type, name: busStop.name
+            geometry: coordinates,
+            type: busStop.location.point.geom.type,
+            name: 'busstop-' + busStop.id,
         });
         busStopFeature.setId(busStop.location.point.id);
         busStopFeature.set('type', 'busstop');
         busStopFeature.set('map_object_id', busStop.id);
+        busStopFeature.set('busstop_name', busStop.name);
         busStopsVectorSource.addFeature(busStopFeature);
 
         // add button to view route
@@ -61,18 +66,3 @@ function DisplayBusStops(busStops) {
 }
 
 LoadBusStops();
-
-// Select function for busstop feature id
-function SelectBusStopFeatureByID(busStopFeatureId) {
-    const busStopFeature = busStopsVectorSource.getFeatureById(busStopFeatureId);
-    if (!busStopFeature) return;
-    editMode = true;
-    mapSelectInteraction.getFeatures().clear();
-    mapSelectInteraction.getFeatures().push(busStopFeature);
-    mapSelectInteraction.dispatchEvent({
-        type: 'select',
-        selected: [busStopFeature],
-        deselected: []
-    });
-    PanToFeature(busStopFeature);
-}

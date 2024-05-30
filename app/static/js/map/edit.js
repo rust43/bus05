@@ -53,7 +53,7 @@ const mapSelectFunction = function () {
             AddRouteBusstop(feature, 'path-b');
         }
     }
-    if (editMode === 'route-path-edit') {
+    if (editMode === 'route-path-edit' || editMode === 'busstop-location-edit') {
         map.addInteraction(mapModifyInteraction);
     }
     editMode = null;
