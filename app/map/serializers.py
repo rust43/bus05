@@ -39,16 +39,17 @@ class PropSerializer(serializers.ModelSerializer):
 
 
 class MapObjectSerializer(serializers.ModelSerializer):
-    object_type = serializers.CharField(source="object_type.name")
-    point = PointSerializer(many=False, read_only=True)
-    circle = CircleSerializer(many=False, read_only=True)
-    line = LineStringSerializer(many=False, read_only=True)
-    polygon = PolygonSerializer(many=False, read_only=True)
-    props = PropSerializer(many=True, read_only=True)
-
     class Meta:
         model = MapObject
-        fields = ["name", "object_type", "point", "circle", "line", "polygon", "props"]
+        fields = ["id", "name", "object_type", "point", "circle", "line", "polygon", "props"]
+
+    id = serializers.ReadOnlyField()
+    object_type = serializers.CharField(source="object_type.name")
+    point = PointSerializer(many=False, required=False)
+    circle = CircleSerializer(many=False, required=False)
+    line = LineStringSerializer(many=False, required=False)
+    polygon = PolygonSerializer(many=False, required=False)
+    props = PropSerializer(many=True, required=False)
 
     def to_representation(self, instance):
         data = super().to_representation(instance)

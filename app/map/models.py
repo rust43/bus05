@@ -19,7 +19,7 @@ class MapObject(models.Model):
 
 class ObjectPoint(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    map_object = models.OneToOneField(MapObject, related_name="point", on_delete=models.CASCADE)
+    map_object = models.OneToOneField(MapObject, related_name="point", on_delete=models.CASCADE, null=True, blank=True)
     geom = models.PointField("точка", geography=True, null=True, blank=True)
 
 
@@ -37,7 +37,7 @@ class ObjectPolygon(models.Model):
 
 class ObjectLineString(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    map_object = models.OneToOneField(MapObject, related_name="line", on_delete=models.CASCADE)
+    map_object = models.OneToOneField(MapObject, related_name="line", on_delete=models.CASCADE, null=True, blank=True)
     geom = models.LineStringField(geography=True, null=True, blank=True)
 
 

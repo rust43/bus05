@@ -1,3 +1,4 @@
+import io
 import json
 
 from django.contrib.gis.geos import LineString
@@ -10,6 +11,7 @@ from map.models import ObjectPoint
 from map.models import ObjectPolygon
 from map.models import ObjectType
 from rest_framework import status
+from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -271,7 +273,7 @@ class DataApiView(APIView):
         routes = Route.objects.all()
         data = {
             "busstops": BusStopSerializer(busstops, many=True).data,
-            "routes": RouteSerializer(routes, many=True).data
+            "routes": RouteSerializer(routes, many=True).data,
         }
         return Response(data, status=status.HTTP_200_OK)
 
@@ -281,8 +283,11 @@ class DataApiView(APIView):
         Import new data to system
         """
         file = request.data.get("file")
-        # map_data = parse_geojson(geojson)
-
-        if file:
-            return Response(status=status.HTTP_201_CREATED)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        data = JSONParser().parse(file)
+        imported_busstops = BusStopSerializer(data=data["busstops"], many=True)
+        imported_routes = RouteSerializer(data=data["routes"], many=True)
+        valid = imported_busstops.is_valid() * imported_routes.is_valid()
+        if not valid:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        imported_busstops.save()
+        return Response(status=status.HTTP_201_CREATED)

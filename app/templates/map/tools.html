@@ -97,6 +97,8 @@
     
             this.on('complete', function () {
                 submitButton.classList.add('d-none');
+                LoadRoutes();
+                LoadBusStops();
             });
         }
     };
