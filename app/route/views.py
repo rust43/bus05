@@ -1,25 +1,13 @@
-import io
-import json
-
-from django.contrib.gis.geos import LineString
-from django.contrib.gis.geos import Point
-from django.contrib.gis.geos import Polygon
-from map.models import MapObject
-from map.models import ObjectCircle
-from map.models import ObjectLineString
-from map.models import ObjectPoint
-from map.models import ObjectPolygon
-from map.models import ObjectType
 from rest_framework import status
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
-from .models import BusStop
-from .models import Route
-from .permissions import HasGroupPermission
-from .serializers import BusStopSerializer
-from .serializers import RouteSerializer
+from route.functions import parse_geojson
+from route.models import BusStop
+from route.models import Route
+from route.permissions import HasGroupPermission
+from route.serializers import BusStopSerializer
+from route.serializers import RouteSerializer
 
 
 class RouteApiView(APIView):
@@ -50,22 +38,24 @@ class RouteApiView(APIView):
         path_a_stops = request.data.get("path_a_stops")
         path_b_stops = request.data.get("path_b_stops")
         geojson = request.data.get("geojson_data")
-        map_data = parse_geojson(geojson)
+        map_data = parse_geojson(geojson)["new"]
 
         if map_data:
             route = Route(name=name)
             # path data parse
-            for path in map_data[0]:
-                if "path-a" in path.name:
+            for path, line in map_data:
+                if "path-a" in str(path.name):
                     path.name = "route-" + str(route.id) + "-path-a"
                     path.save()
-                    path.line.save()
+                    line.save()
                     route.path_a = path
-                elif "path-b" in path.name:
+                elif "path-b" in str(path.name):
                     path.name = "route-" + str(route.id) + "-path-b"
                     path.save()
-                    path.line.save()
+                    line.save()
                     route.path_b = path
+                else:
+                    continue
             route.save()
             # busstop data parse
             for busstop_data in path_a_stops:
@@ -91,16 +81,18 @@ class RouteApiView(APIView):
         if map_data:
             for route_data in map_data.items():
                 route = Route.objects.get(pk=route_data[0])
-                for path in route_data[1]:
-                    if "path-a" in path.name:
-                        route.path_a.delete()
+                for path, line in route_data[1]:
+                    if "path-a" in str(path.name):
+                        if route.path_a:
+                            route.path_a.delete()
                         path.save()
-                        path.line.save()
+                        line.save()
                         route.path_a = path
-                    elif "path-b" in path.name:
-                        route.path_b.delete()
+                    elif "path-b" in str(path.name):
+                        if route.path_b:
+                            route.path_b.delete()
                         path.save()
-                        path.line.save()
+                        line.save()
                         route.path_b = path
                 route.name = name
                 route.save()
@@ -125,61 +117,14 @@ class RouteApiView(APIView):
         route_id = request.data.get("route_id")
         try:
             route = Route.objects.get(pk=route_id)
-            route.path_a.delete()
-            route.path_b.delete()
+            if route.path_a:
+                route.path_a.delete()
+            if route.path_b:
+                route.path_b.delete()
             route.delete()
             return Response(status=status.HTTP_200_OK)
         except Route.DoesNotExist:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-
-
-def parse_geojson(features):
-    data = json.loads(features)
-    parsed_features = {}
-    for feature in data["features"]:
-        name = feature["properties"]["name"]
-        coordinates = feature["geometry"]["coordinates"]
-        geometry_type = feature["geometry"]["type"]
-
-        # check if object newly created or exists in database
-        if feature["properties"].get("map_object_id"):
-            map_object_id = feature["properties"]["map_object_id"]
-        else:
-            map_object_id = 0
-
-        map_object_type = ObjectType.objects.get_or_create(name=geometry_type)[0]
-        map_object = MapObject(name=name, object_type=map_object_type)
-        # map_object = MapObject.objects.create(name=name, object_type=map_object_type)
-        geom = None
-        if geometry_type == "Point":
-            coordinates = list(map(float, coordinates))
-            geom = Point((coordinates[0], coordinates[1]), srid=4326)
-            ObjectPoint(map_object=map_object, geom=geom)
-            # ObjectPoint.objects.create(map_object=map_object, geom=geom)
-        elif geometry_type == "LineString":
-            for coordinate in coordinates:
-                coordinate = list(map(float, coordinate))
-            geom = LineString(coordinates, srid=4326)
-            ObjectLineString(map_object=map_object, geom=geom)
-            # ObjectLineString.objects.create(map_object=map_object, geom=geom)
-        elif geometry_type == "Circle":
-            coordinates = list(map(float, coordinates))
-            geom = Point((coordinates[0], coordinates[1]), srid=4326)
-            ObjectCircle.objects.create(map_object=map_object, geom=geom)
-        elif geometry_type == "Polygon":
-            for coordinate in coordinates[0]:
-                coordinate = list(map(float, coordinate))
-            geom = Polygon(coordinates[0], srid=4326)
-            ObjectPolygon.objects.create(map_object=map_object, geom=geom)
-
-        if parsed_features.get(map_object_id):
-            parsed_features[map_object_id].append(map_object)
-        else:
-            parsed_features[map_object_id] = [map_object]
-        # parsing props
-        # for prop, value in feature["properties"].items():
-        #     MapObjectProp.objects.create(map_object=map_object, prop=prop, value=value)
-    return parsed_features
 
 
 class BusStopApiView(APIView):
@@ -208,14 +153,14 @@ class BusStopApiView(APIView):
         name = request.data.get("name")
         # city = request.data.get("city")
         geojson = request.data.get("geojson_data")
-        map_data = parse_geojson(geojson)
+        map_data = parse_geojson(geojson)["new"]
 
         if map_data:
             busstop = BusStop(name=name)
-            location = map_data[0][0]
+            location, point = map_data[0]
             location.name = "busstop-" + str(busstop.id)
             location.save()
-            location.point.save()
+            point.save()
             busstop.location = location
             busstop.save()
             return Response(status=status.HTTP_201_CREATED)
@@ -230,12 +175,13 @@ class BusStopApiView(APIView):
         geojson = request.data.get("geojson_data")
         map_data = parse_geojson(geojson)
         if map_data:
-            busstop = next(iter(map_data))
-            location = map_data[busstop][0]
-            busstop = BusStop.objects.get(pk=busstop)
-            busstop.location.delete()
+            busstop_id = next(iter(map_data))
+            location, point = map_data[busstop_id][0]
+            busstop = BusStop.objects.get(pk=busstop_id)
+            if busstop.location:
+                busstop.location.delete()
             location.save()
-            location.point.save()
+            point.save()
             busstop.location = location
             busstop.name = name
             busstop.save()
@@ -250,7 +196,8 @@ class BusStopApiView(APIView):
         busstop_id = request.data.get("busstop_id")
         try:
             busstop = BusStop.objects.get(pk=busstop_id)
-            busstop.location.delete()
+            if busstop.location:
+                busstop.location.delete()
             busstop.delete()
             return Response(status=status.HTTP_200_OK)
         except BusStop.DoesNotExist:
@@ -290,4 +237,5 @@ class DataApiView(APIView):
         if not valid:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         imported_busstops.save()
-        return Response(status=status.HTTP_201_CREATED)
+        imported_routes.save()
+        return Response(status=status.HTTP_200_OK)
