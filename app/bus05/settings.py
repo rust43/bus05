@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     "account",
     "map",
     "route",
+    "transport",
 ]
 
 MIDDLEWARE = [

@@ -31,17 +31,3 @@ class Route(models.Model):
 
     class Meta:
         ordering = ["name"]
-
-
-class TransportType(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField(max_length=255)
-
-
-class Transport(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField(max_length=255)
-    active = models.BooleanField(default=True)
-    transport_type = models.OneToOneField(TransportType, on_delete=models.SET_NULL, null=True, blank=True)
-    location = models.OneToOneField(MapObject, on_delete=models.SET_NULL, null=True, blank=True)
-    route = models.ForeignKey(Route, related_name="transports", on_delete=models.SET_NULL, null=True, blank=True)
