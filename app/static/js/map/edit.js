@@ -17,7 +17,7 @@ let selectedFeature = null;
 let editMode = null;
 
 // Select function
-const mapSelectFunction = function() {
+const mapSelectFunction = function () {
     map.removeInteraction(mapModifyInteraction);
     mapOverlay.setPosition(undefined);
     const feature = mapSelectInteraction.getFeatures().item(0);
@@ -30,13 +30,15 @@ const mapSelectFunction = function() {
     }
     if (!feature) return;
     selectedFeature = feature;
-    if (selectedFeature.get('type') === 'new-path') {
-        SelectNewRouteFeature(selectedFeature.get('name'));
+    const type = selectedFeature.get('type');
+    const name = selectedFeature.get('name');
+    if (type === 'new-path') {
+        SelectNewRouteFeature(name);
         map.addInteraction(mapModifyInteraction);
-    } else if (selectedFeature.get('type') === 'new-busstop') {
-        SelectNewBusStopFeature(selectedFeature.get('name'));
+    } else if (type === 'new-busstop') {
+        SelectNewBusStopFeature(name);
         map.addInteraction(mapModifyInteraction);
-    } else if (selectedFeature.get('type') === 'busstop') {
+    } else if (type === 'busstop') {
         // ShowBusStopPopup(selectedFeature);
         if (editMode === 'new-route-add-busstop-path-a') {
             AddNewRouteBusstop(feature, 'path-a');
@@ -68,7 +70,7 @@ mapSelectInteraction.on('select', mapSelectFunction);
 // Keydown functions
 // ------------------
 
-let cancelEditMode = function(evt) {
+let cancelEditMode = function (evt) {
     if (evt.keyCode === 27) {
         map.removeInteraction(mapDrawInteraction);
         map.removeInteraction(mapSnapInteraction);
@@ -102,7 +104,12 @@ function rgbToHex(rgb) {
 async function ExportData() {
     let data = await GetExportData();
     data = JSON.stringify(data);
-    DownloadJSON(data, 'data.txt', 'text/plain');
+    let date = new Date().toLocaleString();
+    date = date.concat(')');
+    date = date.replace(', ', '(');
+    date = date.replaceAll('.', '-');
+    date = date.replaceAll(':', '-');
+    DownloadJSON(data, 'data-' + date + '.json', 'text/plain');
 }
 
 async function GetExportData() {

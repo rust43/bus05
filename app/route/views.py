@@ -99,11 +99,17 @@ class RouteApiView(APIView):
                 # busstop data parse
                 route.path_a_stops.clear()
                 for busstop_data in path_a_stops:
-                    busstop = BusStop.objects.get(pk=busstop_data)
+                    try:
+                        busstop = BusStop.objects.get(pk=busstop_data)
+                    except BusStop.DoesNotExist:
+                        continue
                     route.path_a_stops.add(busstop)
                 route.path_b_stops.clear()
                 for busstop_data in path_b_stops:
-                    busstop = BusStop.objects.get(pk=busstop_data)
+                    try:
+                        busstop = BusStop.objects.get(pk=busstop_data)
+                    except BusStop.DoesNotExist:
+                        continue
                     route.path_b_stops.add(busstop)
                 route.save()
             return Response(status=status.HTTP_200_OK)
@@ -177,7 +183,10 @@ class BusStopApiView(APIView):
         if map_data:
             busstop_id = next(iter(map_data))
             location, point = map_data[busstop_id][0]
-            busstop = BusStop.objects.get(pk=busstop_id)
+            try:
+                busstop = BusStop.objects.get(pk=busstop_id)
+            except BusStop.DoesNotExist:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
             if busstop.location:
                 busstop.location.delete()
             location.save()
