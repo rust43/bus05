@@ -31,10 +31,11 @@ app/static/proj4js/
 # pictures
 app/static/pictures/
 
-# bootstrap icons lib
-app/static/css/bootstrap-icons.min.css
-app/static/css/fonts/
-
-# tiles
-app/static/tiles/2gis.mbtiles
-app/static/tiles/osm.mbtiles
+# static
+app/static/*
+!app/static/css/styles.css
+!app/static/js/busstop
+!app/static/js/map
+!app/static/js/route
+!app/static/js/django-csrf.js
+!app/static/js/mobile-fullscreen.js

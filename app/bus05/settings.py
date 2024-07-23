@@ -9,7 +9,9 @@ SECRET_KEY = local_settings.SECRET_KEY
 
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "192.168.1.7"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "45.129.201.0"]
+
+CSRF_TRUSTED_ORIGINS = ["http://45.129.201.0",]
 
 if os.name == "nt":
     GDAL_LIBRARY_PATH = os.path.join(BASE_DIR, "..\\..\\..\\postgres\\bin\\libgdal-33.dll")
