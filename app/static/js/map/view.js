@@ -178,12 +178,15 @@ const mapOverlay = new olOverlay({
 
 map.addOverlay(mapOverlay);
 
-/**
- * Add a click handler to hide the popup.
- * @return {boolean} Don't follow the href.
- */
-popupCloser.onclick = function () {
-    mapOverlay.setPosition(undefined);
-    popupCloser.blur();
-    return false;
-};
+if (popupCloser) {
+    /**
+     * Add a click handler to hide the popup.
+     * @return {boolean} Don't follow the href.
+     */
+    popupCloser.onclick = function () {
+        mapOverlay.setPosition(undefined);
+        popupCloser.blur();
+        return false;
+    };
+}
+
