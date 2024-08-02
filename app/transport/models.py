@@ -14,6 +14,7 @@ class Transport(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     imei = models.CharField(max_length=16, unique=True)
     name = models.CharField(max_length=255)
+    license_plate = models.CharField(max_length=255)
     active = models.BooleanField(default=True)
     transport_type = models.OneToOneField(
         TransportType, on_delete=models.SET_NULL, null=True, blank=True

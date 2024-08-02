@@ -18,8 +18,8 @@
             flex-direction: column;
         }
     </style>
-    <link rel="stylesheet" href="{% static 'openlayers/ol.css' %}" type="text/css" />
-    <link rel="stylesheet" href="{% static 'css/dropzone.min.css' %}" type="text/css" />
+    <link rel="stylesheet" href="{% static 'openlayers/ol.css' %}" type="text/css"/>
+    <link rel="stylesheet" href="{% static 'css/dropzone.min.css' %}" type="text/css"/>
 {% endblock %}
 {% block header %}
 
@@ -33,7 +33,7 @@
                         <a href="#"
                            class="d-flex align-items-center col-lg-4 mb-2 mb-lg-0 link-body-emphasis text-decoration-none dropdown-toggle"
                            data-bs-toggle="dropdown" aria-expanded="false"><img src="{% static 'pictures/logo.png' %}"
-                                                                                alt="" width="40px" height="40px" /></a>
+                                                                                alt="" width="40px" height="40px"/></a>
                         <ul class="dropdown-menu text-small shadow">
                             <li>
                                 <a class="dropdown-item active" href="{% url 'index' %}" aria-current="page">Карта</a>
@@ -42,13 +42,13 @@
                     </div>
                     <div class="d-flex align-items-center">
                         <form class="w-100 me-3" role="search">
-                            <input type="search" class="form-control" placeholder="Найти..." />
+                            <input type="search" class="form-control" placeholder="Найти..."/>
                         </form>
                         <div class="flex-shrink-0 dropdown">
                             <a href="#"
                                class="d-flex justify-content-center align-items-center link-body-emphasis text-decoration-none dropdown-toggle"
                                data-bs-toggle="dropdown"><span class="text-secondary fs-3"><i
-                                class="bi bi-person-circle"></i></span></a>
+                                    class="bi bi-person-circle"></i></span></a>
                             <ul class="dropdown-menu text-small shadow">
                                 {% if request.user.is_authenticated %}
                                     {% if request.user.is_staff %}
@@ -59,25 +59,17 @@
                                             <a class="dropdown-item" href="#">Настройки</a>
                                         </li>
                                     {% endif %}
+                                    <li><a class="dropdown-item" href="#">Профиль</a></li>
                                     <li>
-                                        <a class="dropdown-item" href="#">Профиль</a>
+                                        <hr class="dropdown-divider"/>
                                     </li>
-                                    <li>
-                                        <hr class="dropdown-divider" />
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="{% url 'logout' %}">Выйти</a>
-                                    </li>
+                                    <li><a class="dropdown-item" href="{% url 'logout' %}">Выйти</a></li>
                                 {% else %}
+                                    <li><a class="dropdown-item" href="{% url 'login' %}">Войти</a></li>
                                     <li>
-                                        <a class="dropdown-item" href="{% url 'login' %}">Войти</a>
+                                        <hr class="dropdown-divider"/>
                                     </li>
-                                    <li>
-                                        <hr class="dropdown-divider" />
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="{% url 'signup' %}">Регистрация</a>
-                                    </li>
+                                    <li><a class="dropdown-item" href="{% url 'signup' %}">Регистрация</a></li>
                                 {% endif %}
                             </ul>
                         </div>
@@ -97,6 +89,9 @@
                 {% include 'busstop/tools.html' %}
                 {% include 'busstop/new.html' %}
                 {% include 'busstop/list.html' %}
+                {% include 'transport/tools.html' %}
+                {% include 'transport/new.html' %}
+                {% include 'transport/list.html' %}
             </div>
             <div class="p-3">
                 <a class="btn btn-outline-secondary w-100 d-flex align-items-center" onclick="ToggleSidebar();">
@@ -153,7 +148,10 @@
             document.getElementById('route-list-sidebar'),
             document.getElementById('busstop-tools'),
             document.getElementById('busstop-new'),
-            document.getElementById('busstop-list-sidebar')
+            document.getElementById('busstop-list-sidebar'),
+            document.getElementById('transport-tools'),
+            document.getElementById('transport-new'),
+            document.getElementById('transport-list-sidebar')
         ];
 
         function selectToolSidebar(sidebar) {

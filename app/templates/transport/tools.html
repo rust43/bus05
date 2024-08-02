@@ -1,10 +1,10 @@
 {% load static %}
-<div id="route-tools" class="d-none w-100">
+<div id="transport-tools" class="d-none w-100">
     <div class="d-flex flex-column">
         <a class="btn btn-light rounded-0 w-100">
             <div class="d-flex align-items-center">
-                <span class="text-bg-violet fs-5 rounded"><i class="bi bi-sign-turn-right-fill m-2"></i></span>
-                <span class="ms-3">Маршруты</span>
+                <span class="text-bg-warning fs-5 rounded"><i class="bi bi-bus-front-fill m-2"></i></span>
+                <span class="ms-3">Транспорт</span>
             </div>
         </a>
         <a class="btn btn-light rounded-0 w-100" onclick="selectToolSidebar('tools');">
@@ -13,17 +13,17 @@
                 <span class="ms-3">Назад</span>
             </div>
         </a>
-        <a class="btn btn-light rounded-0 w-100" onclick="selectToolSidebar('route-new');">
+        <a class="btn btn-light rounded-0 w-100" onclick="selectToolSidebar('transport-new');">
             <div class="d-flex align-items-center">
-                <span class="text-bg-violet fs-5 rounded"><i class="bi bi-plus-square m-2"></i></span>
-                <span class="ms-3">Создать новый</span>
+                <span class="text-bg-warning fs-5 rounded"><i class="bi bi-plus-square m-2"></i></span>
+                <span class="ms-3">Зарегистрировать новый</span>
                 <span class="ms-auto text-secondary"><i class="bi bi-caret-right-fill"></i></span>
             </div>
         </a>
-        <a class="btn btn-light rounded-0 w-100" onclick="selectToolSidebar('route-list-sidebar');">
+        <a class="btn btn-light rounded-0 w-100" onclick="selectToolSidebar('transport-list-sidebar');">
             <div class="d-flex align-items-center">
-                <span class="text-bg-violet fs-5 rounded"><i class="bi bi-list m-2"></i></span>
-                <span class="ms-3">Список маршрутов</span>
+                <span class="text-bg-warning fs-5 rounded"><i class="bi bi-list m-2"></i></span>
+                <span class="ms-3">Список транспорта</span>
                 <span class="ms-auto text-secondary"><i class="bi-caret-right-fill"></i></span>
             </div>
         </a>

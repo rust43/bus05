@@ -1,0 +1,45 @@
+{% load static %}
+<div id="transport-new" class="d-none">
+    <div class="d-flex flex-column">
+        <a class="btn btn-light rounded-0 w-100" onclick="selectToolSidebar('transport-tools');">
+            <div class="d-flex align-items-center">
+                <span class="text-secondary fs-5 rounded"><i class="bi bi-arrow-left m-2"></i></span>
+                <span class="ms-3">Назад</span>
+            </div>
+        </a>
+        <div id="transport-new-data" class="p-3">
+            <div class="mb-3">
+                <label for="transport-new-name" class="form-label">Название транспорта</label>
+                <input type="text" class="form-control" id="transport-new-name" required/>
+                <div class="invalid-feedback">Укажите название транспорта.</div>
+            </div>
+            <div class="mb-3">
+                <label for="transport-new-imei" class="form-label">IMEI транспорта</label>
+                <select class="form-select" id="transport-new-imei" required>
+                    <option selected>Выберите imei транспорта</option>
+                    <option value="1">One</option>
+                    <option value="2">Two</option>
+                    <option value="3">Three</option>
+                </select>
+                <div class="invalid-feedback">Укажите imei транспорта.</div>
+            </div>
+            <div class="mb-3">
+                <label for="transport-new-plate" class="form-label">Гос. номер</label>
+                <input type="text" class="form-control" id="transport-new-plate" required/>
+                <div class="invalid-feedback">Укажите гос. номер транспорта.</div>
+            </div>
+        </div>
+        <a class="btn btn-light rounded-0 w-100" onclick="DeleteNewTransport();">
+            <div class="d-flex align-items-center">
+                <span class="text-bg-danger fs-5 rounded"><i class="bi bi-x-square m-2"></i></span>
+                <span class="ms-3">Очистить</span>
+            </div>
+        </a>
+        <a class="btn btn-light rounded-0 w-100" onclick="NewTransportFormSave();">
+            <div class="d-flex align-items-center">
+                <span class="text-bg-success fs-5 rounded"><i class="bi bi-floppy-fill m-2"></i></span>
+                <span class="ms-3">Сохранить</span>
+            </div>
+        </a>
+    </div>
+</div>
