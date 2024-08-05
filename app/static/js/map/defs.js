@@ -58,7 +58,6 @@ const olPolygonGeometry = ol.geom.Polygon;
 const olLineStringGeometry = ol.geom.LineString;
 
 // Sphere components
-const olSphere = ol.Sphere;
 const olGetArea = ol.sphere.getArea;
 const olGetLength = ol.sphere.getLength;
 const olGetDistance = ol.sphere.getDistance;

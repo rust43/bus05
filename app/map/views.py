@@ -24,6 +24,8 @@ def serve_tile(request, layer, z, x, y):
         mbtiles_path = os.path.join(BASE_DIR, "static/tiles/2gis.mbtiles")
     elif layer == "osm":
         mbtiles_path = os.path.join(BASE_DIR, "static/tiles/osm.mbtiles")
+    elif layer == "yandex":
+        mbtiles_path = os.path.join(BASE_DIR, "static/tiles/yandex.mbtiles")
     else:
         return HttpResponseNotFound("Tile not existing on this server.")
 

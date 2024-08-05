@@ -16,9 +16,9 @@ CSRF_TRUSTED_ORIGINS = ["http://45.129.201.0",]
 if os.name == "nt":
     GDAL_LIBRARY_PATH = os.path.join(BASE_DIR, "..\\..\\..\\..\\.postgres\\bin\\libgdal-33.dll")
     GEOS_LIBRARY_PATH = os.path.join(BASE_DIR, "..\\..\\..\\..\\.postgres\\bin\\libgeos_c.dll")
-    os.environ["PATH"] = os.path.join(BASE_DIR, "..\\venv\\Lib\\site-packages\\osgeo") + ";" + os.environ["PATH"]
+    os.environ["PATH"] = os.path.join(BASE_DIR, "..\\..\\venv\\Lib\\site-packages\\osgeo") + ";" + os.environ["PATH"]
     os.environ["PROJ_LIB"] = (
-        os.path.join(BASE_DIR, "..\\venv\\Lib\\site-packages\\osgeo\\data\\proj") + ";" + os.environ["PATH"]
+        os.path.join(BASE_DIR, "..\\..\\venv\\Lib\\site-packages\\osgeo\\data\\proj") + ";" + os.environ["PATH"]
     )
 
 # Application definition

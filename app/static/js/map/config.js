@@ -16,20 +16,28 @@ const defaultExtent = [47.384, 42.8972, 47.6176, 43.059];
 let tileLayer;
 
 let layerOSM = new olTileLayer({
-    'title': 'osm', source: new olXYZSource({ url: host + '/tiles/osm/{z}/{x}/{y}.png' }),
+    'title': 'osm', source: new olXYZSource({url: host + '/tiles/osm/{z}/{x}/{y}.png'}),
 });
 
 let layer2gis = new olTileLayer({
-    'title': '2gis', source: new olXYZSource({ url: host + '/tiles/2gis/{z}/{x}/{y}.png' }),
+    'title': '2gis', source: new olXYZSource({url: host + '/tiles/2gis/{z}/{x}/{y}.png'}),
 });
 
-tileLayer = layer2gis;
+let layerYandex = new olTileLayer({
+    'title': 'yandex',
+    source: new olXYZSource({
+        url: host + '/tiles/yandex/{z}/{x}/{y}.png',
+        tilePixelRatio: 2,
+    }),
+});
+
+tileLayer = layerOSM;
 
 // ----------------------
 // Map control definition
 // ----------------------
 
-const scaleControl = new olScaleLineControl({ units: "metric" });
+const scaleControl = new olScaleLineControl({units: "metric"});
 const zoomSliderControl = new olZoomSliderControl();
 const fullScreenControl = new olFullScreenControl();
 const rotateControl = new olRotateControl();
@@ -47,16 +55,16 @@ const interactions = [dragRotateInteraction];
 // --------------
 
 let map = new olMap({
-    controls: olDefaultControls.defaults({ attribution: false }).extend(controls),
+    controls: olDefaultControls.defaults({attribution: false}).extend(controls),
     interactions: olDefaultInteractions.defaults().extend(interactions),
     target: 'map',
     layers: [tileLayer],
     view: GetExtentView(defaultExtent),
+    pixelRatio: 1,
 });
 
 map.addInteraction(new ol.interaction.MouseWheelZoom({
-    duration: 250,
-    timeout: 100,
+    duration: 250, timeout: 100,
 }));
 
 // ------------------
@@ -73,10 +81,11 @@ function GetExtentView(webExtent) {
     const viewCenter = olGetExtentCenter(mapExtent);
     return new olView({
         center: viewCenter,
+        // resolutions: tileLayer.getSource().getTileGrid().getResolutions(),
         constrainResolution: true,
         zoom: 10,
         minZoom: 2,
-        maxZoom: 18,
+        maxZoom: 19,
         extent: mapExtent,
     });
 }
@@ -91,6 +100,8 @@ function SetTileLayer(layerName) {
         tileLayer = layerOSM;
     } else if (layerName === "2gis") {
         tileLayer = layer2gis;
+    } else if (layerName === "yandex") {
+        tileLayer = layerYandex;
     }
     map.getLayers().insertAt(0, tileLayer)
 }
