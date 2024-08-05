@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from route.functions import parse_geojson
 from route.models import BusStop
 from route.models import Route
-from route.permissions import HasGroupPermission
+from bus05.permissions import HasGroupPermission
 from route.serializers import BusStopSerializer
 from route.serializers import RouteSerializer
 

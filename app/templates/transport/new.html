@@ -9,12 +9,9 @@
         </a>
         <div id="transport-new-data" class="p-3">
             <div class="mb-3">
-                <label for="transport-new-imei" class="form-label">IMEI транспорта</label>
-                <select class="form-select" id="transport-new-imei" required>
-                    <option selected>Выберите IMEI транспорта</option>
-                    <option value="1">One</option>
-                    <option value="2">Two</option>
-                    <option value="3">Three</option>
+                <label for="new-transport-imei" class="form-label">IMEI транспорта</label>
+                <select class="form-select" id="new-transport-imei" required>
+                    <option value="" selected disabled>Выберите IMEI транспорта</option>
                 </select>
                 <div class="invalid-feedback">Укажите IMEI транспорта.</div>
             </div>
@@ -43,3 +40,41 @@
         </a>
     </div>
 </div>
+
+<script>
+    async function LoadTransportIMEI() {
+        return await GetTransportIMEI();
+    }
+
+    async function GetTransportIMEI() {
+        const url = host + '/api/v1/transport-imei-list/';
+        let response = await fetch(url, {
+            method: 'get', credentials: 'same-origin', headers: {
+                'Accept': 'application/json', 'Content-Type': 'application/json'
+            }
+        });
+        if (response.ok) {
+            return await response.json();
+        } else {
+            console.log('Ошибка HTTP: ' + response.status);
+        }
+    }
+
+    function FillIMEISelect() {
+        LoadTransportIMEI().then((IMEIList) => {
+            let imeiSelect = document.getElementById('new-transport-imei');
+            imeiSelect.selectedIndex = 0;
+            let i, l = imeiSelect.options.length - 1;
+            for (i = l; i >= 1; i--) {
+                imeiSelect.options.remove(i);
+            }
+            l = IMEIList.length - 1;
+            for (i = 0; i < l; i++) {
+                let opt = document.createElement('option');
+                opt.value = IMEIList[i];
+                opt.innerHTML = IMEIList[i];
+                imeiSelect.appendChild(opt);
+            }
+        })
+    }
+</script>
