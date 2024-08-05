@@ -16,13 +16,13 @@
                 <div class="invalid-feedback">Укажите IMEI транспорта.</div>
             </div>
             <div class="mb-3">
-                <label for="transport-new-name" class="form-label">Название транспорта</label>
-                <input type="text" class="form-control" id="transport-new-name" required/>
+                <label for="new-transport-name" class="form-label">Название транспорта</label>
+                <input type="text" class="form-control" id="new-transport-name" required/>
                 <div class="invalid-feedback">Укажите название транспорта.</div>
             </div>
             <div class="mb-3">
-                <label for="transport-new-plate" class="form-label">Гос. номер</label>
-                <input type="text" class="form-control" id="transport-new-plate" required/>
+                <label for="new-transport-plate" class="form-label">Гос. номер</label>
+                <input type="text" class="form-control" id="new-transport-plate" required/>
                 <div class="invalid-feedback">Укажите гос. номер транспорта.</div>
             </div>
         </div>
@@ -76,5 +76,53 @@
                 imeiSelect.appendChild(opt);
             }
         })
+    }
+</script>
+
+<script>
+    const transportNameInput = document.getElementById("new-transport-name");
+    const transportPlateInput = document.getElementById("new-transport-plate");
+    const transportIMEISelect = document.getElementById('new-transport-imei');
+
+    function SaveNewTransport() {
+        if (!TransportFormValidation()) {
+            alert('Проверьте данные нового транспорта!');
+            return;
+        }
+        const transport_data = {
+            'imei': transportIMEISelect.options[transportIMEISelect.selectedIndex].text,
+            'name': transportNameInput.value,
+            'plate': transportPlateInput.value,
+        };
+        PostNewRoute(route_data).then(function () {
+            alert('Маршрут сохранен!');
+            try {
+                ClearNewRoute();
+                LoadRoutes();
+            } catch (err) {
+                alert('Ошибка при загрузке новых маршрутов!');
+            }
+        });
+    }
+
+    async function PostNewRoute(route_data) {
+        const url = host + '/api/v1/route/';
+        const response = await fetch(
+            url,
+            {
+                method: 'post',
+                credentials: 'same-origin',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(route_data)
+            });
+        if (response.ok) {
+            return true;
+        } else {
+            console.log('Ошибка HTTP: ' + response.status);
+        }
     }
 </script>

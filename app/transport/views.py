@@ -23,12 +23,13 @@ class ListTransportIMEI(APIView):
 
 
 class TransportApiView(APIView):
+    authentication_classes = [authentication.SessionAuthentication]
     permission_classes = [HasGroupPermission]
     required_groups = {
         "GET": ["__all__"],
         "POST": ["map_admins"],
         "PUT": ["map_admins"],
-        "DELETE": ["map_admins"],
+        "DELETE": ["map_admins"]
     }
 
     @staticmethod
