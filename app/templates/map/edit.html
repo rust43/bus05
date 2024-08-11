@@ -12,14 +12,14 @@
             height: 100%;
             width: 100%;
         }
-
+        
         body {
             display: flex;
             flex-direction: column;
         }
     </style>
-    <link rel="stylesheet" href="{% static 'openlayers/ol.css' %}" type="text/css"/>
-    <link rel="stylesheet" href="{% static 'css/dropzone.min.css' %}" type="text/css"/>
+    <link rel="stylesheet" href="{% static 'openlayers/ol.css' %}" type="text/css" />
+    <link rel="stylesheet" href="{% static 'css/dropzone.min.css' %}" type="text/css" />
 {% endblock %}
 {% block header %}
 
@@ -30,11 +30,7 @@
             <header class="py-3 border-bottom">
                 <div class="container-fluid d-grid gap-3 align-items-center" style="grid-template-columns: 1fr 2fr;">
                     <div class="dropdown">
-                        <a href="#"
-                           class="d-flex align-items-center col-lg-4 mb-2 mb-lg-0 link-body-emphasis text-decoration-none dropdown-toggle"
-                           data-bs-toggle="dropdown" aria-expanded="false">
-                            <img src="{% static 'pictures/logo.png' %}" alt="" width="40px" height="40px"/>
-                        </a>
+                        <a href="#" class="d-flex align-items-center col-lg-4 mb-2 mb-lg-0 link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><img src="{% static 'pictures/logo.png' %}" alt="" width="40px" height="40px" /></a>
                         <ul class="dropdown-menu text-small shadow">
                             <li>
                                 <a class="dropdown-item active" href="{% url 'index' %}" aria-current="page">Карта</a>
@@ -43,13 +39,10 @@
                     </div>
                     <div class="d-flex align-items-center">
                         <form class="w-100 me-3" role="search">
-                            <input type="search" class="form-control" placeholder="Найти..."/>
+                            <input type="search" class="form-control" placeholder="Найти..." />
                         </form>
                         <div class="flex-shrink-0 dropdown">
-                            <a href="#"
-                               class="d-flex justify-content-center align-items-center link-body-emphasis text-decoration-none dropdown-toggle"
-                               data-bs-toggle="dropdown"><span class="text-secondary fs-3"><i
-                                    class="bi bi-person-circle"></i></span></a>
+                            <a href="#" class="d-flex justify-content-center align-items-center link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown"><span class="text-secondary fs-3"><i class="bi bi-person-circle"></i></span></a>
                             <ul class="dropdown-menu text-small shadow">
                                 {% if request.user.is_authenticated %}
                                     {% if request.user.is_staff %}
@@ -60,25 +53,32 @@
                                             <a class="dropdown-item" href="#">Настройки</a>
                                         </li>
                                     {% endif %}
-                                    <li><a class="dropdown-item" href="#">Профиль</a></li>
                                     <li>
-                                        <hr class="dropdown-divider"/>
+                                        <a class="dropdown-item" href="#">Профиль</a>
                                     </li>
-                                    <li><a class="dropdown-item" href="{% url 'logout' %}">Выйти</a></li>
+                                    <li>
+                                        <hr class="dropdown-divider" />
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="{% url 'logout' %}">Выйти</a>
+                                    </li>
                                 {% else %}
-                                    <li><a class="dropdown-item" href="{% url 'login' %}">Войти</a></li>
                                     <li>
-                                        <hr class="dropdown-divider"/>
+                                        <a class="dropdown-item" href="{% url 'login' %}">Войти</a>
                                     </li>
-                                    <li><a class="dropdown-item" href="{% url 'signup' %}">Регистрация</a></li>
+                                    <li>
+                                        <hr class="dropdown-divider" />
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="{% url 'signup' %}">Регистрация</a>
+                                    </li>
                                 {% endif %}
                             </ul>
                         </div>
                     </div>
                 </div>
             </header>
-            <a href="#" class="d-flex align-items-center link-body-emphasis text-decoration-none px-3 py-2"
-               onclick="selectToolSidebar('');">
+            <a href="#" class="d-flex align-items-center link-body-emphasis text-decoration-none px-3 py-2" onclick="selectToolSidebar('');">
                 <span class="me-3 pe-none fs-3 text-primary"><i class="bi bi-tools"></i></span>
                 <span class="fs-4 text-secondary">Инструменты</span>
             </a>
@@ -124,6 +124,7 @@
 {% block specific_scripts %}
     <script src="{% static 'proj4js/proj4.js' %}"></script>
     <script src="{% static 'openlayers/dist/ol.js' %}"></script>
+    <script src="{% static 'js/django-csrf.js' %}"></script>
     <script src="{% static 'js/map/defs.js' %}"></script>
     <script src="{% static 'js/map/config.js' %}"></script>
     <script src="{% static 'js/map/view.js' %}"></script>
@@ -134,7 +135,7 @@
     <script src="{% static 'js/busstop/loader.js' %}"></script>
     <script src="{% static 'js/busstop/creator.js' %}"></script>
     <script src="{% static 'js/busstop/editor.js' %}"></script>
-    <script src="{% static 'js/django-csrf.js' %}"></script>
+    <script src="{% static 'js/transport/creator.js' %}"></script>
     <script>
         function ToggleSidebar() {
             document.getElementById('sidebar').classList.toggle('sidebar-hidden');
@@ -154,7 +155,7 @@
             document.getElementById('transport-new'),
             document.getElementById('transport-list-sidebar')
         ];
-
+        
         function selectToolSidebar(sidebar) {
             DeleteNewBusStop();
             ClearNewRoute();

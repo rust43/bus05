@@ -14,7 +14,7 @@ def map_view(request):
 
 @login_required
 def map_edit_view(request):
-    if not request.user.groups.filter(name="map_admins").exists():
+    if not request.user.groups.filter(name="map_admin").exists():
         return HttpResponseNotFound("У вас нет доступа к данной странице.")
     return render(request, "map/edit.html")
 

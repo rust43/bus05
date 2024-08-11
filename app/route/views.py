@@ -1,3 +1,4 @@
+from bus05.permissions import HasGroupPermission
 from rest_framework import status
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
@@ -5,7 +6,6 @@ from rest_framework.views import APIView
 from route.functions import parse_geojson
 from route.models import BusStop
 from route.models import Route
-from bus05.permissions import HasGroupPermission
 from route.serializers import BusStopSerializer
 from route.serializers import RouteSerializer
 
@@ -15,9 +15,9 @@ class RouteApiView(APIView):
 
     required_groups = {
         "GET": ["__all__"],
-        "POST": ["map_admins"],
-        "PUT": ["map_admins"],
-        "DELETE": ["map_admins"],
+        "POST": ["map_admin"],
+        "PUT": ["map_admin"],
+        "DELETE": ["map_admin"],
     }
 
     @staticmethod
@@ -137,9 +137,9 @@ class BusStopApiView(APIView):
     permission_classes = [HasGroupPermission]
     required_groups = {
         "GET": ["__all__"],
-        "POST": ["map_admins"],
-        "PUT": ["map_admins"],
-        "DELETE": ["map_admins"],
+        "POST": ["map_admin"],
+        "PUT": ["map_admin"],
+        "DELETE": ["map_admin"],
     }
 
     @staticmethod
@@ -216,8 +216,8 @@ class BusStopApiView(APIView):
 class DataApiView(APIView):
     permission_classes = [HasGroupPermission]
     required_groups = {
-        "GET": ["map_admins"],
-        "POST": ["map_admins"],
+        "GET": ["map_admin"],
+        "POST": ["map_admin"],
     }
 
     @staticmethod
