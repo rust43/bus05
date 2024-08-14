@@ -5,6 +5,7 @@ const transportRouteSelect = document.getElementById('new-transport-route');
 const transportTypeSelect = document.getElementById('new-transport-type-select');
 const transportTypeInput = document.getElementById("new-transport-type");
 const transportTypeChk = document.getElementById("new-transport-type-chk");
+const transportActiveChk = document.getElementById("new-transport-active-chk");
 const transportTypeInputField = document.getElementById("new-transport-type-input");
 
 function ClearNewTransportForm() {
@@ -13,6 +14,7 @@ function ClearNewTransportForm() {
     inputClearHelper(transportTypeInput);
     transportTypeInputField.classList.add("d-none");
     transportTypeChk.checked = false;
+    transportActiveChk.checked = false;
     transportTypeSelect.disabled = false;
     selectClearHelper(transportIMEISelect);
     selectClearHelper(transportRouteSelect);
