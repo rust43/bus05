@@ -2,7 +2,7 @@
 venv/
 
 # OSX
-.DS_Store
+**/.DS_Store
 
 # Thumbnails
 ._*
@@ -26,10 +26,18 @@ resources/
 
 # static
 app/static/*
+
+# css
+!app/static/css/
+app/static/css/*
 !app/static/css/styles.css
-!app/static/js/busstop
-!app/static/js/map
-!app/static/js/route
-!app/static/js/transport
+
+# javascript
+!app/static/js/
+app/static/js/*
+!app/static/js/busstop/
+!app/static/js/map/
+!app/static/js/route/
+!app/static/js/transport/
 !app/static/js/django-csrf.js
 !app/static/js/mobile-fullscreen.js
