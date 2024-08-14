@@ -1,9 +1,11 @@
 from bus05.permissions import HasGroupPermission
 from rest_framework import authentication
+from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from transport.models import TransportPoint
 from transport.models import TransportType
+from transport.serializers import TransportTypeSerializer
 
 
 class ListTransportIMEI(APIView):
@@ -42,8 +44,9 @@ class ListTransportTypes(APIView):
         """
         Return a list of all transport types.
         """
-        type_list = TransportType.objects.all().order_by("name").values_list()
-        return Response(type_list)
+        type_list = TransportType.objects.all()
+        serializer = TransportTypeSerializer(type_list, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class TransportApiView(APIView):

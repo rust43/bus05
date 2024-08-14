@@ -17,7 +17,7 @@
             </div>
             <div class="mb-3">
                 <label for="new-transport-route" class="form-label">Маршрут транспорта</label>
-                <select class="form-select" id="new-transport-route" required>
+                <select class="form-select" id="new-transport-route">
                     <option value="" selected disabled>Выберите маршрут транспорта</option>
                 </select>
                 <div class="invalid-feedback">Укажите маршрут транспорта.</div>
@@ -30,10 +30,10 @@
                 <div class="invalid-feedback">Укажите тип транспорта.</div>
             </div>
             <div class="mb-3 form-check">
-                <input type="checkbox" class="form-check-input" id="create-new-transport-type" />
-                <label class="form-check-label" for="create-new-transport-type">Создать новый тип транспорта</label>
+                <input type="checkbox" class="form-check-input" id="new-transport-type-chk" />
+                <label class="form-check-label" for="new-transport-type-chk">Создать новый тип транспорта</label>
             </div>
-            <div class="mb-3">
+            <div class="mb-3 d-none" id="new-transport-type-input">
                 <label for="new-transport-type" class="form-label">Тип транспорта</label>
                 <input type="text" class="form-control" id="new-transport-type" required disabled />
                 <div class="invalid-feedback">Укажите тип транспорта.</div>
