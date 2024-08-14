@@ -141,19 +141,32 @@ function SaveNewTransport() {
         alert('Проверьте данные нового транспорта!');
         return;
     }
+
+    let transport_type = null;
+    let new_transport_type = false;
+    if (transportTypeChk.checked) {
+        transport_type = transportTypeInput.value;
+        new_transport_type = true;
+    }
+    else {
+        transport_type = transportTypeSelect.value;
+    }
+
     const transport_data = {
-        'imei': transportIMEISelect.options[transportIMEISelect.selectedIndex].text,
+        'imei': transportIMEISelect.value,
         'name': transportNameInput.value,
-        'plate': transportPlateInput.value,
+        'license_plate': transportPlateInput.value,
+        'active': transportActiveChk.checked,
+        'transport_type': transport_type,
+        'new_transport_type': new_transport_type,
+        'route': transportRouteSelect.value,
     };
-    return;
     PostNewTransport(transport_data).then(function () {
         alert('Транспорт сохранен!');
         try {
-            // ClearNewTransport();
-            // LoadTransport();
+            FillNewTransportForm();
         } catch (err) {
-            alert('Ошибка при загрузке нового транспорта!');
+            alert('Ошибка при сохранении нового транспорта!');
         }
     });
 }

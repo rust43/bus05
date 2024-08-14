@@ -29,5 +29,8 @@ class Route(models.Model):
     path_b = models.OneToOneField(MapObject, related_name="path_b", on_delete=models.SET_NULL, null=True, blank=True)
     path_b_stops = models.ManyToManyField(BusStop, related_name="path_b_stops", blank=True)
 
+    def __str__(self):
+        return f"{self.name}"
+
     class Meta:
         ordering = ["name"]

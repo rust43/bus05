@@ -15,6 +15,8 @@ class TransportTypeAdmin(admin.ModelAdmin):
 class TransportAdmin(admin.ModelAdmin):
     model = Transport
     list_display = ("imei", "name", "transport_type", "route")
+    list_filter = ("transport_type__name",)
+    ordering = ("imei",)
 
 
 @admin.register(TransportPoint)
