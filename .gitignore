@@ -30,5 +30,6 @@ app/static/*
 !app/static/js/busstop
 !app/static/js/map
 !app/static/js/route
+!app/static/js/transport
 !app/static/js/django-csrf.js
 !app/static/js/mobile-fullscreen.js
