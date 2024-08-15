@@ -42,11 +42,11 @@ class BusStopSerializer(serializers.ModelSerializer):
 
 
 class BusStopSimpleSerializer(serializers.ModelSerializer):
+    id = serializers.UUIDField()
+
     class Meta:
         model = BusStop
         fields = ["id", "name"]
-
-    id = serializers.UUIDField()
 
 
 class RouteSerializer(serializers.ModelSerializer):

@@ -8,6 +8,7 @@ from transport.models import Transport
 from transport.models import TransportPoint
 from transport.models import TransportType
 from transport.serializers import TransportTypeSerializer
+from transport.serializers import TransportSerializer
 
 
 class ListTransportIMEI(APIView):
@@ -68,6 +69,9 @@ class TransportApiView(APIView):
         """
         List all Transport
         """
+        transports = Transport.objects.all()
+        serializer = TransportSerializer(transports, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @staticmethod
     def post(request, *args, **kwargs):
