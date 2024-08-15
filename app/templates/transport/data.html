@@ -1,25 +1,70 @@
 {% load static %}
-<div id="transport-data" class="d-none">
+<div id="transport-selected" class="d-none">
     <div class="d-flex flex-column border-top">
-        <span class="px-3 mt-2 mb-2">Данные транспорта</span>
-        <div class="px-3 mb-3">
-            <label for="selected-transport-name" class="form-label text-body-tertiary">Название транспорта</label>
-            <input type="text" class="form-control" id="selected-transport-name" required />
-            <div class="invalid-feedback">Укажите название транспорта.</div>
+        <div id="transport-selected-data" class="px-3 d-flex flex-column">
+            <span class="mt-3 mb-3">Данные транспорта</span>
+            <div class="mb-3 d-none">
+                <label for="selected-transport-id" class="form-label text-body-tertiary">Уникальный идентификатор транспорта</label>
+                <input type="text" class="form-control" id="selected-transport-id" disabled />
+            </div>
+            <div class="mb-3">
+                <label for="selected-transport-imei-select" class="form-label text-body-tertiary">IMEI транспорта</label>
+                <select class="form-select" id="selected-transport-imei-select" required>
+                    <option value="" selected disabled>Выберите IMEI транспорта</option>
+                </select>
+                <div class="invalid-feedback">Укажите IMEI транспорта.</div>
+            </div>
+            <div class="mb-3">
+                <label for="selected-transport-route-select" class="form-label text-body-tertiary">Маршрут транспорта</label>
+                <select class="form-select" id="selected-transport-route-select">
+                    <option value="" selected disabled>Выберите маршрут транспорта</option>
+                </select>
+                <div class="invalid-feedback">Укажите маршрут транспорта.</div>
+            </div>
+            <div class="mb-3">
+                <label for="selected-transport-type-select" class="form-label text-body-tertiary">Тип транспорта</label>
+                <select class="form-select" id="selected-transport-type-select" required>
+                    <option value="" selected disabled>Выберите тип транспорта</option>
+                </select>
+                <div class="invalid-feedback">Укажите тип транспорта.</div>
+            </div>
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="selected-transport-type-chk" />
+                <label class="form-check-label" for="selected-transport-type-chk">Создать новый тип транспорта</label>
+            </div>
+            <div class="mb-3 d-none" id="selected-transport-type-field">
+                <label for="selected-transport-type" class="form-label text-body-tertiary">Тип транспорта</label>
+                <input type="text" class="form-control" id="selected-transport-type" required disabled />
+                <div class="invalid-feedback">Укажите тип транспорта.</div>
+            </div>
+            <div class="mb-3">
+                <label for="selected-transport-name" class="form-label text-body-tertiary">Название транспорта</label>
+                <input type="text" class="form-control" id="selected-transport-name" required />
+                <div class="invalid-feedback">Укажите название транспорта.</div>
+            </div>
+            <div class="mb-3">
+                <label for="selected-transport-plate" class="form-label text-body-tertiary">Гос. номер</label>
+                <input type="text" class="form-control" id="selected-transport-plate" required />
+                <div class="invalid-feedback">Укажите гос. номер транспорта.</div>
+            </div>
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="selected-transport-active-chk" />
+                <label class="form-check-label" for="selected-transport-active-chk">Транспорт активен (отображение на маршруте)</label>
+            </div>
         </div>
         <a class="btn btn-light rounded-0 w-100" onclick="" id="show-transport-location-button">
             <div class="d-flex align-items-center">
-                <span class="text-bg-secondary fs-5 rounded"><i class="bi bi-signpost-fill m-2"></i></span>
+                <span class="text-bg-secondary fs-5 rounded"><i class="bi bi-bus-front-fill m-2"></i></span>
                 <span class="ms-3">Расположение</span>
             </div>
         </a>
-        <a class="btn btn-light rounded-0 w-100" onclick="SaveTransport();">
+        <a class="btn btn-light rounded-0 w-100" onclick="SaveEditTransport();">
             <div class="d-flex align-items-center">
                 <span class="text-bg-success fs-5 rounded"><i class="bi bi-floppy-fill m-2"></i></span>
                 <span class="ms-3">Сохранить</span>
             </div>
         </a>
-        <a class="btn btn-light rounded-0 w-100" onclick="DeleteTransport();">
+        <a class="btn btn-light rounded-0 w-100" onclick="DeleteEditTransport();">
             <div class="d-flex align-items-center">
                 <span class="text-bg-danger fs-5 rounded"><i class="bi bi-x-square m-2"></i></span>
                 <span class="ms-3">Удалить</span>

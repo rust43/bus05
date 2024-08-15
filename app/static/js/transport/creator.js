@@ -35,66 +35,31 @@ const selectClearHelper = function (select) {
 
 function FillNewTransportForm() {
     ClearNewTransportForm();
-    FillTransportIMEISelect();
-    FillTransportRouteSelect();
-    FillTransportTypeSelect();
+    FillTransportIMEISelect(transportIMEISelect);
+    FillTransportRouteSelect(transportRouteSelect);
+    FillTransportTypeSelect(transportTypeSelect);
 }
 
-async function APIGetRequest(address) {
-    const url = host + address;
-    let response = await fetch(url, {
-        method: 'get', credentials: 'same-origin', headers: {
-            'Accept': 'application/json', 'Content-Type': 'application/json'
-        }
-    });
-    if (response.ok) {
-        return await response.json();
-    } else {
-        console.log('Ошибка HTTP: ' + response.status);
-    }
-}
-
-function FillSelect(selectElement, valueList, valueNames = null) {
-    selectElement.selectedIndex = 0;
-    let i, l = selectElement.options.length - 1;
-    for (i = l; i >= 1; i--) {
-        selectElement.options.remove(i);
-    }
-    l = valueList.length;
-    for (i = 0; i < l; i++) {
-        let opt = document.createElement('option');
-        if (valueNames !== null) {
-            opt.value = valueList[i][valueNames[0]];
-            opt.innerHTML = valueList[i][valueNames[1]];
-        }
-        else {
-            opt.value = valueList[i];
-            opt.innerHTML = valueList[i];
-        }
-        selectElement.appendChild(opt);
-    }
-}
-
-function FillTransportIMEISelect() {
-    let api_endpoint = "/api/v1/transport-imei/";
-    APIGetRequest(api_endpoint).then((IMEIList) => {
-        FillSelect(transportIMEISelect, IMEIList);
+async function FillTransportIMEISelect(selectElement) {
+    let api_endpoint = "/api/v1/transport/imei/";
+    await APIGetRequest(api_endpoint).then((IMEIList) => {
+        FillSelect(selectElement, IMEIList);
     });
 }
 
-function FillTransportRouteSelect() {
-    APIGetRequest("/api/v1/route/").then((RouteList) => {
-        FillSelect(transportRouteSelect, RouteList, ["id", "name"]);
+async function FillTransportRouteSelect(selectElement) {
+    await APIGetRequest("/api/v1/route/").then((RouteList) => {
+        FillSelect(selectElement, RouteList, ["id", "name"]);
     });
 }
 
-function FillTransportTypeSelect() {
-    APIGetRequest("/api/v1/transport-type/").then((TypesList) => {
-        FillSelect(transportTypeSelect, TypesList, ["id", "name"]);
+async function FillTransportTypeSelect(selectElement) {
+    await APIGetRequest("/api/v1/transport/type/").then((TypesList) => {
+        FillSelect(selectElement, TypesList, ["id", "name"]);
     });
 }
 
-function TransportFormValidation() {
+function TransportCreateFormValidation() {
     let result = true;
     result *= inputValidationHelper(transportNameInput);
     result *= inputValidationHelper(transportPlateInput);
@@ -137,7 +102,7 @@ const selectValidationHelper = function (select) {
 }
 
 function SaveNewTransport() {
-    if (!TransportFormValidation()) {
+    if (!TransportCreateFormValidation()) {
         alert('Проверьте данные нового транспорта!');
         return;
     }
@@ -192,16 +157,24 @@ async function PostNewTransport(transport_data) {
     }
 }
 
-transportTypeChk.addEventListener("change", (event) => {
-    if (event.currentTarget.checked) {
-        transportTypeInputField.classList.remove("d-none");
-        transportTypeInput.disabled = false;
-        transportTypeSelect.disabled = true;
-    }
-    else {
-        transportTypeInputField.classList.add("d-none");
-        transportTypeInput.disabled = true;
-        transportTypeSelect.disabled = false;
-    }
-});
+function TransportTypeChkListener(chkEl, inputParent, inputEl, selectEl) {
+    chkEl.addEventListener("change", (event) => {
+        if (event.currentTarget.checked) {
+            inputParent.classList.remove("d-none");
+            inputEl.disabled = false;
+            selectEl.disabled = true;
+        }
+        else {
+            inputParent.classList.add("d-none");
+            inputEl.disabled = true;
+            selectEl.disabled = false;
+        }
+    });
+}
 
+TransportTypeChkListener(
+    transportTypeChk,
+    transportTypeInputField,
+    transportTypeInput,
+    transportTypeSelect
+);
