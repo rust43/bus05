@@ -7,14 +7,15 @@ from route.models import Route
 from transport.models import Transport
 from transport.models import TransportPoint
 from transport.models import TransportType
-from transport.serializers import TransportTypeSerializer
 from transport.serializers import TransportSerializer
+from transport.serializers import TransportTypeSerializer
 
 
 class ListTransportIMEI(APIView):
     """
     View to list all transport imei's.
     """
+
     authentication_classes = [authentication.SessionAuthentication]
     permission_classes = [HasGroupPermission]
     required_groups = {
@@ -36,6 +37,7 @@ class ListTransportTypes(APIView):
     """
     View to list all transport types.
     """
+
     authentication_classes = [authentication.SessionAuthentication]
     permission_classes = [HasGroupPermission]
     required_groups = {
@@ -115,7 +117,7 @@ class TransportApiView(APIView):
         """
         Edit Transport data
         """
-        transport_id = request.data.get("id")
+        transport_id = request.data.get("transport_id")
         try:
             transport = Transport.objects.get(pk=transport_id)
         except Transport.DoesNotExist:
@@ -148,3 +150,10 @@ class TransportApiView(APIView):
         """
         Delete Transport
         """
+        transport_id = request.data.get("transport_id")
+        try:
+            transport = Transport.objects.get(pk=transport_id)
+            transport.delete()
+            return Response(status=status.HTTP_200_OK)
+        except Transport.DoesNotExist:
+            return Response(status=status.HTTP_400_BAD_REQUEST)

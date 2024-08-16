@@ -86,7 +86,7 @@ function EditTransport() {
         transport_type = selectedTransportTypeSelect.value;
     }
     const transport_data = {
-        'id': transport_id,
+        'transport_id': transport_id,
         'imei': selectedTransportIMEISelect.value,
         'name': selectedTransportNameInput.value,
         'license_plate': selectedTransportPlateInput.value,
@@ -114,6 +114,43 @@ async function PutTransport(transport_data) {
             'X-CSRFToken': getCookie('csrftoken'), 'Accept': 'application/json', 'Content-Type': 'application/json'
         }, body: JSON.stringify(transport_data)
     });
+    if (response.ok) {
+        return true;
+    } else {
+        console.log('Ошибка HTTP: ' + response.status);
+    }
+}
+
+async function DeleteTransport() {
+    let transportId = selectedTransportIDInput.value;
+    const transport_data = {
+        'transport_id': transportId
+    };
+    await DeleteTransportRequest(transport_data).then(function() {
+        alert('Транспорт удален!');
+        try {
+            document.getElementById('transport-selected').classList.add('d-none');
+            LoadTransportList();
+        } catch (err) {
+            alert('Ошибка при удалении нового транспорта!');
+        }
+    });
+}
+
+async function DeleteTransportRequest(transport_data) {
+    const url = host + '/api/v1/transport/';
+    const response = await fetch(
+        url,
+        {
+            method: 'delete',
+            credentials: 'same-origin',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(transport_data)
+        });
     if (response.ok) {
         return true;
     } else {
