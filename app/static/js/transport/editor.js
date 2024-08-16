@@ -30,22 +30,13 @@ function SelectTransportData(transportId) {
     selectedTransportNameInput.value = editedTransport.name;
     selectedTransportIDInput.value = editedTransport.id;
     selectedTransportPlateInput.value = editedTransport.license_plate;
-
-    if (editedTransport.active) {
-        selectedTransportActiveChk.checked = true;
-    }
-    else {
-        selectedTransportActiveChk.checked = false;
-    }
-
+    selectedTransportActiveChk.checked = editedTransport.active;
     FillTransportRouteSelect(selectedTransportRouteSelect).then(() => {
         selectedTransportRouteSelect.value = editedTransport.route;
     });
-
     FillTransportTypeSelect(selectedTransportTypeSelect).then(() => {
         selectedTransportTypeSelect.value = editedTransport.transport_type;
     });
-
     FillTransportIMEISelect(selectedTransportIMEISelect).then(() => {
         let opt = document.createElement('option');
         opt.value = editedTransport.imei;
@@ -57,18 +48,12 @@ function SelectTransportData(transportId) {
 
 function GetSelectedTransport(transportId) {
     for (let i = 0; i < loadedTransport.length; i++) {
-        if (loadedTransport[i].id === transportId)
-            return loadedTransport[i];
+        if (loadedTransport[i].id === transportId) return loadedTransport[i];
     }
     return null;
 }
 
-TransportTypeChkListener(
-    selectedTransportTypeChk,
-    selectedTransportTypeInputField,
-    selectedTransportTypeInput,
-    selectedTransportTypeSelect
-);
+TransportTypeChkListener(selectedTransportTypeChk, selectedTransportTypeInputField, selectedTransportTypeInput, selectedTransportTypeSelect);
 
 function TransportEditFormValidation() {
     let result = true;
@@ -77,8 +62,7 @@ function TransportEditFormValidation() {
     if (selectedTransportTypeChk.checked) {
         result *= inputValidationHelper(selectedTransportTypeInput);
         selectClearHelper(selectedTransportTypeSelect);
-    }
-    else {
+    } else {
         result *= selectValidationHelper(selectedTransportTypeSelect);
         inputClearHelper(selectedTransportTypeInput);
     }
@@ -87,23 +71,22 @@ function TransportEditFormValidation() {
     return result;
 }
 
-function SaveEditTransport() {
+function EditTransport() {
     if (!TransportEditFormValidation()) {
         alert('Проверьте данные редактируемого транспорта!');
         return;
     }
-
-    let transport_type = null;
+    let transport_id = selectedTransportIDInput.value;
+    let transport_type;
     let new_transport_type = false;
     if (selectedTransportTypeChk.checked) {
         transport_type = selectedTransportTypeInput.value;
         new_transport_type = true;
-    }
-    else {
+    } else {
         transport_type = selectedTransportTypeSelect.value;
     }
-
     const transport_data = {
+        'id': transport_id,
         'imei': selectedTransportIMEISelect.value,
         'name': selectedTransportNameInput.value,
         'license_plate': selectedTransportPlateInput.value,
@@ -112,31 +95,25 @@ function SaveEditTransport() {
         'new_transport_type': new_transport_type,
         'route': selectedTransportRouteSelect.value,
     };
-
-    PostEditTransport(transport_data).then(function () {
+    PutTransport(transport_data).then(function () {
         alert('Транспорт сохранен!');
         try {
-            FillNewTransportForm();
+            LoadTransportList().then(() => {
+                SelectTransportData(transport_id);
+            });
         } catch (err) {
             alert('Ошибка при сохранении нового транспорта!');
         }
     });
 }
 
-async function PostEditTransport(transport_data) {
+async function PutTransport(transport_data) {
     const url = host + '/api/v1/transport/';
-    const response = await fetch(
-        url,
-        {
-            method: 'post',
-            credentials: 'same-origin',
-            headers: {
-                'X-CSRFToken': getCookie('csrftoken'),
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(transport_data)
-        });
+    const response = await fetch(url, {
+        method: 'put', credentials: 'same-origin', headers: {
+            'X-CSRFToken': getCookie('csrftoken'), 'Accept': 'application/json', 'Content-Type': 'application/json'
+        }, body: JSON.stringify(transport_data)
+    });
     if (response.ok) {
         return true;
     } else {

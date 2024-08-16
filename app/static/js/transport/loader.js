@@ -1,8 +1,8 @@
 let loadedTransport = null;
 
-function LoadTransportList() {
+async function LoadTransportList() {
     let api_endpoint = "/api/v1/transport/";
-    APIGetRequest(api_endpoint).then((transportList) => {
+    await APIGetRequest(api_endpoint).then((transportList) => {
         loadedTransport = transportList;
         const transportListContainer = document.getElementById('transport-list');
         if (transportListContainer) transportListContainer.innerHTML = '';
@@ -49,8 +49,7 @@ function FillSelect(selectElement, valueList, valueNames = null) {
         if (valueNames !== null) {
             opt.value = valueList[i][valueNames[0]];
             opt.innerHTML = valueList[i][valueNames[1]];
-        }
-        else {
+        } else {
             opt.value = valueList[i];
             opt.innerHTML = valueList[i];
         }

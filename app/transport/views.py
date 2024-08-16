@@ -15,7 +15,6 @@ class ListTransportIMEI(APIView):
     """
     View to list all transport imei's.
     """
-
     authentication_classes = [authentication.SessionAuthentication]
     permission_classes = [HasGroupPermission]
     required_groups = {
@@ -37,7 +36,6 @@ class ListTransportTypes(APIView):
     """
     View to list all transport types.
     """
-
     authentication_classes = [authentication.SessionAuthentication]
     permission_classes = [HasGroupPermission]
     required_groups = {
@@ -78,7 +76,6 @@ class TransportApiView(APIView):
         """
         Create new Transport
         """
-
         imei = request.data.get("imei")
         name = request.data.get("name")
         license_plate = request.data.get("license_plate")
@@ -118,6 +115,33 @@ class TransportApiView(APIView):
         """
         Edit Transport data
         """
+        transport_id = request.data.get("id")
+        try:
+            transport = Transport.objects.get(pk=transport_id)
+        except Transport.DoesNotExist:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        transport.imei = request.data.get("imei")
+        transport.name = request.data.get("name")
+        transport.license_plate = request.data.get("license_plate")
+        transport.active = request.data.get("active")
+        transport_type = request.data.get("transport_type")
+        if request.data.get("new_transport_type"):
+            transport_type = TransportType.objects.create(name=transport_type)
+        else:
+            try:
+                transport_type = TransportType.objects.get(pk=transport_type)
+            except TransportType.DoesNotExist:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+        transport.transport_type = transport_type
+
+        try:
+            route = Route.objects.get(pk=request.data.get("route"))
+        except Route.DoesNotExist:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        transport.route = route
+        transport.save()
+
+        return Response(status=status.HTTP_201_CREATED)
 
     @staticmethod
     def delete(request, *args, **kwargs):

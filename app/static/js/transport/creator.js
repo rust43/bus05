@@ -33,11 +33,11 @@ const selectClearHelper = function (select) {
     select.classList.remove("is-invalid");
 }
 
-function FillNewTransportForm() {
+async function FillNewTransportForm() {
     ClearNewTransportForm();
-    FillTransportIMEISelect(transportIMEISelect);
-    FillTransportRouteSelect(transportRouteSelect);
-    FillTransportTypeSelect(transportTypeSelect);
+    await FillTransportIMEISelect(transportIMEISelect);
+    await FillTransportRouteSelect(transportRouteSelect);
+    await FillTransportTypeSelect(transportTypeSelect);
 }
 
 async function FillTransportIMEISelect(selectElement) {
@@ -66,8 +66,7 @@ function TransportCreateFormValidation() {
     if (transportTypeChk.checked) {
         result *= inputValidationHelper(transportTypeInput);
         selectClearHelper(transportTypeSelect);
-    }
-    else {
+    } else {
         result *= selectValidationHelper(transportTypeSelect);
         inputClearHelper(transportTypeInput);
     }
@@ -93,27 +92,25 @@ const selectValidationHelper = function (select) {
         select.classList.remove('is-invalid');
         select.classList.add('is-valid');
         return true;
-    }
-    else {
+    } else {
         select.classList.remove('is-valid');
         select.classList.add('is-invalid');
         return false;
     }
 }
 
-function SaveNewTransport() {
+async function SaveNewTransport() {
     if (!TransportCreateFormValidation()) {
         alert('Проверьте данные нового транспорта!');
         return;
     }
 
-    let transport_type = null;
+    let transport_type;
     let new_transport_type = false;
     if (transportTypeChk.checked) {
         transport_type = transportTypeInput.value;
         new_transport_type = true;
-    }
-    else {
+    } else {
         transport_type = transportTypeSelect.value;
     }
 
@@ -138,18 +135,11 @@ function SaveNewTransport() {
 
 async function PostNewTransport(transport_data) {
     const url = host + '/api/v1/transport/';
-    const response = await fetch(
-        url,
-        {
-            method: 'post',
-            credentials: 'same-origin',
-            headers: {
-                'X-CSRFToken': getCookie('csrftoken'),
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(transport_data)
-        });
+    const response = await fetch(url, {
+        method: 'post', credentials: 'same-origin', headers: {
+            'X-CSRFToken': getCookie('csrftoken'), 'Accept': 'application/json', 'Content-Type': 'application/json'
+        }, body: JSON.stringify(transport_data)
+    });
     if (response.ok) {
         return true;
     } else {
@@ -163,8 +153,7 @@ function TransportTypeChkListener(chkEl, inputParent, inputEl, selectEl) {
             inputParent.classList.remove("d-none");
             inputEl.disabled = false;
             selectEl.disabled = true;
-        }
-        else {
+        } else {
             inputParent.classList.add("d-none");
             inputEl.disabled = true;
             selectEl.disabled = false;
@@ -172,9 +161,4 @@ function TransportTypeChkListener(chkEl, inputParent, inputEl, selectEl) {
     });
 }
 
-TransportTypeChkListener(
-    transportTypeChk,
-    transportTypeInputField,
-    transportTypeInput,
-    transportTypeSelect
-);
+TransportTypeChkListener(transportTypeChk, transportTypeInputField, transportTypeInput, transportTypeSelect);
