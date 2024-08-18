@@ -126,7 +126,7 @@ async function DeleteTransport() {
     const transport_data = {
         'transport_id': transportId
     };
-    await DeleteTransportRequest(transport_data).then(function() {
+    await DeleteTransportRequest(transport_data).then(function () {
         alert('Транспорт удален!');
         try {
             document.getElementById('transport-selected').classList.add('d-none');

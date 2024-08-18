@@ -7,11 +7,12 @@ from route.models import Route
 from transport.models import Transport
 from transport.models import TransportPoint
 from transport.models import TransportType
+from transport.serializers import TransportPointSerializer
 from transport.serializers import TransportSerializer
 from transport.serializers import TransportTypeSerializer
 
 
-class ListTransportIMEI(APIView):
+class TransportIMEIAPIView(APIView):
     """
     View to list all transport imei's.
     """
@@ -33,7 +34,7 @@ class ListTransportIMEI(APIView):
         return Response(list_diff)
 
 
-class ListTransportTypes(APIView):
+class TransportTypeAPIView(APIView):
     """
     View to list all transport types.
     """
@@ -51,6 +52,34 @@ class ListTransportTypes(APIView):
         """
         type_list = TransportType.objects.all()
         serializer = TransportTypeSerializer(type_list, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class TransportPointAPIView(APIView):
+    """
+    View to get last transport point for imei or for list of imes's.
+    """
+
+    permission_classes = []
+    authentication_classes = []
+
+    @staticmethod
+    def post(request, *args, **kwargs):
+        """
+        Return a list of last transport point for provided imei's.
+        """
+        imei = request.data.get("imei")
+        points = []
+
+        if isinstance(imei, list):
+            for i in imei:
+                points.append(TransportPoint.objects.filter(imei=i).last())
+        elif isinstance(imei, str):
+            points = TransportPoint.objects.filter(imei=imei).last()
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = TransportPointSerializer(points, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
