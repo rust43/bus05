@@ -1,24 +1,30 @@
-const transportNameInput = document.getElementById("new-transport-name");
-const transportPlateInput = document.getElementById("new-transport-plate");
-const transportIMEISelect = document.getElementById('new-transport-imei');
-const transportRouteSelect = document.getElementById('new-transport-route');
-const transportTypeSelect = document.getElementById('new-transport-type-select');
-const transportTypeInput = document.getElementById("new-transport-type");
-const transportTypeChk = document.getElementById("new-transport-type-chk");
-const transportActiveChk = document.getElementById("new-transport-active-chk");
-const transportTypeInputField = document.getElementById("new-transport-type-input");
+// Create interactions for new transport
+
+// interface elements dict
+
+const newTransInterface = {
+    "nameInput": document.getElementById("new-transport-name"),
+    "plateInput": document.getElementById("new-transport-plate"),
+    "typeInput": document.getElementById('new-transport-type'),
+    "imeiSelect": document.getElementById('new-transport-imei'),
+    "routeSelect": document.getElementById('new-transport-route'),
+    "typeSelect": document.getElementById('new-transport-type-select'),
+    "typeInputField": document.getElementById("new-transport-type-input"),
+    "typeChk": document.getElementById("new-transport-type-chk"),
+    "activeChk": document.getElementById("new-transport-active-chk")
+}
 
 function ClearNewTransportForm() {
-    inputClearHelper(transportNameInput);
-    inputClearHelper(transportPlateInput);
-    inputClearHelper(transportTypeInput);
-    transportTypeInputField.classList.add("d-none");
-    transportTypeChk.checked = false;
-    transportActiveChk.checked = false;
-    transportTypeSelect.disabled = false;
-    selectClearHelper(transportIMEISelect);
-    selectClearHelper(transportRouteSelect);
-    selectClearHelper(transportTypeSelect);
+    inputClearHelper(newTransInterface["nameInput"]);
+    inputClearHelper(newTransInterface["plateInput"]);
+    inputClearHelper(newTransInterface["typeInput"]);
+    newTransInterface["typeInputField"].classList.add("d-none");
+    newTransInterface["typeChk"].checked = false;
+    newTransInterface["activeChk"].checked = false;
+    newTransInterface["typeSelect"].disabled = false;
+    selectClearHelper(newTransInterface["imeiSelect"]);
+    selectClearHelper(newTransInterface["routeSelect"]);
+    selectClearHelper(newTransInterface["typeSelect"]);
 }
 
 const inputClearHelper = function (input) {
@@ -35,43 +41,42 @@ const selectClearHelper = function (select) {
 
 async function FillNewTransportForm() {
     ClearNewTransportForm();
-    await FillTransportIMEISelect(transportIMEISelect);
-    await FillTransportRouteSelect(transportRouteSelect);
-    await FillTransportTypeSelect(transportTypeSelect);
+    await FillTransportIMEISelect(newTransInterface["imeiSelect"]);
+    await FillTransportRouteSelect(newTransInterface["routeSelect"]);
+    await FillTransportTypeSelect(newTransInterface["typeSelect"]);
 }
 
 async function FillTransportIMEISelect(selectElement) {
-    let api_endpoint = "/api/v1/transport/imei/";
-    await APIGetRequest(api_endpoint).then((IMEIList) => {
+    await APIGetRequest(transportAPI["imei"]).then((IMEIList) => {
         FillSelect(selectElement, IMEIList);
     });
 }
 
 async function FillTransportRouteSelect(selectElement) {
-    await APIGetRequest("/api/v1/route/").then((RouteList) => {
+    await APIGetRequest(routeAPI["main"]).then((RouteList) => {
         FillSelect(selectElement, RouteList, ["id", "name"]);
     });
 }
 
 async function FillTransportTypeSelect(selectElement) {
-    await APIGetRequest("/api/v1/transport/type/").then((TypesList) => {
+    await APIGetRequest(transportAPI["type"]).then((TypesList) => {
         FillSelect(selectElement, TypesList, ["id", "name"]);
     });
 }
 
 function TransportCreateFormValidation() {
     let result = true;
-    result *= inputValidationHelper(transportNameInput);
-    result *= inputValidationHelper(transportPlateInput);
-    if (transportTypeChk.checked) {
-        result *= inputValidationHelper(transportTypeInput);
-        selectClearHelper(transportTypeSelect);
+    result *= inputValidationHelper(newTransInterface["nameInput"]);
+    result *= inputValidationHelper(newTransInterface["plateInput"]);
+    if (newTransInterface["typeChk"].checked) {
+        result *= inputValidationHelper(newTransInterface["typeInput"]);
+        selectClearHelper(newTransInterface["typeSelect"]);
     } else {
-        result *= selectValidationHelper(transportTypeSelect);
-        inputClearHelper(transportTypeInput);
+        result *= selectValidationHelper(newTransInterface["typeSelect"]);
+        inputClearHelper(newTransInterface["typeInput"]);
     }
-    result *= selectValidationHelper(transportRouteSelect);
-    result *= selectValidationHelper(transportIMEISelect);
+    result *= selectValidationHelper(newTransInterface["routeSelect"]);
+    result *= selectValidationHelper(newTransInterface["imeiSelect"]);
     return result;
 }
 
@@ -104,47 +109,28 @@ async function SaveNewTransport() {
         alert('Проверьте данные нового транспорта!');
         return;
     }
-
     let transport_type;
     let new_transport_type = false;
-    if (transportTypeChk.checked) {
-        transport_type = transportTypeInput.value;
+    if (newTransInterface.typeChk.checked) {
+        transport_type = newTransInterface.typeInput.value;
         new_transport_type = true;
     } else {
-        transport_type = transportTypeSelect.value;
+        transport_type = newTransInterface.typeSelect.value;
     }
-
     const transport_data = {
-        'imei': transportIMEISelect.value,
-        'name': transportNameInput.value,
-        'license_plate': transportPlateInput.value,
-        'active': transportActiveChk.checked,
+        'imei': newTransInterface.imeiSelect.value,
+        'name': newTransInterface.nameInput.value,
+        'license_plate': newTransInterface.plateInput.value,
+        'active': newTransInterface.activeChk.checked,
         'transport_type': transport_type,
         'new_transport_type': new_transport_type,
-        'route': transportRouteSelect.value,
+        'route': newTransInterface.routeSelect.value,
     };
-    PostNewTransport(transport_data).then(function () {
+    APIPostRequest(transport_data, transportAPI.main).then(function () {
         alert('Транспорт сохранен!');
-        try {
-            FillNewTransportForm();
-        } catch (err) {
-            alert('Ошибка при сохранении нового транспорта!');
-        }
+        try { FillNewTransportForm(); }
+        catch (err) { alert('Ошибка при сохранении нового транспорта!'); }
     });
-}
-
-async function PostNewTransport(transport_data) {
-    const url = host + '/api/v1/transport/';
-    const response = await fetch(url, {
-        method: 'post', credentials: 'same-origin', headers: {
-            'X-CSRFToken': getCookie('csrftoken'), 'Accept': 'application/json', 'Content-Type': 'application/json'
-        }, body: JSON.stringify(transport_data)
-    });
-    if (response.ok) {
-        return true;
-    } else {
-        console.log('Ошибка HTTP: ' + response.status);
-    }
 }
 
 function TransportTypeChkListener(chkEl, inputParent, inputEl, selectEl) {
@@ -161,4 +147,9 @@ function TransportTypeChkListener(chkEl, inputParent, inputEl, selectEl) {
     });
 }
 
-TransportTypeChkListener(transportTypeChk, transportTypeInputField, transportTypeInput, transportTypeSelect);
+TransportTypeChkListener(
+    newTransInterface.typeChk,
+    newTransInterface.typeInputField,
+    newTransInterface.typeInput,
+    newTransInterface.typeSelect
+);

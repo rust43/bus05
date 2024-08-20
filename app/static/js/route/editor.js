@@ -13,14 +13,10 @@ let PathBBusStopListContainer = null;
 //
 
 function SaveRoute() {
-    if (editedRoute === null)
-        return;
-
+    if (editedRoute === null) return;
     let route_name = document.getElementById('selected-route-name').value;
-
-    let route_path_a = routesVectorSource.getFeatureById(editedRoute.path_a.line.id);
-    let route_path_b = routesVectorSource.getFeatureById(editedRoute.path_b.line.id);
-
+    let route_path_a = routeVectorSource.getFeatureById(editedRoute.path_a.line.id);
+    let route_path_b = routeVectorSource.getFeatureById(editedRoute.path_b.line.id);
     let features = [route_path_a, route_path_b];
     let geoJSONwriter = new olGeoJSON();
     let geoJSONdata = geoJSONwriter.writeFeatures(
@@ -33,37 +29,16 @@ function SaveRoute() {
         'path_a_stops': edit_route_path_a_stops,
         'path_b_stops': edit_route_path_b_stops
     };
-    SaveRouteRequest(route_data).then(function() {
+    APIPutRequest(route_data, routeAPI["main"]).then(function () {
         alert('Изменения сохранены!');
         try {
-            LoadRoutes().then(function() {
+            LoadRoutes().then(function () {
                 SelectRouteData(editedRoute.id);
             });
         } catch (err) {
-            alert('Ошибка при загрузке новых маршрутов!');
+            alert('Ошибка при загрузке данных нового маршрута!');
         }
     });
-}
-
-async function SaveRouteRequest(route_data) {
-    const url = host + '/api/v1/route/';
-    const response = await fetch(
-        url,
-        {
-            method: 'put',
-            credentials: 'same-origin',
-            headers: {
-                'X-CSRFToken': getCookie('csrftoken'),
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(route_data)
-        });
-    if (response.ok) {
-        return true;
-    } else {
-        console.log('Ошибка HTTP: ' + response.status);
-    }
 }
 
 //
@@ -72,39 +47,16 @@ async function SaveRouteRequest(route_data) {
 
 function DeleteRoute() {
     let routeId = document.getElementById('selected-route-id').value;
-    const route_data = {
-        'route_id': routeId
-    };
-    DeleteRouteRequest(route_data).then(function() {
+    const route_data = { 'route_id': routeId };
+    APIDeleteRequest(route_data, routeAPI["main"]).then(function () {
         alert('Маршрут удален!');
         try {
             document.getElementById('route-data').classList.add('d-none');
             LoadRoutes();
         } catch (err) {
-            alert('Ошибка при загрузке новых маршрутов!');
+            alert('Ошибка при удалении маршрута!');
         }
     });
-}
-
-async function DeleteRouteRequest(route_data) {
-    const url = host + '/api/v1/route/';
-    const response = await fetch(
-        url,
-        {
-            method: 'delete',
-            credentials: 'same-origin',
-            headers: {
-                'X-CSRFToken': getCookie('csrftoken'),
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(route_data)
-        });
-    if (response.ok) {
-        return true;
-    } else {
-        console.log('Ошибка HTTP: ' + response.status);
-    }
 }
 
 //
@@ -113,7 +65,7 @@ async function DeleteRouteRequest(route_data) {
 
 // Select function for path feature id
 function EditPathFeature(pathFeatureId) {
-    const pathFeature = routesVectorSource.getFeatureById(pathFeatureId);
+    const pathFeature = routeVectorSource.getFeatureById(pathFeatureId);
     if (!pathFeature) return;
     editMode = 'route-path-edit';
     mapSelectInteraction.getFeatures().clear();
@@ -144,10 +96,10 @@ function SelectRouteData(routeId) {
     FillBusStopsContainer(edit_route_path_a_stops, PathABusStopListContainer, false);
     FillBusStopsContainer(edit_route_path_b_stops, PathBBusStopListContainer, false);
 
-    document.getElementById('show-route-path-a').onclick = function() {
+    document.getElementById('show-route-path-a').onclick = function () {
         EditPathFeature(editedRoute.path_a.line.id);
     };
-    document.getElementById('show-route-path-b').onclick = function() {
+    document.getElementById('show-route-path-b').onclick = function () {
         EditPathFeature(editedRoute.path_b.line.id);
     };
 }
@@ -172,11 +124,11 @@ function FillBusStopsContainer(stopsDict, container, newRoute) {
             busstopBadge.appendChild(busstopBadgeButton);
             busstopBadge.classList.add('badge', 'text-bg-success', 'd-flex', 'align-items-center');
             if (newRoute) {
-                busstopBadge.onclick = function() {
+                busstopBadge.onclick = function () {
                     DeleteNewRouteBusStop(key);
                 };
             } else {
-                busstopBadge.onclick = function() {
+                busstopBadge.onclick = function () {
                     DeleteRouteBusStop(key);
                 };
             }

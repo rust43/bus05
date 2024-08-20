@@ -1,25 +1,31 @@
-const selectedTransportNameInput = document.getElementById('selected-transport-name');
-const selectedTransportPlateInput = document.getElementById('selected-transport-plate');
-const selectedTransportIDInput = document.getElementById('selected-transport-id');
-const selectedTransportIMEISelect = document.getElementById('selected-transport-imei-select');
-const selectedTransportRouteSelect = document.getElementById('selected-transport-route-select');
-const selectedTransportTypeSelect = document.getElementById('selected-transport-type-select');
-const selectedTransportTypeInput = document.getElementById('selected-transport-type');
-const selectedTransportTypeChk = document.getElementById('selected-transport-type-chk');
-const selectedTransportActiveChk = document.getElementById('selected-transport-active-chk');
-const selectedTransportTypeInputField = document.getElementById('selected-transport-type-field');
+// Edit interactions for transport
+
+// interface elements dict
+
+const editTransInterface = {
+    "id": document.getElementById('selected-transport-id'),
+    "type": document.getElementById('selected-transport-type'),
+    "name": document.getElementById("selected-transport-name"),
+    "plate": document.getElementById("selected-transport-plate"),
+    "typeChk": document.getElementById("selected-transport-type-chk"),
+    "imei": document.getElementById('selected-transport-imei-select'),
+    "route": document.getElementById('selected-transport-route-select'),
+    "typeSel": document.getElementById('selected-transport-type-select'),
+    "typeField": document.getElementById("selected-transport-type-field"),
+    "activeChk": document.getElementById("selected-transport-active-chk")
+}
 
 function ClearEditTransportForm() {
-    inputClearHelper(selectedTransportNameInput);
-    inputClearHelper(selectedTransportPlateInput);
-    inputClearHelper(selectedTransportTypeInput);
-    selectedTransportTypeInputField.classList.add("d-none");
-    selectedTransportTypeChk.checked = false;
-    selectedTransportActiveChk.checked = false;
-    selectedTransportTypeSelect.disabled = false;
-    selectClearHelper(selectedTransportIMEISelect);
-    selectClearHelper(selectedTransportRouteSelect);
-    selectClearHelper(selectedTransportTypeSelect);
+    inputClearHelper(editTransInterface.name);
+    inputClearHelper(editTransInterface.plate);
+    inputClearHelper(editTransInterface.type);
+    editTransInterface.typeField.classList.add('d-none');
+    editTransInterface.typeChk.checked = false;
+    editTransInterface.activeChk.checked = false;
+    editTransInterface.typeSel.disabled = false;
+    selectClearHelper(editTransInterface.imei);
+    selectClearHelper(editTransInterface.route);
+    selectClearHelper(editTransInterface.typeSel);
 }
 
 function SelectTransportData(transportId) {
@@ -27,22 +33,22 @@ function SelectTransportData(transportId) {
     ClearEditTransportForm();
     let editedTransport = GetSelectedTransport(transportId);
     document.getElementById('transport-selected').classList.remove('d-none');
-    selectedTransportNameInput.value = editedTransport.name;
-    selectedTransportIDInput.value = editedTransport.id;
-    selectedTransportPlateInput.value = editedTransport.license_plate;
-    selectedTransportActiveChk.checked = editedTransport.active;
-    FillTransportRouteSelect(selectedTransportRouteSelect).then(() => {
-        selectedTransportRouteSelect.value = editedTransport.route;
+    editTransInterface.name.value = editedTransport.name;
+    editTransInterface.id.value = editedTransport.id;
+    editTransInterface.plate.value = editedTransport.license_plate;
+    editTransInterface.activeChk.checked = editedTransport.active;
+    FillTransportRouteSelect(editTransInterface.route).then(() => {
+        editTransInterface.route.value = editedTransport.route;
     });
-    FillTransportTypeSelect(selectedTransportTypeSelect).then(() => {
-        selectedTransportTypeSelect.value = editedTransport.transport_type;
+    FillTransportTypeSelect(editTransInterface.typeSel).then(() => {
+        editTransInterface.typeSel.value = editedTransport.transport_type;
     });
-    FillTransportIMEISelect(selectedTransportIMEISelect).then(() => {
+    FillTransportIMEISelect(editTransInterface.imei).then(() => {
         let opt = document.createElement('option');
         opt.value = editedTransport.imei;
         opt.innerHTML = editedTransport.imei;
-        selectedTransportIMEISelect.appendChild(opt);
-        selectedTransportIMEISelect.value = editedTransport.imei;
+        editTransInterface.imei.appendChild(opt);
+        editTransInterface.imei.value = editedTransport.imei;
     });
 }
 
@@ -53,21 +59,26 @@ function GetSelectedTransport(transportId) {
     return null;
 }
 
-TransportTypeChkListener(selectedTransportTypeChk, selectedTransportTypeInputField, selectedTransportTypeInput, selectedTransportTypeSelect);
+TransportTypeChkListener(
+    editTransInterface.typeChk,
+    editTransInterface.typeField,
+    editTransInterface.type,
+    editTransInterface.typeSel
+);
 
 function TransportEditFormValidation() {
     let result = true;
-    result *= inputValidationHelper(selectedTransportNameInput);
-    result *= inputValidationHelper(selectedTransportPlateInput);
-    if (selectedTransportTypeChk.checked) {
-        result *= inputValidationHelper(selectedTransportTypeInput);
-        selectClearHelper(selectedTransportTypeSelect);
+    result *= inputValidationHelper(editTransInterface.name);
+    result *= inputValidationHelper(editTransInterface.plate);
+    if (editTransInterface.typeChk.checked) {
+        result *= inputValidationHelper(editTransInterface.type);
+        selectClearHelper(editTransInterface.typeSel);
     } else {
-        result *= selectValidationHelper(selectedTransportTypeSelect);
-        inputClearHelper(selectedTransportTypeInput);
+        result *= selectValidationHelper(editTransInterface.typeSel);
+        inputClearHelper(editTransInterface.type);
     }
-    result *= selectValidationHelper(selectedTransportRouteSelect);
-    result *= selectValidationHelper(selectedTransportIMEISelect);
+    result *= selectValidationHelper(editTransInterface.route);
+    result *= selectValidationHelper(editTransInterface.imei);
     return result;
 }
 
@@ -76,30 +87,30 @@ function EditTransport() {
         alert('Проверьте данные редактируемого транспорта!');
         return;
     }
-    let transport_id = selectedTransportIDInput.value;
+    let transport_id = editTransInterface.id.value;
     let transport_type;
     let new_transport_type = false;
-    if (selectedTransportTypeChk.checked) {
-        transport_type = selectedTransportTypeInput.value;
+    if (editTransInterface.typeChk.checked) {
+        transport_type = editTransInterface.type.value;
         new_transport_type = true;
     } else {
-        transport_type = selectedTransportTypeSelect.value;
+        transport_type = editTransInterface.typeSel.value;
     }
     const transport_data = {
         'transport_id': transport_id,
-        'imei': selectedTransportIMEISelect.value,
-        'name': selectedTransportNameInput.value,
-        'license_plate': selectedTransportPlateInput.value,
-        'active': selectedTransportActiveChk.checked,
+        'imei': editTransInterface.imei.value,
+        'name': editTransInterface.name.value,
+        'license_plate': editTransInterface.plate.value,
+        'active': editTransInterface.activeChk.checked,
         'transport_type': transport_type,
         'new_transport_type': new_transport_type,
-        'route': selectedTransportRouteSelect.value,
+        'route': editTransInterface.route.value,
     };
-    PutTransport(transport_data).then(function () {
-        alert('Транспорт сохранен!');
+    APIPutRequest(transport_data, transportAPI["main"]).then(function () {
         try {
-            LoadTransportList().then(() => {
+            LoadTransport().then(() => {
                 SelectTransportData(transport_id);
+                alert('Транспорт сохранен!');
             });
         } catch (err) {
             alert('Ошибка при сохранении нового транспорта!');
@@ -107,53 +118,17 @@ function EditTransport() {
     });
 }
 
-async function PutTransport(transport_data) {
-    const url = host + '/api/v1/transport/';
-    const response = await fetch(url, {
-        method: 'put', credentials: 'same-origin', headers: {
-            'X-CSRFToken': getCookie('csrftoken'), 'Accept': 'application/json', 'Content-Type': 'application/json'
-        }, body: JSON.stringify(transport_data)
-    });
-    if (response.ok) {
-        return true;
-    } else {
-        console.log('Ошибка HTTP: ' + response.status);
-    }
-}
-
 async function DeleteTransport() {
-    let transportId = selectedTransportIDInput.value;
-    const transport_data = {
-        'transport_id': transportId
-    };
-    await DeleteTransportRequest(transport_data).then(function () {
-        alert('Транспорт удален!');
+    let transportId = editTransInterface.id.value;
+    const transport_data = { 'transport_id': transportId };
+    await APIDeleteRequest(transport_data, transportAPI["main"]).then(function () {
         try {
             document.getElementById('transport-selected').classList.add('d-none');
-            LoadTransportList();
+            LoadTransport().then(() => {
+                alert('Транспорт удален!');
+            });
         } catch (err) {
             alert('Ошибка при удалении нового транспорта!');
         }
     });
-}
-
-async function DeleteTransportRequest(transport_data) {
-    const url = host + '/api/v1/transport/';
-    const response = await fetch(
-        url,
-        {
-            method: 'delete',
-            credentials: 'same-origin',
-            headers: {
-                'X-CSRFToken': getCookie('csrftoken'),
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(transport_data)
-        });
-    if (response.ok) {
-        return true;
-    } else {
-        console.log('Ошибка HTTP: ' + response.status);
-    }
 }

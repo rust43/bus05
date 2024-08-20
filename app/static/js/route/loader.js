@@ -2,56 +2,35 @@
 // Route layer loader file
 //
 
-let routesVectorSource = new olVectorSource({ wrapX: false });
-let routesVectorLayer = new olVectorLayer({ source: routesVectorSource, style: mapStyleFunction });
-map.addLayer(routesVectorLayer);
+// openlayers layers definition
+let routeVectorSource = new olVectorSource({ wrapX: false });
+let routeVectorLayer = new olVectorLayer({ source: routeVectorSource, style: mapStyleFunction });
 
+// openlayers adding routes layer
+map.addLayer(routeVectorLayer);
+
+// var to keep loaded route list
 let loadedRoutes = null;
 
 async function LoadRoutes() {
-    loadedRoutes = await GetRoutes();
-    routesVectorSource.clear();
-    DisplayRoutes(loadedRoutes);
+    loadedRoutes = await APIGetRequest(routeAPI["main"]);
 }
 
-async function GetRoutes() {
-    const url = host + '/api/v1/route/';
-    let response = await fetch(url, {
-        method: 'get', credentials: 'same-origin', headers: {
-            'Accept': 'application/json', 'Content-Type': 'application/json'
-        }
-    });
-    if (response.ok) {
-        return await response.json();
-    } else {
-        console.log('Ошибка HTTP: ' + response.status);
-    }
-}
+LoadRoutes();
 
-function DisplayRoutes(routes) {
+async function FillRouteList() {
+    await LoadRoutes();
     const routeListContainer = document.getElementById('route-list');
-    if (routeListContainer)
-        routeListContainer.innerHTML = '';
-    for (let i = 0; i < routes.length; i++) {
-        const route = routes[i];
-        DisplayPath(
-            route.path_a.line.id,
-            route.id,
-            'route-' + route.id + '-path-a',
-            route.path_a.line.geom
-        );
-        DisplayPath(
-            route.path_b.line.id,
-            route.id,
-            'route-' + route.id + '-path-b',
-            route.path_b.line.geom);
-        // add button to view route
-        const routeButton = document.createElement('BUTTON');
+    if (routeListContainer) routeListContainer.innerHTML = '';
+    for (let i = 0; i < loadedRoutes.length; i++) {
+        const route = loadedRoutes[i];
+        // add button to view transport
+        const routeButton = document.createElement('button');
         const routeButtonText = document.createTextNode(route.name);
         if (routeListContainer) {
             routeButton.appendChild(routeButtonText);
             routeButton.classList.add('btn', 'badge', 'text-bg-success');
-            routeButton.onclick = function() {
+            routeButton.onclick = function () {
                 SelectRouteData(route.id);
             };
             routeListContainer.appendChild(routeButton);
@@ -59,7 +38,42 @@ function DisplayRoutes(routes) {
     }
 }
 
-function DisplayPath(id, route_id, name, geom) {
+function DisplayRoute(routeID) {
+    routeVectorSource.clear();
+    const route = GetRoute(routeID);
+    if (route === null) return;
+    DisplayRoutePath(
+        route.path_a.line.id,
+        route.id,
+        'route-' + route.id + '-path-a',
+        route.path_a.line.geom
+    );
+    DisplayRoutePath(
+        route.path_b.line.id,
+        route.id,
+        'route-' + route.id + '-path-b',
+        route.path_b.line.geom);
+}
+
+function DisplayAllRoutes() {
+    if (loadedRoutes.length === 0) return;
+    for (let i = 0; i < loadedRoutes.length; i++) {
+        const route = loadedRoutes[i];
+        DisplayRoutePath(
+            route.path_a.line.id,
+            route.id,
+            'route-' + route.id + '-path-a',
+            route.path_a.line.geom
+        );
+        DisplayRoutePath(
+            route.path_b.line.id,
+            route.id,
+            'route-' + route.id + '-path-b',
+            route.path_b.line.geom);
+    }
+}
+
+function DisplayRoutePath(id, route_id, name, geom) {
     let coordinates = new olLineStringGeometry(geom.coordinates);
     coordinates = coordinates.transform('EPSG:4326', 'EPSG:3857');
     const routeFeature = new olFeature({
@@ -68,7 +82,16 @@ function DisplayPath(id, route_id, name, geom) {
     routeFeature.setId(id);
     routeFeature.set('type', 'path');
     routeFeature.set('map_object_id', route_id);
-    routesVectorSource.addFeature(routeFeature);
+    routeVectorSource.addFeature(routeFeature);
 }
 
-LoadRoutes();
+
+// helper functions
+
+function GetRoute(routeID) {
+    if (loadedRoutes.length === 0) return;
+    for (let i = 0; i < loadedRoutes.length; i++) {
+        if (loadedRoutes[i].id === routeID) return loadedRoutes[i];
+    }
+    return null;
+}

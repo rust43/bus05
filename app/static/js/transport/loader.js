@@ -2,78 +2,84 @@
 // Transport layer loader file
 //
 
-let transport_api_endpoint = "/api/v1/transport/";
-let transportVectorSource = new olVectorSource({ wrapX: false });
-let transportVectorLayer = new olVectorLayer({ source: transportVectorSource, style: mapStyleFunction });
+// openlayers layers definition
+const transportVectorSource = new olVectorSource({ wrapX: false });
+const transportVectorLayer = new olVectorLayer({ source: transportVectorSource, style: mapStyleFunction });
+
+// openlayers adding transport layer
 map.addLayer(transportVectorLayer);
 
+// var to keep loaded transport list
 let loadedTransport = null;
 
 async function LoadTransport() {
-    loadedTransport = await APIGetRequest(transport_api_endpoint);
-    transportVectorSource.clear();
-    DisplayTransport(loadedTransport);
+    loadedTransport = await APIGetRequest(transportAPI["main"]);
 }
 
-async function LoadTransportList() {
-    await APIGetRequest(transport_api_endpoint).then((transportList) => {
-        loadedTransport = transportList;
-        const transportListContainer = document.getElementById('transport-list');
-        if (transportListContainer) transportListContainer.innerHTML = '';
-        for (let i = 0; i < transportList.length; i++) {
-            const transport = transportList[i];
-            // add button to view transport
-            const transportButton = document.createElement('BUTTON');
-            const transportButtonText = document.createTextNode(transport.name + " " + transport.license_plate);
-            if (transportListContainer) {
-                transportButton.appendChild(transportButtonText);
-                transportButton.classList.add('btn', 'badge', 'text-bg-warning');
-                transportButton.onclick = function () {
-                    SelectTransportData(transport.id);
-                };
-                transportListContainer.appendChild(transportButton);
-            }
+LoadTransport();
+
+async function FillTransportList() {
+    await LoadTransport();
+    const transportListContainer = document.getElementById('transport-list');
+    if (transportListContainer) transportListContainer.innerHTML = '';
+    for (let i = 0; i < loadedTransport.length; i++) {
+        const transport = loadedTransport[i];
+        // add button to view transport
+        const transportButton = document.createElement('button');
+        const transportButtonText = document.createTextNode(transport.name + " " + transport.license_plate);
+        if (transportListContainer) {
+            transportButton.appendChild(transportButtonText);
+            transportButton.classList.add('btn', 'badge', 'text-bg-warning');
+            transportButton.onclick = function () {
+                SelectTransportData(transport.id);
+            };
+            transportListContainer.appendChild(transportButton);
         }
-    });
+    }
 }
 
 async function LoadTransportPoints() {
-    let transport_points_api_endpoint = "/api/v1/transport/point/";
+    if (loadedTransport.length === 0) return;
     let imeiList = [];
     for (let i = 0; i < loadedTransport.length; i++) {
         imeiList.push(loadedTransport[i].imei);
     }
     const data = { 'imei': imeiList };
-    await APIPostRequest(data, transport_points_api_endpoint).then((pointList) => {
-        console.log(pointList);
-    });
+    return await APIPostRequest(data, transportAPI["point"]);
 }
 
-async function APIGetRequest(address) {
-    const url = host + address;
-    let response = await fetch(url, {
-        method: 'get', credentials: 'same-origin', headers: {
-            'Accept': 'application/json', 'Content-Type': 'application/json'
-        }
-    });
-    if (response.ok) {
-        return await response.json();
-    } else {
-        console.log('Ошибка HTTP: ' + response.status);
+async function DisplayTransport() {
+    transportVectorSource.clear();
+    let pointList = await LoadTransportPoints();
+    for (let i = 0; i < pointList.length; i++) {
+        const point = pointList[i];
+        let coordinates = olFromLonLat([point.lon, point.lat]);
+        coordinates = new olPointGeometry(coordinates);
+        // coordinates = coordinates.transform('EPSG:4326', 'EPSG:3857');
+        const transportFeature = new olFeature({ geometry: coordinates });
+        const transport = GetTransport(point.imei);
+        if (transport === null) return;
+        transportFeature.setId(transport.id);
+        transportFeature.set('name', 'transport-' + transport.id);
+        transportFeature.set('type', 'transport');
+        transportFeature.set('transport_type', transport.transport_type);
+        transportFeature.set('course', point.course);
+        transportFeature.set('speed', point.speed);
+        transportFeature.set('height', point.height);
+        transportFeature.set('sats', point.sats);
+        transportFeature.set('route', transport.route);
+        transportVectorSource.addFeature(transportFeature);
     }
 }
 
-async function APIPostRequest(data, APIAddress) {
-    const response = await fetch(APIAddress, {
-        method: 'post', credentials: 'same-origin', headers: {
-            'X-CSRFToken': getCookie('csrftoken'), 'Accept': 'application/json', 'Content-Type': 'application/json'
-        }, body: JSON.stringify(data)
-    });
-    if (response.ok) {
-        return await response.json();
-    } else {
-        console.log('Ошибка HTTP: ' + response.status);
+// helper functions
+
+function GetTransport(imei) {
+    if (loadedTransport.length === 0) return;
+    for (let i = 0; i < loadedTransport.length; i++) {
+        if (loadedTransport[i].imei === imei) return loadedTransport[i];
     }
+    return null;
 }
 
 function FillSelect(selectElement, valueList, valueNames = null) {
@@ -95,22 +101,3 @@ function FillSelect(selectElement, valueList, valueNames = null) {
         selectElement.appendChild(opt);
     }
 }
-
-function DisplayTransport(transportList) {
-    for (let i = 0; i < transportList.length; i++) {
-        const transport = transportList[i];
-        continue;
-        let coordinates = new olPointGeometry(transport.location.point.geom.coordinates);
-        coordinates = coordinates.transform('EPSG:4326', 'EPSG:3857');
-        const transportFeature = new olFeature({
-            geometry: coordinates, type: transport.location.point.geom.type, name: 'transport-' + transport.id
-        });
-        transportFeature.setId(transport.location.point.id);
-        transportFeature.set('type', 'transport');
-        transportFeature.set('map_object_id', transport.id);
-        transportFeature.set('transport_name', transport.name);
-        transportVectorSource.addFeature(transportFeature);
-    }
-}
-
-LoadTransport();
