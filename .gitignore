@@ -39,5 +39,6 @@ app/static/js/*
 !app/static/js/map/
 !app/static/js/route/
 !app/static/js/transport/
+!app/static/js/requests.js
 !app/static/js/django-csrf.js
 !app/static/js/mobile-fullscreen.js
