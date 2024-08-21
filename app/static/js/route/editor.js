@@ -48,11 +48,12 @@ function SaveRoute() {
 function DeleteRoute() {
     let routeId = document.getElementById('selected-route-id').value;
     const route_data = { 'route_id': routeId };
-    APIDeleteRequest(route_data, routeAPI["main"]).then(function () {
-        alert('Маршрут удален!');
+    APIDeleteRequest(route_data, routeAPI.main).then(function () {
         try {
-            document.getElementById('route-data').classList.add('d-none');
-            LoadRoutes();
+            FillRouteList().then(() => {
+                document.getElementById('route-data').classList.add('d-none');
+                alert('Маршрут удален!');
+            });
         } catch (err) {
             alert('Ошибка при удалении маршрута!');
         }

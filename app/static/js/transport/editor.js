@@ -108,7 +108,7 @@ function EditTransport() {
     };
     APIPutRequest(transport_data, transportAPI["main"]).then(function () {
         try {
-            LoadTransport().then(() => {
+            FillTransportList().then(() => {
                 SelectTransportData(transport_id);
                 alert('Транспорт сохранен!');
             });
@@ -124,7 +124,7 @@ async function DeleteTransport() {
     await APIDeleteRequest(transport_data, transportAPI.main).then(function () {
         try {
             document.getElementById('transport-selected').classList.add('d-none');
-            LoadTransport().then(() => {
+            FillTransportList().then(() => {
                 alert('Транспорт удален!');
             });
         } catch (err) {

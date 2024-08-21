@@ -2,17 +2,8 @@
 // BusStop layer loader file
 //
 
-let busStopsVectorSource = new olVectorSource({wrapX: false});
-let busStopsClusterSource = new olClusterSource({
-    wrapX: false,
-    // distance: 35,
-    distance: 0,
-    // minDistance: 10,
-    minDistance: 0,
-    source: busStopsVectorSource,
-});
-
-let busStopsVectorLayer = new olVectorLayer({source: busStopsClusterSource, style: mapStyleFunction});
+let busStopsVectorSource = new olVectorSource({ wrapX: false });
+let busStopsVectorLayer = new olVectorLayer({ source: busStopsVectorSource, style: mapStyleFunction });
 map.addLayer(busStopsVectorLayer);
 
 let loadedBusStops = null;

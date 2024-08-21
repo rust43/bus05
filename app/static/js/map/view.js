@@ -8,34 +8,33 @@ const layerIndexes = {
     transport: 2,
 }
 
-const mapStyleFunction = (function (feature) {
-    console.log(feature.type);
+const mapStyleFunction = (() => {
     const styles = {};
     styles['default'] = [
         new olStyle({
             image: new olCircleStyle({
-                fill: new olFillStyle({color: 'rgba(255,255,255,0.4)'}),
-                stroke: new olStrokeStyle({color: '#3399CC', width: 1.25}),
+                fill: new olFillStyle({ color: 'rgba(255,255,255,0.4)' }),
+                stroke: new olStrokeStyle({ color: '#3399CC', width: 1.25 }),
                 radius: 5
             }),
-            fill: new olFillStyle({color: 'rgba(255,255,255,0.4)'}),
-            stroke: new olStrokeStyle({color: '#3399CC', width: 1.25})
+            fill: new olFillStyle({ color: 'rgba(255,255,255,0.4)' }),
+            stroke: new olStrokeStyle({ color: '#3399CC', width: 1.25 })
         })];
     styles['path'] = [
         new olStyle({
-            stroke: new olStrokeStyle({color: '#308C00', width: 3}),
+            stroke: new olStrokeStyle({ color: '#308C00', width: 3 }),
             zIndex: layerIndexes.route,
         })];
     styles['new-path'] = [
         new olStyle({
-            stroke: new olStrokeStyle({color: '#029dbf', width: 4}),
+            stroke: new olStrokeStyle({ color: '#029dbf', width: 4 }),
             zIndex: layerIndexes.route,
         })];
     styles['busstop'] = [
         new olStyle({
             image: new olIconStyle({
                 crossOrigin: 'anonymous',
-                src: staticURL + '/pictures/bus-stop-18.png',
+                src: staticURL + '/pictures/bus-stop.png',
                 width: 18,
                 height: 18,
             }),
@@ -65,11 +64,20 @@ const mapStyleFunction = (function (feature) {
         })
     ];
     return function (feature) {
+        let zoom = map.getView().getZoom();
         const featureType = feature.get('type');
         let style = styles[featureType] || styles['default'];
         if (featureType === 'path' || featureType === 'new-path') {
             return DrawArrows(feature, style, 10, 10);
-        } else if (featureType === 'transport') {
+        } else if (featureType === 'busstop') {
+            if (zoom >= 16) {
+                return style;
+            }
+            else {
+                return null;
+            }
+        }
+        else if (featureType === 'transport') {
             return DrawTransportMarker(feature, style);
         }
         return style;
@@ -81,23 +89,23 @@ const mapOverlayStyleFunction = (function () {
     styles['default'] = [
         new olStyle({
             image: new olCircleStyle({
-                fill: new olFillStyle({color: 'rgba(255,255,255,0.4)'}),
-                stroke: new olStrokeStyle({color: '#3399CC', width: 1.25}),
+                fill: new olFillStyle({ color: 'rgba(255,255,255,0.4)' }),
+                stroke: new olStrokeStyle({ color: '#3399CC', width: 1.25 }),
                 radius: 5
             }),
-            fill: new olFillStyle({color: 'rgba(255,255,255,0.4)'}),
-            stroke: new olStrokeStyle({color: '#3399CC', width: 1.25})
+            fill: new olFillStyle({ color: 'rgba(255,255,255,0.4)' }),
+            stroke: new olStrokeStyle({ color: '#3399CC', width: 1.25 })
         })
     ];
     styles['path'] = [
         new olStyle({
-            stroke: new olStrokeStyle({color: '#20c200', width: 4}),
+            stroke: new olStrokeStyle({ color: '#20c200', width: 4 }),
             zIndex: 2,
         })
     ];
     styles['new-path'] = [
         new olStyle({
-            stroke: new olStrokeStyle({color: '#0d6efd', width: 4}),
+            stroke: new olStrokeStyle({ color: '#0d6efd', width: 4 }),
             zIndex: 2,
         })
     ];
@@ -235,7 +243,7 @@ function DrawBusstopText(feature, style, size) {
 }
 
 function PanToFeature(feature) {
-    map.getView().fit(feature.getGeometry(), {duration: 500});
+    map.getView().fit(feature.getGeometry(), { duration: 500 });
 }
 
 // ----------------------
