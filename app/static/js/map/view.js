@@ -2,34 +2,41 @@
 // Map style functions
 // -------------------
 
+const layerIndexes = {
+    "route": 1,
+    "busstops": 2,
+    "transport": 3
+}
+
 const mapStyleFunction = (function () {
     const styles = {};
     styles['default'] = [
         new olStyle({
             image: new olCircleStyle({
-                fill: new olFillStyle({ color: 'rgba(255,255,255,0.4)' }),
-                stroke: new olStrokeStyle({ color: '#3399CC', width: 1.25 }),
+                fill: new olFillStyle({color: 'rgba(255,255,255,0.4)'}),
+                stroke: new olStrokeStyle({color: '#3399CC', width: 1.25}),
                 radius: 5
             }),
-            fill: new olFillStyle({ color: 'rgba(255,255,255,0.4)' }),
-            stroke: new olStrokeStyle({ color: '#3399CC', width: 1.25 })
+            fill: new olFillStyle({color: 'rgba(255,255,255,0.4)'}),
+            stroke: new olStrokeStyle({color: '#3399CC', width: 1.25})
         })];
     styles['path'] = [
         new olStyle({
-            stroke: new olStrokeStyle({ color: '#308C00', width: 3 })
+            stroke: new olStrokeStyle({color: '#308C00', width: 3}),
+            zIndex: 2,
         })];
     styles['new-path'] = [
         new olStyle({
-            stroke: new olStrokeStyle({ color: '#029dbf', width: 4 })
+            stroke: new olStrokeStyle({color: '#029dbf', width: 4}),
+            zIndex: 2,
         })];
     styles['busstop'] = [
         new olStyle({
             image: new olIconStyle({
                 crossOrigin: 'anonymous',
-                src: staticURL + '/pictures/bus-stop.png',
-                anchor: [0.5, 0.5],
-                width: 30,
-                height: 30
+                src: staticURL + '/pictures/bus-stop-18.png',
+                width: 18,
+                height: 18,
             })
         })];
     styles['new-busstop'] = [
@@ -39,7 +46,7 @@ const mapStyleFunction = (function () {
                 src: staticURL + '/pictures/bus-stop.png',
                 anchor: [0.5, 0.5],
                 width: 30,
-                height: 30
+                height: 30,
             })
         })];
     styles['transport'] = [
@@ -47,22 +54,19 @@ const mapStyleFunction = (function () {
             image: new olIconStyle({
                 color: "#ffffff",
                 crossOrigin: 'anonymous',
-                src: staticURL + '/pictures/bus-icon.svg',
-                scale: 0.2,
+                src: staticURL + '/pictures/bus-16.svg',
+                height: 16,
+                width: 16,
             }),
-            fill: new olFillStyle({ color: 'rgba(255,255,255,0.4)' }),
-            stroke: new olStrokeStyle({ color: '#ffffff', width: 1.25 })
         })
     ];
-
     return function (feature) {
         const featureType = feature.get('type');
         let style = styles[featureType] || styles['default'];
         if (featureType === 'path' || featureType === 'new-path') {
             return DrawArrows(feature, style, 10, 10);
-        }
-        else if (featureType === 'transport') {
-            return DrawTransportMarker(feature, style, 0.4);
+        } else if (featureType === 'transport') {
+            return DrawTransportMarker(feature, style);
         }
         return style;
     };
@@ -73,22 +77,24 @@ const mapOverlayStyleFunction = (function () {
     styles['default'] = [
         new olStyle({
             image: new olCircleStyle({
-                fill: new olFillStyle({ color: 'rgba(255,255,255,0.4)' }),
-                stroke: new olStrokeStyle({ color: '#3399CC', width: 1.25 }),
+                fill: new olFillStyle({color: 'rgba(255,255,255,0.4)'}),
+                stroke: new olStrokeStyle({color: '#3399CC', width: 1.25}),
                 radius: 5
             }),
-            fill: new olFillStyle({ color: 'rgba(255,255,255,0.4)' }),
-            stroke: new olStrokeStyle({ color: '#3399CC', width: 1.25 })
+            fill: new olFillStyle({color: 'rgba(255,255,255,0.4)'}),
+            stroke: new olStrokeStyle({color: '#3399CC', width: 1.25})
         })
     ];
     styles['path'] = [
         new olStyle({
-            stroke: new olStrokeStyle({ color: '#20c200', width: 4 })
+            stroke: new olStrokeStyle({color: '#20c200', width: 4}),
+            zIndex: 2,
         })
     ];
     styles['new-path'] = [
         new olStyle({
-            stroke: new olStrokeStyle({ color: '#0d6efd', width: 4 })
+            stroke: new olStrokeStyle({color: '#0d6efd', width: 4}),
+            zIndex: 2,
         })
     ];
     styles['busstop'] = [
@@ -120,26 +126,22 @@ const mapOverlayStyleFunction = (function () {
             image: new olIconStyle({
                 color: "#ffffff",
                 crossOrigin: 'anonymous',
-                src: staticURL + '/pictures/bus-icon.svg',
-                scale: 0.3,
+                src: staticURL + '/pictures/bus-16.svg',
+                height: 16,
+                width: 16,
             }),
-            fill: new olFillStyle({ color: 'rgba(255,255,255,0.4)' }),
-            stroke: new olStrokeStyle({ color: '#ffffff', width: 1.25 }),
             zIndex: 1,
         })
     ];
-
     return function (feature) {
         const featureType = feature.get('type');
         let style = styles[featureType] || styles['default'];
         if (featureType === 'path' || featureType === 'new-path') {
             return DrawArrows(feature, style, 18, 18);
-        }
-        else if (featureType === 'busstop') {
+        } else if (featureType === 'busstop') {
             return DrawBusstopText(feature, style, 14);
-        }
-        else if (featureType === 'transport') {
-            return DrawTransportMarker(feature, style, 0.6);
+        } else if (featureType === 'transport') {
+            return DrawTransportMarker(feature, style);
         }
         return style;
     };
@@ -188,23 +190,21 @@ function DrawArrows(feature, style, height, width) {
     return styles;
 }
 
-function DrawTransportMarker(feature, style, scale) {
-    const strokeColor = style[0].getStroke().getColor();
-    const styles = [
+function DrawTransportMarker(feature, style) {
+    return [
         new olStyle({
             image: new olIconStyle({
                 crossOrigin: 'anonymous',
-                src: staticURL + '/pictures/bus-marker.svg',
-                color: strokeColor,
+                src: staticURL + '/pictures/marker-bus-38.svg',
+                width: 38,
+                height: 38,
                 anchor: [0.5, 0.6],
                 rotateWithView: true,
                 rotation: feature.get('course'),
-                scale: scale,
             }),
         }),
         style[0]
-    ]
-    return styles;
+    ];
 }
 
 function DrawBusstopText(feature, style, size) {
@@ -224,14 +224,14 @@ function DrawBusstopText(feature, style, size) {
                 }),
                 offsetY: 15,
             }),
-            zIndex: 2,
+            zIndex: 3,
         }),
     )
     return styles;
 }
 
 function PanToFeature(feature) {
-    map.getView().fit(feature.getGeometry(), { duration: 500 });
+    map.getView().fit(feature.getGeometry(), {duration: 500});
 }
 
 // ----------------------

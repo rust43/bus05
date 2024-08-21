@@ -15,16 +15,16 @@ const newTransInterface = {
 }
 
 function ClearNewTransportForm() {
-    inputClearHelper(newTransInterface["nameInput"]);
-    inputClearHelper(newTransInterface["plateInput"]);
-    inputClearHelper(newTransInterface["typeInput"]);
-    newTransInterface["typeInputField"].classList.add("d-none");
-    newTransInterface["typeChk"].checked = false;
-    newTransInterface["activeChk"].checked = false;
-    newTransInterface["typeSelect"].disabled = false;
-    selectClearHelper(newTransInterface["imeiSelect"]);
-    selectClearHelper(newTransInterface["routeSelect"]);
-    selectClearHelper(newTransInterface["typeSelect"]);
+    inputClearHelper(newTransInterface.nameInput);
+    inputClearHelper(newTransInterface.plateInput);
+    inputClearHelper(newTransInterface.typeInput);
+    newTransInterface.typeInputField.classList.add("d-none");
+    newTransInterface.typeChk.checked = false;
+    newTransInterface.activeChk.checked = false;
+    newTransInterface.typeSelect.disabled = false;
+    selectClearHelper(newTransInterface.imeiSelect);
+    selectClearHelper(newTransInterface.routeSelect);
+    selectClearHelper(newTransInterface.typeSelect);
 }
 
 const inputClearHelper = function (input) {
@@ -41,42 +41,42 @@ const selectClearHelper = function (select) {
 
 async function FillNewTransportForm() {
     ClearNewTransportForm();
-    await FillTransportIMEISelect(newTransInterface["imeiSelect"]);
-    await FillTransportRouteSelect(newTransInterface["routeSelect"]);
-    await FillTransportTypeSelect(newTransInterface["typeSelect"]);
+    await FillTransportIMEISelect(newTransInterface.imeiSelect);
+    await FillTransportRouteSelect(newTransInterface.routeSelect);
+    await FillTransportTypeSelect(newTransInterface.typeSelect);
 }
 
 async function FillTransportIMEISelect(selectElement) {
-    await APIGetRequest(transportAPI["imei"]).then((IMEIList) => {
+    await APIGetRequest(transportAPI.imei).then((IMEIList) => {
         FillSelect(selectElement, IMEIList);
     });
 }
 
 async function FillTransportRouteSelect(selectElement) {
-    await APIGetRequest(routeAPI["main"]).then((RouteList) => {
+    await APIGetRequest(routeAPI.main).then((RouteList) => {
         FillSelect(selectElement, RouteList, ["id", "name"]);
     });
 }
 
 async function FillTransportTypeSelect(selectElement) {
-    await APIGetRequest(transportAPI["type"]).then((TypesList) => {
+    await APIGetRequest(transportAPI.type).then((TypesList) => {
         FillSelect(selectElement, TypesList, ["id", "name"]);
     });
 }
 
 function TransportCreateFormValidation() {
     let result = true;
-    result *= inputValidationHelper(newTransInterface["nameInput"]);
-    result *= inputValidationHelper(newTransInterface["plateInput"]);
-    if (newTransInterface["typeChk"].checked) {
-        result *= inputValidationHelper(newTransInterface["typeInput"]);
-        selectClearHelper(newTransInterface["typeSelect"]);
+    result *= inputValidationHelper(newTransInterface.nameInput);
+    result *= inputValidationHelper(newTransInterface.plateInput);
+    if (newTransInterface.typeChk.checked) {
+        result *= inputValidationHelper(newTransInterface.typeInput);
+        selectClearHelper(newTransInterface.typeSelect);
     } else {
-        result *= selectValidationHelper(newTransInterface["typeSelect"]);
-        inputClearHelper(newTransInterface["typeInput"]);
+        result *= selectValidationHelper(newTransInterface.typeSelect);
+        inputClearHelper(newTransInterface.typeInput);
     }
-    result *= selectValidationHelper(newTransInterface["routeSelect"]);
-    result *= selectValidationHelper(newTransInterface["imeiSelect"]);
+    result *= selectValidationHelper(newTransInterface.routeSelect);
+    result *= selectValidationHelper(newTransInterface.imeiSelect);
     return result;
 }
 
@@ -128,8 +128,11 @@ async function SaveNewTransport() {
     };
     APIPostRequest(transport_data, transportAPI.main).then(function () {
         alert('Транспорт сохранен!');
-        try { FillNewTransportForm(); }
-        catch (err) { alert('Ошибка при сохранении нового транспорта!'); }
+        try {
+            FillNewTransportForm();
+        } catch (err) {
+            alert('Ошибка при сохранении нового транспорта!');
+        }
     });
 }
 

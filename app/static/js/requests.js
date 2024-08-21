@@ -20,7 +20,9 @@ async function APIGetRequest(APIAddress) {
     });
     if (response.ok) {
         return await response.json();
-    } else { console.log('Ошибка HTTP: ' + response.status); }
+    } else {
+        console.log('Ошибка HTTP: ' + response.status);
+    }
 }
 
 async function APIPostRequest(data, APIAddress) {
@@ -30,9 +32,14 @@ async function APIPostRequest(data, APIAddress) {
         }, body: JSON.stringify(data)
     });
     if (response.ok) {
-        try { return await response.json(); }
-        catch { return true; }
-    } else { console.log('Ошибка HTTP: ' + response.status); }
+        try {
+            return await response.json();
+        } catch {
+            return true;
+        }
+    } else {
+        console.log('Ошибка HTTP: ' + response.status);
+    }
 }
 
 async function APIPutRequest(data, APIAddress) {
@@ -42,9 +49,10 @@ async function APIPutRequest(data, APIAddress) {
         }, body: JSON.stringify(data)
     });
     if (response.ok) {
-        try { return await response.json(); }
-        catch { return true; }
-    } else { console.log('Ошибка HTTP: ' + response.status); }
+        return true;
+    } else {
+        console.log('Ошибка HTTP: ' + response.status);
+    }
 }
 
 async function APIDeleteRequest(data, APIAddress) {
@@ -54,7 +62,8 @@ async function APIDeleteRequest(data, APIAddress) {
         }, body: JSON.stringify(data)
     });
     if (response.ok) {
-        try { return await response.json(); }
-        catch { return true; }
-    } else { console.log('Ошибка HTTP: ' + response.status); }
+        return true;
+    } else {
+        console.log('Ошибка HTTP: ' + response.status);
+    }
 }

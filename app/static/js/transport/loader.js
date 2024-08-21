@@ -3,8 +3,8 @@
 //
 
 // openlayers layers definition
-const transportVectorSource = new olVectorSource({ wrapX: false });
-const transportVectorLayer = new olVectorLayer({ source: transportVectorSource, style: mapStyleFunction });
+const transportVectorSource = new olVectorSource({wrapX: false});
+const transportVectorLayer = new olVectorLayer({source: transportVectorSource, style: mapStyleFunction});
 
 // openlayers adding transport layer
 map.addLayer(transportVectorLayer);
@@ -13,10 +13,12 @@ map.addLayer(transportVectorLayer);
 let loadedTransport = null;
 
 async function LoadTransport() {
-    loadedTransport = await APIGetRequest(transportAPI["main"]);
+    loadedTransport = await APIGetRequest(transportAPI.main);
 }
 
-LoadTransport();
+LoadTransport().then(function () {
+    console.log("Транспорт загружен");
+});
 
 async function FillTransportList() {
     await LoadTransport();
@@ -44,8 +46,8 @@ async function LoadTransportPoints() {
     for (let i = 0; i < loadedTransport.length; i++) {
         imeiList.push(loadedTransport[i].imei);
     }
-    const data = { 'imei': imeiList };
-    return await APIPostRequest(data, transportAPI["point"]);
+    const data = {'imei': imeiList};
+    return await APIPostRequest(data, transportAPI.point);
 }
 
 async function DisplayTransport() {
@@ -53,20 +55,20 @@ async function DisplayTransport() {
     let pointList = await LoadTransportPoints();
     for (let i = 0; i < pointList.length; i++) {
         const point = pointList[i];
-        let coordinates = olFromLonLat([point.lon, point.lat]);
+        let coordinates = olFromLonLat([point["lon"], point["lat"]]);
         coordinates = new olPointGeometry(coordinates);
         // coordinates = coordinates.transform('EPSG:4326', 'EPSG:3857');
-        const transportFeature = new olFeature({ geometry: coordinates });
+        const transportFeature = new olFeature({geometry: coordinates});
         const transport = GetTransport(point.imei);
         if (transport === null) return;
         transportFeature.setId(transport.id);
         transportFeature.set('name', 'transport-' + transport.id);
         transportFeature.set('type', 'transport');
         transportFeature.set('transport_type', transport.transport_type);
-        transportFeature.set('course', point.course);
+        transportFeature.set('course', point["course"]);
         transportFeature.set('speed', point.speed);
         transportFeature.set('height', point.height);
-        transportFeature.set('sats', point.sats);
+        transportFeature.set('sats', point["sats"]);
         transportFeature.set('route', transport.route);
         transportVectorSource.addFeature(transportFeature);
     }

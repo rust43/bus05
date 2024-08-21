@@ -120,8 +120,8 @@ function EditTransport() {
 
 async function DeleteTransport() {
     let transportId = editTransInterface.id.value;
-    const transport_data = { 'transport_id': transportId };
-    await APIDeleteRequest(transport_data, transportAPI["main"]).then(function () {
+    const transport_data = {'transport_id': transportId};
+    await APIDeleteRequest(transport_data, transportAPI.main).then(function () {
         try {
             document.getElementById('transport-selected').classList.add('d-none');
             LoadTransport().then(() => {

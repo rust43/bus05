@@ -61,6 +61,7 @@ let map = new olMap({
     layers: [tileLayer],
     view: GetExtentView(defaultExtent),
     pixelRatio: 1,
+    hidpi: false,
 });
 
 map.addInteraction(new ol.interaction.MouseWheelZoom({
