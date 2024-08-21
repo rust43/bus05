@@ -2,12 +2,22 @@
 // Map configuration
 // ----------------------
 
+proj4.defs('EPSG:3395', '+proj=merc +datum=WGS84 +ellps=WGS84 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +no_defs');
+
 ol.proj.proj4.register(proj4);
+
+ol.proj.get('EPSG:3395').setExtent(
+    [-20037508.342789244, -20037508.342789244, 20037508.342789244, 20037508.342789244]
+);
 
 const host = "http://" + window.location.hostname + ':' + window.location.port;
 const staticURL = host + '/static';
 
-const defaultExtent = [47.384, 42.8972, 47.6176, 43.059];
+// const defaultExtent = [47.384, 42.8972, 47.6176, 43.059];
+
+// const defaultExtent = [47.1986, 42.7714, 47.7203, 43.1195];
+
+const defaultExtent = [47.0252, 42.7505, 47.7292, 43.3064];
 
 // -----------------
 // Layers definition
@@ -23,7 +33,22 @@ let layer2gis = new olTileLayer({
     'title': '2gis', source: new olXYZSource({ url: host + '/tiles/2gis/{z}/{x}/{y}.png' }),
 });
 
-tileLayer = layer2gis;
+let layerYandex = new olTileLayer({
+    'title': 'yandex', source: new olXYZSource({ url: host + '/tiles/yandex/{z}/{x}/{y}.png' }),
+});
+
+let onlineLayerYandex = new olTileLayer({
+    'title': 'onlineyandex',
+    source: new olXYZSource({
+        url: "https://core-renderer-tiles.maps.yandex.net/tiles?l=map&x={x}&y={y}&z={z}&lang=ru_RU",
+        projection: 'EPSG:3395',
+        tileGrid: ol.tilegrid.createXYZ({
+            extent: [-20037508.34, -20037508.34, 20037508.34, 20037508.34]
+        }),
+    }),
+});
+
+tileLayer = onlineLayerYandex;
 
 // ----------------------
 // Map control definition
@@ -76,7 +101,7 @@ function GetExtentView(webExtent) {
         constrainResolution: true,
         zoom: 10,
         minZoom: 2,
-        maxZoom: 18,
+        maxZoom: 21,
         extent: mapExtent,
     });
 }
@@ -91,6 +116,9 @@ function SetTileLayer(layerName) {
         tileLayer = layerOSM;
     } else if (layerName === "2gis") {
         tileLayer = layer2gis;
+    }
+    else if (layerName === "yandex") {
+        tileLayer = layerYandex;
     }
     map.getLayers().insertAt(0, tileLayer)
 }
