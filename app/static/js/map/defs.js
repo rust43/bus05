@@ -12,6 +12,7 @@ const olOverlay = ol.Overlay;
 // Source components
 const olXYZSource = ol.source.XYZ;
 const olVectorSource = ol.source.Vector;
+const olClusterSource = ol.source.Cluster;
 
 // Layer components
 const olVectorLayer = ol.layer.Vector;

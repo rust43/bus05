@@ -3,8 +3,8 @@
 //
 
 // openlayers layers definition
-let routeVectorSource = new olVectorSource({ wrapX: false });
-let routeVectorLayer = new olVectorLayer({ source: routeVectorSource, style: mapStyleFunction });
+let routeVectorSource = new olVectorSource({wrapX: false});
+let routeVectorLayer = new olVectorLayer({source: routeVectorSource, style: mapStyleFunction});
 
 // openlayers adding routes layer
 map.addLayer(routeVectorLayer);
@@ -13,7 +13,7 @@ map.addLayer(routeVectorLayer);
 let loadedRoutes = null;
 
 async function LoadRoutes() {
-    loadedRoutes = await APIGetRequest(routeAPI["main"]);
+    loadedRoutes = await APIGetRequest(routeAPI.main);
 }
 
 LoadRoutes();

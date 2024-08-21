@@ -2,8 +2,17 @@
 // BusStop layer loader file
 //
 
-let busStopsVectorSource = new olVectorSource({ wrapX: false });
-let busStopsVectorLayer = new olVectorLayer({ source: busStopsVectorSource, style: mapStyleFunction });
+let busStopsVectorSource = new olVectorSource({wrapX: false});
+let busStopsClusterSource = new olClusterSource({
+    wrapX: false,
+    // distance: 35,
+    distance: 0,
+    // minDistance: 10,
+    minDistance: 0,
+    source: busStopsVectorSource,
+});
+
+let busStopsVectorLayer = new olVectorLayer({source: busStopsClusterSource, style: mapStyleFunction});
 map.addLayer(busStopsVectorLayer);
 
 let loadedBusStops = null;
@@ -50,7 +59,7 @@ function DisplayBusStops(busStops) {
         if (busstopListContainer) {
             busstopButton.appendChild(busstopButtonText);
             busstopButton.classList.add('btn', 'badge', 'text-bg-success');
-            busstopButton.onclick = function() {
+            busstopButton.onclick = function () {
                 SelectBusStopData(busStop.id);
             };
             busstopListContainer.appendChild(busstopButton);

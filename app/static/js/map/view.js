@@ -3,12 +3,13 @@
 // -------------------
 
 const layerIndexes = {
-    "route": 1,
-    "busstops": 2,
-    "transport": 3
+    route: 3,
+    busstops: 1,
+    transport: 2,
 }
 
-const mapStyleFunction = (function () {
+const mapStyleFunction = (function (feature) {
+    console.log(feature.type);
     const styles = {};
     styles['default'] = [
         new olStyle({
@@ -23,12 +24,12 @@ const mapStyleFunction = (function () {
     styles['path'] = [
         new olStyle({
             stroke: new olStrokeStyle({color: '#308C00', width: 3}),
-            zIndex: 2,
+            zIndex: layerIndexes.route,
         })];
     styles['new-path'] = [
         new olStyle({
             stroke: new olStrokeStyle({color: '#029dbf', width: 4}),
-            zIndex: 2,
+            zIndex: layerIndexes.route,
         })];
     styles['busstop'] = [
         new olStyle({
@@ -37,17 +38,19 @@ const mapStyleFunction = (function () {
                 src: staticURL + '/pictures/bus-stop-18.png',
                 width: 18,
                 height: 18,
-            })
+            }),
+            zIndex: layerIndexes.busstops,
         })];
     styles['new-busstop'] = [
         new olStyle({
             image: new olIconStyle({
                 crossOrigin: 'anonymous',
-                src: staticURL + '/pictures/bus-stop.png',
+                src: staticURL + '/pictures/bus-stop-18.png',
                 anchor: [0.5, 0.5],
                 width: 30,
                 height: 30,
-            })
+            }),
+            zIndex: layerIndexes.busstops,
         })];
     styles['transport'] = [
         new olStyle({
@@ -58,6 +61,7 @@ const mapStyleFunction = (function () {
                 height: 16,
                 width: 16,
             }),
+            zIndex: layerIndexes.transport,
         })
     ];
     return function (feature) {
