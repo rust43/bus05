@@ -76,12 +76,12 @@ function EditPathFeature(pathFeatureId) {
         selected: [pathFeature],
         deselected: []
     });
-    PanToFeature(pathFeature);
+    // PanToFeature(pathFeature);
 }
 
 function SelectRouteData(routeId) {
     if (routeId === '') return;
-
+    DisplayRoute(routeId);
     editedRoute = GetSelectedRoute(routeId);
 
     document.getElementById('route-data').classList.remove('d-none');

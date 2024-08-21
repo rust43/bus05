@@ -127,9 +127,12 @@ async function SaveNewTransport() {
         'route': newTransInterface.routeSelect.value,
     };
     APIPostRequest(transport_data, transportAPI.main).then(function () {
-        alert('Транспорт сохранен!');
         try {
+            alert('Транспорт сохранен!');
             FillNewTransportForm();
+            LoadTransport().then(function () {
+                DisplayTransport();
+            });
         } catch (err) {
             alert('Ошибка при сохранении нового транспорта!');
         }

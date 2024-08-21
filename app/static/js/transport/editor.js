@@ -120,12 +120,13 @@ function EditTransport() {
 
 async function DeleteTransport() {
     let transportId = editTransInterface.id.value;
-    const transport_data = {'transport_id': transportId};
+    const transport_data = { 'transport_id': transportId };
     await APIDeleteRequest(transport_data, transportAPI.main).then(function () {
         try {
             document.getElementById('transport-selected').classList.add('d-none');
+            alert('Транспорт удален!');
             FillTransportList().then(() => {
-                alert('Транспорт удален!');
+                DisplayTransport();
             });
         } catch (err) {
             alert('Ошибка при удалении нового транспорта!');

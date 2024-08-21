@@ -3,8 +3,8 @@
 //
 
 // openlayers layers definition
-let routeVectorSource = new olVectorSource({wrapX: false});
-let routeVectorLayer = new olVectorLayer({source: routeVectorSource, style: mapStyleFunction});
+let routeVectorSource = new olVectorSource({ wrapX: false });
+let routeVectorLayer = new olVectorLayer({ source: routeVectorSource, style: mapStyleFunction });
 
 // openlayers adding routes layer
 map.addLayer(routeVectorLayer);
@@ -20,6 +20,7 @@ LoadRoutes();
 
 async function FillRouteList() {
     await LoadRoutes();
+    document.getElementById('route-data').classList.add('d-none');
     const routeListContainer = document.getElementById('route-list');
     if (routeListContainer) routeListContainer.innerHTML = '';
     for (let i = 0; i < loadedRoutes.length; i++) {
@@ -56,6 +57,7 @@ function DisplayRoute(routeID) {
 }
 
 function DisplayAllRoutes() {
+    routeVectorSource.clear();
     if (loadedRoutes.length === 0) return;
     for (let i = 0; i < loadedRoutes.length; i++) {
         const route = loadedRoutes[i];
@@ -94,4 +96,8 @@ function GetRoute(routeID) {
         if (loadedRoutes[i].id === routeID) return loadedRoutes[i];
     }
     return null;
+}
+
+function ClearRouteLayer() {
+    routeVectorSource.clear();
 }

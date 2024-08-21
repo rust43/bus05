@@ -169,6 +169,23 @@ const mapSelectInteraction = new olSelectInteraction({
 // Add interactions
 map.addInteraction(mapSelectInteraction);
 
+mapSelectInteraction.on('select', (e) => {
+    if (e.selected.length === 0) {
+        if (e.deselected.length >= 1) {
+            if (e.deselected[0].get('type') === 'transport') {
+                ClearRouteLayer();
+            }
+        }
+        return;
+    }
+    const feature = e.selected[0];
+    const type = feature.get('type');
+    if (type === 'transport') {
+        let routeID = feature.get('route');
+        DisplayRoute(routeID);
+    }
+});
+
 // Function for drawing arrows
 function DrawArrows(feature, style, height, width) {
     const styles = [style[0]];

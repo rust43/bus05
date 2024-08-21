@@ -3,8 +3,8 @@
 //
 
 // openlayers layers definition
-const transportVectorSource = new olVectorSource({wrapX: false});
-const transportVectorLayer = new olVectorLayer({source: transportVectorSource, style: mapStyleFunction});
+const transportVectorSource = new olVectorSource({ wrapX: false });
+const transportVectorLayer = new olVectorLayer({ source: transportVectorSource, style: mapStyleFunction });
 
 // openlayers adding transport layer
 map.addLayer(transportVectorLayer);
@@ -17,8 +17,12 @@ async function LoadTransport() {
 }
 
 LoadTransport().then(function () {
-    console.log("Транспорт загружен");
+    DisplayTransport();
 });
+
+function ClearTransportLayer() {
+    transportVectorSource.clear();
+}
 
 async function FillTransportList() {
     await LoadTransport();
@@ -46,7 +50,7 @@ async function LoadTransportPoints() {
     for (let i = 0; i < loadedTransport.length; i++) {
         imeiList.push(loadedTransport[i].imei);
     }
-    const data = {'imei': imeiList};
+    const data = { 'imei': imeiList };
     return await APIPostRequest(data, transportAPI.point);
 }
 
@@ -58,11 +62,12 @@ async function DisplayTransport() {
         let coordinates = olFromLonLat([point["lon"], point["lat"]]);
         coordinates = new olPointGeometry(coordinates);
         // coordinates = coordinates.transform('EPSG:4326', 'EPSG:3857');
-        const transportFeature = new olFeature({geometry: coordinates});
+        const transportFeature = new olFeature({ geometry: coordinates });
         const transport = GetTransport(point.imei);
         if (transport === null) return;
         transportFeature.setId(transport.id);
         transportFeature.set('name', 'transport-' + transport.id);
+        transportFeature.set('imei', transport.imei);
         transportFeature.set('type', 'transport');
         transportFeature.set('transport_type', transport.transport_type);
         transportFeature.set('course', point["course"]);
