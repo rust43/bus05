@@ -57,6 +57,7 @@ async function LoadTransportPoints() {
 async function DisplayTransport() {
     transportVectorSource.clear();
     let pointList = await LoadTransportPoints();
+    if (!pointList) return;
     for (let i = 0; i < pointList.length; i++) {
         const point = pointList[i];
         let coordinates = olFromLonLat([point["lon"], point["lat"]]);
@@ -109,7 +110,7 @@ function FillSelect(selectElement, valueList, valueNames = null) {
     }
 }
 
-const intervalLoader = setInterval(transportLoader, 5000);
+// const intervalLoader = setInterval(transportLoader, 5000);
 
 function transportLoader() {
     DisplayTransport();
