@@ -91,7 +91,7 @@ function DisplayRoutePath(id, route_id, name, geom) {
 // helper functions
 
 function GetRoute(routeID) {
-    if (loadedRoutes.length === 0) return;
+    if (loadedRoutes === null) return null;
     for (let i = 0; i < loadedRoutes.length; i++) {
         if (loadedRoutes[i].id === routeID) return loadedRoutes[i];
     }

@@ -49,5 +49,5 @@ app/static/pictures/*
 !app/static/pictures/arrow.png
 !app/static/pictures/bus-16.svg
 !app/static/pictures/bus-24.svg
-!app/static/pictures/bus-stop-16.svg
 !app/static/pictures/marker-bus-38.svg
+!app/static/pictures/plate.png

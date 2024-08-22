@@ -22,7 +22,7 @@ const mapStyleFunction = (() => {
         })];
     styles['path'] = [
         new olStyle({
-            stroke: new olStrokeStyle({ color: '#308C00', width: 3 }),
+            stroke: new olStrokeStyle({ color: '#308c00', width: 3 }),
             zIndex: layerIndexes.route,
         })];
     styles['new-path'] = [
@@ -44,7 +44,7 @@ const mapStyleFunction = (() => {
         new olStyle({
             image: new olIconStyle({
                 crossOrigin: 'anonymous',
-                src: staticURL + '/pictures/bus-stop-18.png',
+                src: staticURL + '/pictures/bus-stop.png',
                 anchor: [0.5, 0.5],
                 width: 30,
                 height: 30,
@@ -78,7 +78,7 @@ const mapStyleFunction = (() => {
             }
         }
         else if (featureType === 'transport') {
-            return DrawTransportMarker(feature, style);
+            return DrawTransportMarker(feature, style, 38);
         }
         return style;
     };
@@ -139,8 +139,8 @@ const mapOverlayStyleFunction = (function () {
                 color: "#ffffff",
                 crossOrigin: 'anonymous',
                 src: staticURL + '/pictures/bus-16.svg',
-                height: 16,
-                width: 16,
+                height: 20,
+                width: 20,
             }),
             zIndex: 1,
         })
@@ -153,7 +153,7 @@ const mapOverlayStyleFunction = (function () {
         } else if (featureType === 'busstop') {
             return DrawBusstopText(feature, style, 14);
         } else if (featureType === 'transport') {
-            return DrawTransportMarker(feature, style);
+            return DrawTransportMarker(feature, style, 45, 45);
         }
         return style;
     };
@@ -219,17 +219,39 @@ function DrawArrows(feature, style, height, width) {
     return styles;
 }
 
-function DrawTransportMarker(feature, style) {
+function DrawTransportMarker(feature, style, size) {
+    const route = GetRoute(feature.get('route'));
+    let routeName = '...';
+    if (route !== null)
+        routeName = route.name;
     return [
         new olStyle({
             image: new olIconStyle({
                 crossOrigin: 'anonymous',
+                src: staticURL + '/pictures/plate.png',
+                color: "#ffffff",
+                width: 50,
+                height: 24,
+                anchor: [1.1, 0.5],
+            }),
+        }),
+        new olStyle({
+            image: new olIconStyle({
+                crossOrigin: 'anonymous',
                 src: staticURL + '/pictures/marker-bus-38.svg',
-                width: 38,
-                height: 38,
+                width: size,
+                height: size,
                 anchor: [0.5, 0.6],
                 rotateWithView: true,
                 rotation: feature.get('course'),
+            }),
+            text: new olTextStyle({
+                text: routeName,
+                font: 13 + 'px Calibri,sans-serif',
+                fill: new olFillStyle({
+                    color: '#308c00',
+                }),
+                offsetX: -35,
             }),
         }),
         style[0]

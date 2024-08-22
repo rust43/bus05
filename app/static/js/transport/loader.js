@@ -108,3 +108,9 @@ function FillSelect(selectElement, valueList, valueNames = null) {
         selectElement.appendChild(opt);
     }
 }
+
+const intervalLoader = setInterval(transportLoader, 5000);
+
+function transportLoader() {
+    DisplayTransport();
+}
