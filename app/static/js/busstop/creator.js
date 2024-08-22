@@ -32,7 +32,7 @@ function DrawBusStop(BusStopName) {
         source: newBusStopVectorSource, type: 'Point', pixelTolerance: 50
     });
 
-    mapDrawInteraction.on('drawend', function(evt) {
+    mapDrawInteraction.on('drawend', function (evt) {
         const feature = evt.feature;
         feature.set('name', BusStopName);
         feature.set('type', 'new-busstop');
@@ -48,7 +48,7 @@ function DrawBusStop(BusStopName) {
 // BusStop map validation functions
 // --------------------------------
 
-const BusStopValidation = function(BusStopName, feature) {
+const BusStopValidation = function (BusStopName, feature) {
     const flag = document.getElementById(BusStopName + '-flag');
     flag.classList.remove('text-bg-danger');
     flag.classList.add('text-bg-success');
@@ -56,14 +56,14 @@ const BusStopValidation = function(BusStopName, feature) {
     setBusStopFeature(BusStopName, feature);
 };
 
-const BusStopInvalidation = function(BusStopName) {
+const BusStopInvalidation = function (BusStopName) {
     const flag = document.getElementById(BusStopName + '-flag');
     flag.classList.remove('text-bg-success');
     flag.classList.add('text-bg-danger');
     flag.innerText = 'Не указано';
 };
 
-const setBusStopFeature = function(BusStopName, feature) {
+const setBusStopFeature = function (BusStopName, feature) {
     if (BusStopName === 'busstop-new-location') {
         if (newBusStopLocationFeature !== null) newBusStopVectorSource.removeFeature(newBusStopLocationFeature);
         newBusStopLocationFeature = feature;
@@ -91,7 +91,7 @@ function BusStopFormValidation() {
     return result;
 }
 
-newBusStopNameInput.onchange = function() {
+newBusStopNameInput.onchange = function () {
     validationHelper(newBusStopNameInput);
 };
 
@@ -100,6 +100,7 @@ newBusStopNameInput.onchange = function() {
 // ------------------------------------
 
 function RemoveSelectedNewBusStopFeature() {
+    if (selectedFeature === null) return;
     let name = selectedFeature.get('name');
     if (name === 'busstop-new-location') {
         newBusStopVectorSource.removeFeature(newBusStopLocationFeature);
@@ -110,7 +111,7 @@ function RemoveSelectedNewBusStopFeature() {
     }
 }
 
-const deleteNewBusStopFeature = function(evt) {
+const deleteNewBusStopFeature = function (evt) {
     if (evt.keyCode === 46) RemoveSelectedNewBusStopFeature();
 };
 document.addEventListener('keydown', deleteNewBusStopFeature, false);
@@ -154,7 +155,7 @@ function BusStopFormSave() {
         'name': newBusStopNameInput.value, 'geojson_data': geoJSONdata
     };
 
-    PostBusStop(busstop_data).then(function() {
+    PostBusStop(busstop_data).then(function () {
         alert('Остановка сохранена!');
         try {
             DeleteNewBusStop();

@@ -15,7 +15,7 @@ const routeInterface = {
 // ---------------------------
 
 const newRouteVectorSource = new olVectorSource({ wrapX: false });
-let newRouteVectorLayer = new olVectorLayer({ source: newRouteVectorSource, style: mapStyleFunction });
+let newRouteVectorLayer = new olVectorLayer({ source: newRouteVectorSource, style: mapStyleFunction, className: 'newRouteVectorLayer' });
 map.addLayer(newRouteVectorLayer);
 
 // ----------------------------
@@ -145,6 +145,7 @@ routeInterface["nameInput"].onchange = function () {
 // ----------------------------------
 
 function RemoveSelectedNewRouteFeature() {
+    if (selectedFeature === null) return;
     let name = selectedFeature.get('name');
     if (name === 'route-path-a') {
         newRouteVectorSource.removeFeature(feature_path_a);
@@ -165,6 +166,14 @@ const deleteNewRouteFeature = function (evt) {
     if (evt.keyCode === 46) RemoveSelectedNewRouteFeature();
 };
 document.addEventListener('keydown', deleteNewRouteFeature, false);
+
+const removeLastPoint = function (evt) {
+    if (evt.keyCode === 8) {
+        mapDrawInteraction.removeLastPoint();
+    }
+}
+document.addEventListener('keydown', removeLastPoint, false);
+
 
 // ----------------------------------
 // Route map select feature functions
