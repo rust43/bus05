@@ -22,4 +22,4 @@ class TransportAdmin(admin.ModelAdmin):
 @admin.register(TransportPoint)
 class TransportPointAdmin(admin.ModelAdmin):
     model = TransportPoint
-    list_display = ("imei", "date", "speed")
+    list_display = ("id", "imei", "date", "speed")
