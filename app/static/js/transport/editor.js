@@ -50,6 +50,22 @@ function SelectTransportData(transportId) {
         editTransInterface.imei.appendChild(opt);
         editTransInterface.imei.value = editedTransport.imei;
     });
+    document.getElementById('show-transport-location-button').onclick = function () {
+        SelectTransportFeature(transportId);
+    };
+}
+
+function SelectTransportFeature(transportFeatureID) {
+    const transportFeature = transportVectorSource.getFeatureById(transportFeatureID);
+    if (!transportFeature) return;
+    mapSelectInteraction.getFeatures().clear();
+    mapSelectInteraction.getFeatures().push(transportFeature);
+    mapSelectInteraction.dispatchEvent({
+        type: 'select',
+        selected: [transportFeature],
+        deselected: []
+    });
+    PanToFeature(transportFeature);
 }
 
 function GetSelectedTransport(transportId) {
@@ -110,6 +126,7 @@ function EditTransport() {
         try {
             FillTransportList().then(() => {
                 SelectTransportData(transport_id);
+                DisplayTransport();
                 alert('Транспорт сохранен!');
             });
         } catch (err) {

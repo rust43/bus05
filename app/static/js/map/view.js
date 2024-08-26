@@ -2,12 +2,6 @@
 // Map style functions
 // -------------------
 
-const layerIndexes = {
-    route: 3,
-    busstops: 1,
-    transport: 2,
-}
-
 const mapStyleFunction = (() => {
     const styles = {};
     styles['default'] = [
@@ -23,12 +17,10 @@ const mapStyleFunction = (() => {
     styles['path'] = [
         new olStyle({
             stroke: new olStrokeStyle({ color: '#308c00', width: 3 }),
-            zIndex: layerIndexes.route,
         })];
     styles['new-path'] = [
         new olStyle({
             stroke: new olStrokeStyle({ color: '#029dbf', width: 4 }),
-            zIndex: layerIndexes.route,
         })];
     styles['busstop'] = [
         new olStyle({
@@ -38,7 +30,6 @@ const mapStyleFunction = (() => {
                 width: 18,
                 height: 18,
             }),
-            zIndex: layerIndexes.busstops,
         })];
     styles['new-busstop'] = [
         new olStyle({
@@ -49,7 +40,6 @@ const mapStyleFunction = (() => {
                 width: 30,
                 height: 30,
             }),
-            zIndex: layerIndexes.busstops,
         })];
     styles['transport'] = [
         new olStyle({
@@ -94,13 +84,11 @@ const mapOverlayStyleFunction = (function () {
     styles['path'] = [
         new olStyle({
             stroke: new olStrokeStyle({ color: '#20c200', width: 4 }),
-            zIndex: 2,
         })
     ];
     styles['new-path'] = [
         new olStyle({
             stroke: new olStrokeStyle({ color: '#0d6efd', width: 4 }),
-            zIndex: 2,
         })
     ];
     styles['busstop'] = [
@@ -112,7 +100,6 @@ const mapOverlayStyleFunction = (function () {
                 width: 60,
                 height: 60
             }),
-            zIndex: 1,
         })
     ];
     styles['new-busstop'] = [
@@ -124,7 +111,6 @@ const mapOverlayStyleFunction = (function () {
                 width: 60,
                 height: 60
             }),
-            zIndex: 1,
         })
     ];
     styles['transport'] = [
@@ -147,7 +133,7 @@ const mapOverlayStyleFunction = (function () {
         } else if (featureType === 'busstop') {
             return DrawBusstopText(feature, style, 14);
         } else if (featureType === 'transport') {
-            return DrawTransportMarker(feature, style, 45, 45);
+            return DrawTransportMarker(feature, style, 45, 45, true);
         }
         return style;
     };
@@ -166,9 +152,7 @@ map.addInteraction(mapSelectInteraction);
 mapSelectInteraction.on('select', (e) => {
     if (e.selected.length === 0) {
         if (e.deselected.length >= 1) {
-            if (e.deselected[0].get('type') === 'transport') {
-                ClearRouteLayer();
-            }
+            if (e.deselected[0].get('type') === 'transport') ClearRouteLayer();
         }
         return;
     }
@@ -231,9 +215,11 @@ function DrawArrows(feature, style, height, width, zoom) {
     return styles;
 }
 
-function DrawTransportMarker(feature, style, size) {
+function DrawTransportMarker(feature, style, size, selected = false) {
     const route = GetRoute(feature.get('route'));
-    const coord = feature.getGeometry().getCoordinates()[0];
+    let coord = feature.getGeometry().getCoordinates()[0];
+    if (selected)
+        coord = 1e10;
     let routeName = '...';
     if (route !== null)
         routeName = route.name;
@@ -277,7 +263,10 @@ function DrawTransportMarker(feature, style, size) {
 
 function DrawBusstopText(feature, style, size) {
     const name = feature.get('busstop_name');
-    const styles = [style[0]];
+    const coord = feature.getGeometry().getCoordinates()[0];
+    let clonedStyle = style[0].clone();
+    clonedStyle.setZIndex(coord);
+    const styles = [clonedStyle];
     styles.push(
         new olStyle({
             text: new olTextStyle({
@@ -292,7 +281,7 @@ function DrawBusstopText(feature, style, size) {
                 }),
                 offsetY: 15,
             }),
-            zIndex: 3,
+            zIndex: coord,
         }),
     )
     return styles;

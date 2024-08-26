@@ -32,13 +32,14 @@ async function FillTransportList() {
         const transport = loadedTransport[i];
         // add button to view transport
         const transportButton = document.createElement('button');
-        const transportButtonText = document.createTextNode(transport.name + " " + transport.license_plate);
+        const transportButtonText = document.createTextNode(transport.name);
         if (transportListContainer) {
             transportButton.appendChild(transportButtonText);
-            transportButton.classList.add('btn', 'badge', 'text-bg-warning');
-            transportButton.onclick = function () {
-                SelectTransportData(transport.id);
-            };
+            if (transport.active)
+                transportButton.classList.add('btn', 'badge', 'text-bg-warning');
+            else
+                transportButton.classList.add('btn', 'badge', 'text-bg-secondary');
+            transportButton.onclick = function () { SelectTransportData(transport.id); };
             transportListContainer.appendChild(transportButton);
         }
     }
@@ -48,6 +49,7 @@ async function LoadTransportPoints() {
     if (loadedTransport.length === 0) return;
     let imeiList = [];
     for (let i = 0; i < loadedTransport.length; i++) {
+        if (!loadedTransport[i].active) continue;
         imeiList.push(loadedTransport[i].imei);
     }
     const data = { 'imei': imeiList };

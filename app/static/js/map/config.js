@@ -86,7 +86,7 @@ function GetExtentView(webExtent) {
         // constrainResolution: true,
         zoom: 10,
         minZoom: 2,
-        maxZoom: 19,
+        maxZoom: 18,
         extent: mapExtent,
     });
 }
