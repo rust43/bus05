@@ -168,9 +168,8 @@ const deleteNewRouteFeature = function (evt) {
 document.addEventListener('keydown', deleteNewRouteFeature, false);
 
 const removeLastPoint = function (evt) {
-    if (evt.keyCode === 8) {
-        mapDrawInteraction.removeLastPoint();
-    }
+    if (mapDrawInteraction === null) return;
+    if (evt.keyCode === 8) mapDrawInteraction.removeLastPoint();
 }
 document.addEventListener('keydown', removeLastPoint, false);
 

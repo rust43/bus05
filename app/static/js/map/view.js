@@ -60,24 +60,18 @@ const mapStyleFunction = (() => {
                 height: 16,
                 width: 16,
             }),
-            zIndex: layerIndexes.transport,
-        })
+        }),
     ];
     return function (feature) {
-        let zoom = map.getView().getZoom();
+        const zoom = map.getView().getZoom();
         const featureType = feature.get('type');
         let style = styles[featureType] || styles['default'];
         if (featureType === 'path' || featureType === 'new-path') {
             return DrawArrows(feature, style, 10, 10, zoom);
         } else if (featureType === 'busstop') {
-            if (zoom >= 15) {
-                return style;
-            }
-            else {
-                return null;
-            }
-        }
-        else if (featureType === 'transport') {
+            if (zoom >= 15) return style;
+            else return null;
+        } else if (featureType === 'transport') {
             return DrawTransportMarker(feature, style, 38);
         }
         return style;
@@ -142,8 +136,7 @@ const mapOverlayStyleFunction = (function () {
                 height: 20,
                 width: 20,
             }),
-            zIndex: 1,
-        })
+        }),
     ];
     return function (feature) {
         const zoom = map.getView().getZoom();
@@ -202,30 +195,19 @@ function DrawArrows(feature, style, height, width, zoom) {
             anchor: [0.5, 0.5],
             rotateWithView: true,
             rotation: -rotation,
-            stroke: new olStrokeStyle({
-                color: 'black',
-                width: 20,
-            }),
         });
     };
-
     const totalLenght = lineString.getLength();
-
-    let stepDistance = 2000;
-
-    if (zoom >= 13) {
-        stepDistance = 1000;
-    }
-    if (zoom >= 14) {
-        stepDistance = 500;
-    }
-    if (zoom >= 15) {
-        stepDistance = 250;
-    }
+    let stepDistance;
     if (zoom >= 17) {
         stepDistance = 125;
-    }
-
+    } else if (zoom >= 15) {
+        stepDistance = 250;
+    } else if (zoom >= 14) {
+        stepDistance = 500;
+    } else if (zoom >= 13) {
+        stepDistance = 1000;
+    } else { stepDistance = 2000; }
     let passedDistance = 0;
     let markDistance = stepDistance;
     lineString.forEachSegment(function (start, end) {
@@ -234,7 +216,7 @@ function DrawArrows(feature, style, height, width, zoom) {
         const rotation = Math.atan2(dy, dx);
         const segmentLength = new olLineStringGeometry([start, end]).getLength();
         passedDistance += segmentLength;
-        while (markDistance < passedDistance) {
+        while (markDistance <= passedDistance) {
             const fraction = markDistance / totalLenght;
             const point = lineString.getCoordinateAt(fraction);
             styles.push(
@@ -251,9 +233,12 @@ function DrawArrows(feature, style, height, width, zoom) {
 
 function DrawTransportMarker(feature, style, size) {
     const route = GetRoute(feature.get('route'));
+    const coord = feature.getGeometry().getCoordinates()[0];
     let routeName = '...';
     if (route !== null)
         routeName = route.name;
+    let clonedStyle = style[0].clone();
+    clonedStyle.setZIndex(coord);
     return [
         new olStyle({
             image: new olIconStyle({
@@ -264,6 +249,7 @@ function DrawTransportMarker(feature, style, size) {
                 height: 24,
                 anchor: [1.1, 0.5],
             }),
+            zIndex: coord,
         }),
         new olStyle({
             image: new olIconStyle({
@@ -283,8 +269,9 @@ function DrawTransportMarker(feature, style, size) {
                 }),
                 offsetX: -35,
             }),
+            zIndex: coord,
         }),
-        style[0]
+        clonedStyle,
     ];
 }
 
