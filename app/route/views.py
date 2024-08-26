@@ -243,11 +243,24 @@ class DataApiView(APIView):
         data = JSONParser().parse(file)
         # consolidation
         data = consolidate_import(data)
-        imported_busstops = BusStopSerializer(data=data["busstops"], many=True)
-        imported_routes = RouteSerializer(data=data["routes"], many=True)
-        valid = imported_busstops.is_valid() * imported_routes.is_valid()
+        if len(data["busstops"]) > 0:
+            imported_busstops = BusStopSerializer(data=data["busstops"], many=True, allow_empty=True)
+            imported_busstops_valid = imported_busstops.is_valid()
+        else:
+            imported_busstops = None
+            imported_busstops_valid = True
+        imported_routes = None
+        if len(data["routes"]) > 0:
+            imported_routes = RouteSerializer(data=data["routes"], many=True)
+            imported_routes_valid = imported_routes.is_valid()
+        else:
+            imported_routes = None
+            imported_routes_valid = True
+        valid = bool(imported_busstops_valid) * bool(imported_routes_valid)
         if not valid:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-        imported_busstops.save()
-        imported_routes.save()
+        if imported_busstops:
+            imported_busstops.save()
+        if imported_routes:
+            imported_routes.save()
         return Response(status=status.HTTP_200_OK)

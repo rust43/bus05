@@ -85,32 +85,59 @@ def parse_geojson(
 
 
 def consolidate_import(data):
+
+    # dict for keep replace busstop list
+    switch_bs = {}
+
+    # finding existing busstop id's by coordinates
     busstops = data["busstops"]
     for busstop in busstops:
         name = busstop["name"]
         coordinates = busstop["location"]["point"]["geom"]["coordinates"]
         point = Point(coordinates)
-        ex_point = ObjectPoint.objects.filter(geom__distance_lt=(point, Distance(m=2)))
+        # finding point in distance of two meters
+        existing_points = ObjectPoint.objects.filter(geom__distance_lt=(point, Distance(m=2)))
+        for existing_point in existing_points:
+            # getting point map_object
+            mo = existing_point.map_object
+            # finding busstops with that map object
+            try:
+                existing_bs = BusStop.objects.get(location=mo)
+                busstop["exist_id"] = True
+                switch_bs[busstop["id"]] = str(existing_bs.id)
+            except BusStop.DoesNotExist:
+                continue
 
-        # try:
-        #     existing_busstops = BusStop.objects.get(name=name)
-        #     location = existing_busstop.location
-        #     busstop["exist_id"] = existing_busstop.id
-        # except BusStop.DoesNotExist:
-        #     continue
-
+    # removing existing routes from import
     routes = data["routes"]
+    new_routes = []
     for route in routes:
         name = route["name"]
         try:
-            existing_route = Route.objects.get(name=name)
-            routes.pop(route)
+            Route.objects.get(name=name)
         except Route.DoesNotExist:
-            pass
+            new_routes.append(route)
+    routes = new_routes
+
+    # replacing route busstops with existings values
+    for route in routes:
+        path_a_stops = route["path_a_stops"]
+        for bs in path_a_stops:
+            if switch_bs.get(bs["id"]) is not None:
+                bs["id"] = switch_bs[bs["id"]]
+
+        path_b_stops = route["path_b_stops"]
+        for bs in path_b_stops:
+            if switch_bs.get(bs["id"]) is not None:
+                bs["id"] = switch_bs[bs["id"]]
 
     # remove existing busstops
+    new_busstops = []
     for busstop in busstops:
-        if "exist_id" in busstop:
-            busstops.pop(busstop, None)
+        if not "exist_id" in busstop:
+            new_busstops.append(busstop)
+    busstops = new_busstops
 
+    data["busstops"] = busstops
+    data["routes"] = routes
     return data
