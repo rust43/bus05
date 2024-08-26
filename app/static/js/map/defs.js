@@ -38,6 +38,7 @@ const olSnapInteraction = ol.interaction.Snap;
 const olDrawInteraction = ol.interaction.Draw;
 const olModifyInteraction = ol.interaction.Modify;
 const olTranslateInteraction = ol.interaction.Translate;
+const olMouseWheelZoomInteraction = ol.interaction.MouseWheelZoom;
 
 // Proj components
 const olTransform = ol.proj.transform;

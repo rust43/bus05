@@ -16,11 +16,11 @@ const defaultExtent = [47.384, 42.8972, 47.6176, 43.059];
 let tileLayer;
 
 let layerOSM = new olTileLayer({
-    'title': 'osm', source: new olXYZSource({url: host + '/tiles/osm/{z}/{x}/{y}.png'}),
+    'title': 'osm', source: new olXYZSource({ url: host + '/tiles/osm/{z}/{x}/{y}.png' }),
 });
 
 let layer2gis = new olTileLayer({
-    'title': '2gis', source: new olXYZSource({url: host + '/tiles/2gis/{z}/{x}/{y}.png'}),
+    'title': '2gis', source: new olXYZSource({ url: host + '/tiles/2gis/{z}/{x}/{y}.png' }),
 });
 
 let layerYandex = new olTileLayer({
@@ -37,7 +37,7 @@ tileLayer = layerOSM;
 // Map control definition
 // ----------------------
 
-const scaleControl = new olScaleLineControl({units: "metric"});
+const scaleControl = new olScaleLineControl({ units: "metric" });
 const zoomSliderControl = new olZoomSliderControl();
 const fullScreenControl = new olFullScreenControl();
 const rotateControl = new olRotateControl();
@@ -48,25 +48,25 @@ const controls = [scaleControl, rotateControl, zoomSliderControl, fullScreenCont
 // --------------------------
 
 const dragRotateInteraction = new olDragRotateInteraction();
-const interactions = [dragRotateInteraction];
+const mouseWheelZoomInteraction = new olMouseWheelZoomInteraction({
+    // timeout: 250,
+    // duration: 250,
+});
+const interactions = [dragRotateInteraction, mouseWheelZoomInteraction];
 
 // --------------
 // Map definition
 // --------------
 
 let map = new olMap({
-    controls: olDefaultControls.defaults({attribution: false}).extend(controls),
+    controls: olDefaultControls.defaults({ attribution: false }).extend(controls),
     interactions: olDefaultInteractions.defaults().extend(interactions),
     target: 'map',
     layers: [tileLayer],
     view: GetExtentView(defaultExtent),
-    pixelRatio: 1,
+    pixelRatio: 2,
     hidpi: false,
 });
-
-map.addInteraction(new ol.interaction.MouseWheelZoom({
-    duration: 250, timeout: 100,
-}));
 
 // ------------------
 // Map set extent function
@@ -83,7 +83,7 @@ function GetExtentView(webExtent) {
     return new olView({
         center: viewCenter,
         // resolutions: tileLayer.getSource().getTileGrid().getResolutions(),
-        constrainResolution: true,
+        // constrainResolution: true,
         zoom: 10,
         minZoom: 2,
         maxZoom: 19,

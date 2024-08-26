@@ -3,6 +3,7 @@ from rest_framework import status
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from route.functions import consolidate_import
 from route.functions import parse_geojson
 from route.models import BusStop
 from route.models import Route
@@ -240,6 +241,8 @@ class DataApiView(APIView):
         """
         file = request.data.get("file")
         data = JSONParser().parse(file)
+        # consolidation
+        data = consolidate_import(data)
         imported_busstops = BusStopSerializer(data=data["busstops"], many=True)
         imported_routes = RouteSerializer(data=data["routes"], many=True)
         valid = imported_busstops.is_valid() * imported_routes.is_valid()

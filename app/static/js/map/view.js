@@ -68,9 +68,9 @@ const mapStyleFunction = (() => {
         const featureType = feature.get('type');
         let style = styles[featureType] || styles['default'];
         if (featureType === 'path' || featureType === 'new-path') {
-            return DrawArrows(feature, style, 10, 10);
+            return DrawArrows(feature, style, 10, 10, zoom);
         } else if (featureType === 'busstop') {
-            if (zoom >= 16) {
+            if (zoom >= 15) {
                 return style;
             }
             else {
@@ -146,10 +146,11 @@ const mapOverlayStyleFunction = (function () {
         })
     ];
     return function (feature) {
+        const zoom = map.getView().getZoom();
         const featureType = feature.get('type');
         let style = styles[featureType] || styles['default'];
         if (featureType === 'path' || featureType === 'new-path') {
-            return DrawArrows(feature, style, 18, 18);
+            return DrawArrows(feature, style, 18, 18, zoom);
         } else if (featureType === 'busstop') {
             return DrawBusstopText(feature, style, 14);
         } else if (featureType === 'transport') {
@@ -187,9 +188,9 @@ mapSelectInteraction.on('select', (e) => {
 });
 
 // Function for drawing arrows
-function DrawArrows(feature, style, height, width) {
+function DrawArrows(feature, style, height, width, zoom) {
     const styles = [style[0]];
-    const geometry = feature.getGeometry();
+    const lineString = feature.getGeometry();
     const strokeColor = style[0].getStroke().getColor();
     const arrowImage = function (rotation) {
         return new olIconStyle({
@@ -200,21 +201,50 @@ function DrawArrows(feature, style, height, width) {
             height: height,
             anchor: [0.5, 0.5],
             rotateWithView: true,
-            rotation: -rotation
+            rotation: -rotation,
+            stroke: new olStrokeStyle({
+                color: 'black',
+                width: 20,
+            }),
         });
     };
-    geometry.forEachSegment(function (start, end) {
+
+    const totalLenght = lineString.getLength();
+
+    let stepDistance = 2000;
+
+    if (zoom >= 13) {
+        stepDistance = 1000;
+    }
+    if (zoom >= 14) {
+        stepDistance = 500;
+    }
+    if (zoom >= 15) {
+        stepDistance = 250;
+    }
+    if (zoom >= 17) {
+        stepDistance = 125;
+    }
+
+    let passedDistance = 0;
+    let markDistance = stepDistance;
+    lineString.forEachSegment(function (start, end) {
         const dx = end[0] - start[0];
         const dy = end[1] - start[1];
         const rotation = Math.atan2(dy, dx);
-        const center = [(end[0] + start[0]) / 2, (end[1] + start[1]) / 2];
-        // arrows
-        styles.push(
-            new olStyle({
-                geometry: new olPointGeometry(center),
-                image: arrowImage(rotation)
-            })
-        );
+        const segmentLength = new olLineStringGeometry([start, end]).getLength();
+        passedDistance += segmentLength;
+        while (markDistance < passedDistance) {
+            const fraction = markDistance / totalLenght;
+            const point = lineString.getCoordinateAt(fraction);
+            styles.push(
+                new olStyle({
+                    geometry: new olPointGeometry(point),
+                    image: arrowImage(rotation),
+                })
+            );
+            markDistance += stepDistance;
+        }
     });
     return styles;
 }

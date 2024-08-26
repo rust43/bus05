@@ -3,12 +3,15 @@ import json
 from django.contrib.gis.geos import LineString
 from django.contrib.gis.geos import Point
 from django.contrib.gis.geos import Polygon
+from django.contrib.gis.measure import Distance
 from map.models import MapObject
 from map.models import ObjectCircle
 from map.models import ObjectLineString
 from map.models import ObjectPoint
 from map.models import ObjectPolygon
 from map.models import ObjectType
+from route.models import BusStop
+from route.models import Route
 
 
 def parse_point(name: str, geometry_type: str, geom: Point) -> tuple[MapObject, ObjectPoint]:
@@ -79,3 +82,35 @@ def parse_geojson(
         # for prop, value in feature["properties"].items():
         #     MapObjectProp.objects.create(map_object=map_object, prop=prop, value=value)
     return parsed_features
+
+
+def consolidate_import(data):
+    busstops = data["busstops"]
+    for busstop in busstops:
+        name = busstop["name"]
+        coordinates = busstop["location"]["point"]["geom"]["coordinates"]
+        point = Point(coordinates)
+        ex_point = ObjectPoint.objects.filter(geom__distance_lt=(point, Distance(m=2)))
+
+        # try:
+        #     existing_busstops = BusStop.objects.get(name=name)
+        #     location = existing_busstop.location
+        #     busstop["exist_id"] = existing_busstop.id
+        # except BusStop.DoesNotExist:
+        #     continue
+
+    routes = data["routes"]
+    for route in routes:
+        name = route["name"]
+        try:
+            existing_route = Route.objects.get(name=name)
+            routes.pop(route)
+        except Route.DoesNotExist:
+            pass
+
+    # remove existing busstops
+    for busstop in busstops:
+        if "exist_id" in busstop:
+            busstops.pop(busstop, None)
+
+    return data
