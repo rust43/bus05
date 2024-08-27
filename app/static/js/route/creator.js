@@ -32,25 +32,33 @@ let new_route_path_b_stops = {};
 // ---------------------------
 
 function DrawRoute(routeName) {
+    StartDraw(newRouteVectorSource);
+    mapDrawInteraction.on('drawend', function (evt) {
+        const feature = evt.feature;
+        feature.set('name', routeName);
+        feature.set('type', 'new-path');
+        routeValidation(routeName, feature);
+        CancelDraw();
+    });
+    map.getInteractions().extend([mapDrawInteraction, mapSnapInteraction]);
+}
+
+function CancelDraw() {
+    map.removeInteraction(mapDrawInteraction);
+    map.removeInteraction(mapSnapInteraction);
+    map.addInteraction(mapSelectInteraction);
+}
+
+function StartDraw(vectorSource) {
     // removing interactions before draw
     map.removeInteraction(mapSelectInteraction);
     map.removeInteraction(mapModifyInteraction);
     map.removeInteraction(mapDrawInteraction);
     map.removeInteraction(mapSnapInteraction);
     mapDrawInteraction = new olDrawInteraction({
-        source: newRouteVectorSource, type: 'LineString', pixelTolerance: 50
+        source: vectorSource, type: 'LineString', pixelTolerance: 50
     });
-    mapSnapInteraction = new olSnapInteraction({ source: newRouteVectorSource });
-    mapDrawInteraction.on('drawend', function (evt) {
-        const feature = evt.feature;
-        feature.set('name', routeName);
-        feature.set('type', 'new-path');
-        routeValidation(routeName, feature);
-        map.removeInteraction(mapDrawInteraction);
-        map.removeInteraction(mapSnapInteraction);
-        map.addInteraction(mapSelectInteraction);
-    });
-    map.getInteractions().extend([mapDrawInteraction, mapSnapInteraction]);
+    mapSnapInteraction = new olSnapInteraction({ source: vectorSource });
 }
 
 // ------------------------------
@@ -87,6 +95,7 @@ const setRouteFeature = function (routeName, feature) {
 };
 
 function ClearNewRoute() {
+    CancelDraw();
     routeInterface["nameInput"].value = '';
     routeInterface["nameInput"].classList.remove('is-valid');
     if (feature_path_a !== null) {
@@ -163,16 +172,50 @@ function RemoveSelectedNewRouteFeature() {
 }
 
 const deleteNewRouteFeature = function (evt) {
-    if (evt.keyCode === 46) RemoveSelectedNewRouteFeature();
+    if (evt.keyCode !== 46) return;
+    RemoveSelectedNewRouteFeature();
 };
 document.addEventListener('keydown', deleteNewRouteFeature, false);
 
 const removeLastPoint = function (evt) {
+    if (evt.keyCode !== 8) return;
     if (mapDrawInteraction === null) return;
-    if (evt.keyCode === 8) mapDrawInteraction.removeLastPoint();
+    mapDrawInteraction.removeLastPoint();
 }
 document.addEventListener('keydown', removeLastPoint, false);
 
+const continueDrawRouteFeature = function (evt) {
+    if (evt.keyCode !== 16) return;
+    if (mapSelectInteraction === null) return;
+    let feature = mapSelectInteraction.getFeatures().item(0);
+    if (!feature) return;
+    const routeName = feature.get('name');
+    const type = feature.get('type');
+    if (type !== 'new-path' && type !== 'path') return;
+    // remove existing feature from map
+    let vectorSource;
+    if (type === 'new-path') vectorSource = newRouteVectorSource;
+    else vectorSource = routeVectorSource;
+    vectorSource.removeFeature(feature);
+    StartDraw(vectorSource);
+    mapDrawInteraction.extend(feature);
+    mapDrawInteraction.on('drawend', function (evt) {
+        feature = evt.feature;
+        feature.set('name', routeName);
+        feature.set('type', type);
+        if (type === 'new-path') routeValidation(routeName, feature);
+        CancelDraw();
+        mapSelectInteraction.getFeatures().clear();
+        mapSelectInteraction.getFeatures().push(feature);
+        mapSelectInteraction.dispatchEvent({
+            type: 'select',
+            selected: [feature],
+            deselected: []
+        });
+    });
+    map.getInteractions().extend([mapDrawInteraction, mapSnapInteraction]);
+}
+document.addEventListener('keydown', continueDrawRouteFeature, false);
 
 // ----------------------------------
 // Route map select feature functions
@@ -193,6 +236,7 @@ function UnselectNewRouteFeature(routeName) {
 }
 
 function SelectNewRouteBusStopFeature(PathDirection) {
+    CancelDraw();
     if (PathDirection === 'path-a') {
         editMode = 'new-route-add-busstop-path-a';
     } else if (PathDirection === 'path-b') {

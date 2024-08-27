@@ -17,6 +17,10 @@ function SaveRoute() {
     let route_name = document.getElementById('selected-route-name').value;
     let route_path_a = routeVectorSource.getFeatureById(editedRoute.path_a.line.id);
     let route_path_b = routeVectorSource.getFeatureById(editedRoute.path_b.line.id);
+    if (route_path_a === null || route_path_b === null) {
+        alert("Укажите направления маршрута!");
+        return;
+    }
     let features = [route_path_a, route_path_b];
     let geoJSONwriter = new olGeoJSON();
     let geoJSONdata = geoJSONwriter.writeFeatures(

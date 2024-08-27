@@ -84,6 +84,7 @@
             </a>
             <div class="d-flex flex-column overflow-auto mb-auto">
                 {% include 'map/tools.html' %}
+                {% include 'map/hints.html' %}
                 {% include 'route/tools.html' %}
                 {% include 'route/new.html' %}
                 {% include 'route/list.html' %}
@@ -162,7 +163,6 @@
         function selectToolSidebar(sidebar) {
             DeleteNewBusStop();
             ClearNewRoute();
-            map.removeInteraction(mapModifyInteraction);
             for (let i = 0; i < sidebars.length; i++) {
                 sidebars[i].classList.add('d-none');
             }
