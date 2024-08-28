@@ -61,10 +61,10 @@ class RouteApiView(APIView):
             # busstop data parse
             for busstop_data in path_a_stops:
                 busstop = BusStop.objects.get(pk=busstop_data)
-                route.path_a_stops.add(busstop)
+                route.path_a_stops.add(busstop, through_defaults="BusStopOrderA")
             for busstop_data in path_b_stops:
                 busstop = BusStop.objects.get(pk=busstop_data)
-                route.path_b_stops.add(busstop)
+                route.path_b_stops.add(busstop, through_defaults="BusStopOrderB")
             route.save()
             return Response(status=status.HTTP_201_CREATED)
         return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -104,14 +104,14 @@ class RouteApiView(APIView):
                         busstop = BusStop.objects.get(pk=busstop_data)
                     except BusStop.DoesNotExist:
                         continue
-                    route.path_a_stops.add(busstop)
+                    route.path_a_stops.add(busstop, through_defaults="BusStopOrderA")
                 route.path_b_stops.clear()
                 for busstop_data in path_b_stops:
                     try:
                         busstop = BusStop.objects.get(pk=busstop_data)
                     except BusStop.DoesNotExist:
                         continue
-                    route.path_b_stops.add(busstop)
+                    route.path_b_stops.add(busstop, through_defaults="BusStopOrderB")
                 route.save()
             return Response(status=status.HTTP_200_OK)
         return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -249,7 +249,6 @@ class DataApiView(APIView):
         else:
             imported_busstops = None
             imported_busstops_valid = True
-        imported_routes = None
         if len(data["routes"]) > 0:
             imported_routes = RouteSerializer(data=data["routes"], many=True)
             imported_routes_valid = imported_routes.is_valid()

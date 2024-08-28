@@ -1,8 +1,12 @@
+import sys
 import json
 from uuid import uuid4
 
-input_file_name = "100a.json"
-output_file_name = "100a_exp.json"
+# input_file_name = "100a.json"
+input_file_name = sys.argv[1]
+# output_file_name = "100a_exp.json"
+output_file_name = input_file_name.replace(".json", "")
+output_file_name = output_file_name + "_exp.json"
 
 with open(input_file_name, encoding="utf-8") as json_file:
     data = json.load(json_file)

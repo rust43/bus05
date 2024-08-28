@@ -29,7 +29,7 @@ def parse_path(name: str, geometry_type: str, geom: LineString) -> tuple[MapObje
 
 
 def parse_map_object(
-    name: str, geometry_type: str, coordinates: list
+        name: str, geometry_type: str, coordinates: list
 ) -> tuple[MapObject | None, ObjectPoint | ObjectLineString | ObjectCircle | ObjectPolygon | None]:
     map_object_type = ObjectType.objects.get_or_create(name=geometry_type)[0]
     map_object = MapObject(name=name, object_type=map_object_type)
@@ -57,7 +57,7 @@ def parse_map_object(
 
 
 def parse_geojson(
-    features: str,
+        features: str,
 ) -> dict[str, list[tuple[MapObject, ObjectPoint | ObjectLineString | ObjectCircle | ObjectPolygon]]]:
     data = json.loads(features)
     parsed_features = {}
@@ -85,15 +85,21 @@ def parse_geojson(
 
 
 def consolidate_import(data):
-
     # dict for keep replace busstop list
     switch_bs = {}
+    bus_stops_distinct = {}
 
     # finding existing busstop id's by coordinates
     busstops = data["busstops"]
     for busstop in busstops:
         name = busstop["name"]
         coordinates = busstop["location"]["point"]["geom"]["coordinates"]
+        # removing same coordinates and names busstops
+        if bus_stops_distinct.get(name) is not None:
+            if bus_stops_distinct[name] == coordinates:
+                busstop["exist_id"] = True
+                continue
+        bus_stops_distinct[name] = coordinates
         point = Point(coordinates)
         # finding point in distance of two meters
         existing_points = ObjectPoint.objects.filter(geom__distance_lt=(point, Distance(m=2)))
@@ -134,7 +140,7 @@ def consolidate_import(data):
     # remove existing busstops
     new_busstops = []
     for busstop in busstops:
-        if not "exist_id" in busstop:
+        if "exist_id" not in busstop:
             new_busstops.append(busstop)
     busstops = new_busstops
 
