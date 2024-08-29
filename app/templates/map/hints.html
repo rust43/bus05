@@ -1,5 +1,5 @@
 {% load static %}
-<div id="edit-hints" class="edit-hints bg-glass">
+<div id="edit-hints" class="edit-hints edit-hints-hidden bg-glass">
     <div class="d-flex flex-column p-2">
         <h5>Клавиши управления</h5>
         <div>
@@ -26,9 +26,16 @@
     </div>
 </div>
 
+<div class="hints-toggler hints-toggler-visible" id="hints-toggler">
+    <a class="btn btn-sm btn-secondary w-100 d-flex align-items-center" onclick="ToggleHints();">
+        <span class="small me-3"><i class="bi bi-arrow-bar-left"></i></span>
+        <span class="small">Отобразить подсказки</span>
+    </a>
+</div>
+
 <script>
     function ToggleHints() {
         document.getElementById('edit-hints').classList.toggle('edit-hints-hidden');
-        // document.getElementById('sidebar-toggler').classList.toggle('sidebar-toggler-visible');
+        document.getElementById('hints-toggler').classList.toggle('hints-toggler-visible');
     }
 </script>

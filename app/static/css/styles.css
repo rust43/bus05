@@ -1,7 +1,3 @@
-body {
-    overflow: hidden;
-}
-
 .map {
     width: 100%;
     height: 100%;
@@ -122,16 +118,18 @@ body {
 
 .edit-hints {
     position: absolute;
-    right: 10px;
-    bottom: 10px;
-    border-radius: 10px;
+    width: 544px;
+    height: 182px;
+    right: 0px;
+    bottom: 0px;
+    border-radius: 10px 0px 0px 0px;
     z-index: 1;
     opacity: 1;
     overflow: hidden;
-    transition: 0.5s ease-in-out;
-    -webkit-transition: 0.5s ease-in-out;
-    -moz-transition: 0.5s ease-in-out;
-    -o-transition: 0.5s ease-in-out;
+    transition: width 0.5s ease-in-out;
+    -webkit-transition: width 0.5s ease-in-out;
+    -moz-transition: width 0.5s ease-in-out;
+    -o-transition: width 0.5s ease-in-out;
     /* -webkit-transition: left 0.15s ease-in-out; */
     /* -moz-transition: left 0.15s ease-in-out; */
     /* -o-transition: left 0.15s ease-in-out; */
@@ -139,27 +137,27 @@ body {
 }
 
 .edit-hints-hidden {
-    /* width: 0px !important; */
-    right: -510px !important;
+    /* right: -510px !important; */
     /* overflow: hidden; */
     /* visibility: hidden; */
-    /* -webkit-transition: width 0.3s ease-in-out; */
-    /* -moz-transition: width 0.3s ease-in-out; */
-    /* -o-transition: width 0.3s ease-in-out; */
-    /* transition: width 0.3s ease-in-out; */
+    width: 0px !important;
+    -webkit-transition: width 0.3s ease-in-out;
+    -moz-transition: width 0.3s ease-in-out;
+    -o-transition: width 0.3s ease-in-out;
+    transition: width 0.3s ease-in-out;
 }
 
-/* .sidebar-toggler {
+.hints-toggler {
     position: absolute;
-    bottom: 43px;
-    left: 7px;
+    bottom: 10px;
+    right: 10px;
     z-index: 1;
     visibility: hidden;
     opacity: 0;
     transition: visibility 0s, opacity 0.5s linear;
 }
 
-.sidebar-toggler-visible {
+.hints-toggler-visible {
     visibility: visible;
     opacity: 1;
-} */
+}
