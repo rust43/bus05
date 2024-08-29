@@ -23,6 +23,7 @@ async function FillRouteList() {
     document.getElementById('route-data').classList.add('d-none');
     const routeListContainer = document.getElementById('route-list');
     if (routeListContainer) routeListContainer.innerHTML = '';
+    else return;
     for (let i = 0; i < loadedRoutes.length; i++) {
         const route = loadedRoutes[i];
         // add button to view transport

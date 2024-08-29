@@ -10,7 +10,7 @@ function SelectBusStopData(busStopId) {
     editedBusStop = GetSelectedBusStop(busStopId);
     document.getElementById('busstop-data').classList.remove('d-none');
     document.getElementById('selected-busstop-name').value = editedBusStop.name;
-    document.getElementById('show-busstop-location-button').onclick = function() {
+    document.getElementById('show-busstop-location-button').onclick = function () {
         EditBusStopFeature(editedBusStop.location.point.id);
     };
 }
@@ -49,10 +49,8 @@ function GetSelectedBusStop(busStopId) {
 function SaveBusStop() {
     if (editedBusStop === null)
         return;
-
     let name = document.getElementById('selected-busstop-name').value;
     let location = busStopsVectorSource.getFeatureById(editedBusStop.location.point.id);
-
     let features = [location];
     let geoJSONwriter = new olGeoJSON();
     let geoJSONdata = geoJSONwriter.writeFeatures(
@@ -61,39 +59,20 @@ function SaveBusStop() {
     );
     const busstop_data = {
         'name': name,
-        'geojson_data': geoJSONdata
+        'geojson_data': geoJSONdata,
     };
-    SaveBusStopRequest(busstop_data).then(function() {
-        alert('Изменения сохранены!');
+    APIPutRequest(busstop_data, busstopAPI.main).then(function () {
         try {
-            LoadBusStops().then(function() {
-                SelectBusStopData(editedBusStop.id);
+            document.getElementById('search-busstop-input').value = '';
+            document.getElementById('busstop-data').classList.add('d-none');
+            FillBusstopList().then(function () {
+                DisplayBusStops();
             });
+            alert('Изменения сохранены!');
         } catch (err) {
             alert('Ошибка при загрузке новых остановок!');
         }
     });
-}
-
-async function SaveBusStopRequest(busstop_data) {
-    const url = host + '/api/v1/busstop/';
-    const response = await fetch(
-        url,
-        {
-            method: 'put',
-            credentials: 'same-origin',
-            headers: {
-                'X-CSRFToken': getCookie('csrftoken'),
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(busstop_data)
-        });
-    if (response.ok) {
-        return true;
-    } else {
-        console.log('Ошибка HTTP: ' + response.status);
-    }
 }
 
 //
@@ -107,34 +86,16 @@ function DeleteBusStop() {
     const busstop_data = {
         'busstop_id': busStopId
     };
-    DeleteBusStopRequest(busstop_data).then(function() {
+    APIDeleteRequest(busstop_data, busstopAPI.main).then(function () {
         alert('Остановка удалена!');
         try {
             document.getElementById('busstop-data').classList.add('d-none');
-            LoadBusStops();
+            document.getElementById('search-busstop-input').value = '';
+            FillBusstopList().then(function () {
+                DisplayBusStops();
+            });
         } catch (err) {
             alert('Ошибка при загрузке новых остановок!');
         }
     });
-}
-
-async function DeleteBusStopRequest(busstop_data) {
-    const url = host + '/api/v1/busstop/';
-    const response = await fetch(
-        url,
-        {
-            method: 'delete',
-            credentials: 'same-origin',
-            headers: {
-                'X-CSRFToken': getCookie('csrftoken'),
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(busstop_data)
-        });
-    if (response.ok) {
-        return true;
-    } else {
-        console.log('Ошибка HTTP: ' + response.status);
-    }
 }

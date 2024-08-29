@@ -161,3 +161,12 @@
     visibility: visible;
     opacity: 1;
 }
+
+.busstop-list {
+    overflow-x: hidden;
+    overflow-y: scroll;
+    min-height: 250px;
+    max-height: 250px;
+    border: #dee2e6 1px solid;
+    border-radius: 10px;
+}

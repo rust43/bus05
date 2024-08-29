@@ -11,6 +11,10 @@ const transportAPI = {
     "point": "/api/v1/transport/point/"
 }
 
+const busstopAPI = {
+    "main": "/api/v1/busstop/",
+}
+
 async function APIGetRequest(APIAddress) {
     const url = host + APIAddress;
     let response = await fetch(url, {

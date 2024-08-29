@@ -9,30 +9,34 @@ map.addLayer(busStopsVectorLayer);
 let loadedBusStops = null;
 
 async function LoadBusStops() {
-    loadedBusStops = await GetBusStops();
-    busStopsVectorSource.clear();
-    DisplayBusStops(loadedBusStops);
+    loadedBusStops = await APIGetRequest(busstopAPI.main);
 }
 
-async function GetBusStops() {
-    const url = host + '/api/v1/busstop/';
-    let response = await fetch(url, {
-        method: 'get', credentials: 'same-origin', headers: {
-            'Accept': 'application/json', 'Content-Type': 'application/json'
-        }
-    });
-    if (response.ok) {
-        return await response.json();
-    } else {
-        console.log('Ошибка HTTP: ' + response.status);
-    }
-}
-
-function DisplayBusStops(busStops) {
+async function FillBusstopList() {
     const busstopListContainer = document.getElementById('busstop-list');
     if (busstopListContainer) busstopListContainer.innerHTML = '';
-    for (let i = 0; i < busStops.length; i++) {
-        const busStop = busStops[i];
+    else return;
+    document.getElementById('search-busstop-input').disabled = true;
+    document.getElementById('search-busstop-input').value = '';
+    busstopListContainer.innerHTML = '<div class="spinner-border text-success m-auto" role="status"></div>';
+    await LoadBusStops();
+    if (loadedBusStops.length === 0) return;
+    let busstopsHTML = "";
+    for (let i = 0; i < loadedBusStops.length; i++) {
+        const busstop = loadedBusStops[i];
+        let button = `<button class="btn badge text-bg-success" onclick=SelectBusStopData("${busstop.id}");>${busstop.name}</button>`;
+        busstopsHTML += button;
+    }
+    busstopListContainer.innerHTML = busstopsHTML;
+    document.getElementById('search-busstop-input').disabled = false;
+}
+
+async function DisplayBusStops() {
+    busStopsVectorSource.clear();
+    await LoadBusStops();
+    if (loadedBusStops.length === 0) return;
+    for (let i = 0; i < loadedBusStops.length; i++) {
+        const busStop = loadedBusStops[i];
         let coordinates = new olPointGeometry(busStop.location.point.geom.coordinates);
         coordinates = coordinates.transform('EPSG:4326', 'EPSG:3857');
         const busStopFeature = new olFeature({
@@ -43,19 +47,7 @@ function DisplayBusStops(busStops) {
         busStopFeature.set('map_object_id', busStop.id);
         busStopFeature.set('busstop_name', busStop.name);
         busStopsVectorSource.addFeature(busStopFeature);
-
-        // add button to view route
-        const busstopButton = document.createElement('BUTTON');
-        const busstopButtonText = document.createTextNode(busStop.name);
-        if (busstopListContainer) {
-            busstopButton.appendChild(busstopButtonText);
-            busstopButton.classList.add('btn', 'badge', 'text-bg-success');
-            busstopButton.onclick = function () {
-                SelectBusStopData(busStop.id);
-            };
-            busstopListContainer.appendChild(busstopButton);
-        }
     }
 }
 
-LoadBusStops();
+DisplayBusStops();

@@ -155,7 +155,7 @@ function BusStopFormSave() {
         'name': newBusStopNameInput.value, 'geojson_data': geoJSONdata
     };
 
-    PostBusStop(busstop_data).then(function () {
+    APIPostRequest(busstop_data, busstopAPI.main).then(function () {
         alert('Остановка сохранена!');
         try {
             DeleteNewBusStop();
@@ -164,18 +164,4 @@ function BusStopFormSave() {
             alert('Ошибка при загрузке новых остановок!');
         }
     });
-}
-
-async function PostBusStop(busstop_data) {
-    const url = host + '/api/v1/busstop/';
-    const response = await fetch(url, {
-        method: 'post', credentials: 'same-origin', headers: {
-            'X-CSRFToken': getCookie('csrftoken'), 'Accept': 'application/json', 'Content-Type': 'application/json'
-        }, body: JSON.stringify(busstop_data)
-    });
-    if (response.ok) {
-        return true;
-    } else {
-        console.log('Ошибка HTTP: ' + response.status);
-    }
 }
