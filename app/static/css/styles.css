@@ -162,7 +162,7 @@
     opacity: 1;
 }
 
-.busstop-list {
+.search-list-container {
     overflow-x: hidden;
     overflow-y: scroll;
     min-height: 250px;

@@ -102,7 +102,7 @@ function rgbToHex(rgb) {
 //
 
 async function ExportData() {
-    let data = await GetExportData();
+    let data = await APIGetRequest(dataAPI.main);
     data = JSON.stringify(data);
     let date = new Date().toLocaleString();
     date = date.concat(')');
@@ -110,20 +110,6 @@ async function ExportData() {
     date = date.replaceAll('.', '-');
     date = date.replaceAll(':', '-');
     DownloadJSON(data, 'data-' + date + '.json', 'text/plain');
-}
-
-async function GetExportData() {
-    const url = host + '/api/v1/data/';
-    let response = await fetch(url, {
-        method: 'get', credentials: 'same-origin', headers: {
-            'Accept': 'application/json', 'Content-Type': 'application/json'
-        }
-    });
-    if (response.ok) {
-        return await response.json();
-    } else {
-        console.log('Ошибка HTTP: ' + response.status);
-    }
 }
 
 //
@@ -136,4 +122,18 @@ function DownloadJSON(content, fileName, contentType) {
     link.href = URL.createObjectURL(file);
     link.download = fileName;
     link.click();
+}
+
+function SearchFilterList(container, searchValue) {
+    searchValue = searchValue.toLowerCase();
+    const childrens = container.children;
+    let applyFilter = false;
+    if (searchValue.length > 0) applyFilter = true;
+    for (let i = 0; i < childrens.length; i++) {
+        if (applyFilter && childrens[i].innerHTML.toLowerCase().indexOf(searchValue) < 0) {
+            childrens[i].classList.add('d-none');
+        } else {
+            childrens[i].classList.remove('d-none');
+        }
+    }
 }

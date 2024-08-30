@@ -130,7 +130,6 @@ map.addInteraction(mapSelectInteraction);
 mapSelectInteraction.on('select', (e) => {
     pauseTransportLoad = true;
     if (e.deselected.length >= 1) {
-        console.log(e.deselected);
         if (e.deselected[0].get('type') === 'transport') {
             UnselectTransportFeature(selectedTransportIMEI);
             selectedTransportIMEI = null;

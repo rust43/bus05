@@ -15,30 +15,15 @@
                 <span class="input-group-text bg-transparent"><i class="bi bi-search"></i></span>
             </div>
         </div>
-        <div class="d-flex flex-wrap align-content-start gap-1 mb-3 p-3 busstop-list" id="busstop-list"></div>
+        <div class="d-flex flex-wrap align-content-start gap-1 mb-3 ms-3 p-3 search-list-container" id="busstop-list"></div>
         {% include 'busstop/data.html' %}
     </div>
 </div>
 
 <script>
-    const busstopListContainer = document.getElementById('busstop-list');
-    function FilterBusstops(searchValue) {
-        searchValue = searchValue.toLowerCase();
-        const busstops = busstopListContainer.children;
-        let applyFilter = false;
-        if (searchValue.length > 0) applyFilter = true;
-        for (let i = 0; i < busstops.length; i++) {
-            const busstop = busstops[i];
-            if (applyFilter && busstop.innerHTML.toLowerCase().indexOf(searchValue) < 0) {
-                busstop.classList.add('d-none');
-            } else {
-                busstop.classList.remove('d-none');
-            }
-        }
-    }
-    const searchField = document.getElementById('search-busstop-input');
-    searchField.addEventListener('input', updateFilter);
+    const busstopList = document.getElementById('busstop-list');
+    document.getElementById('search-busstop-input').addEventListener('input', updateFilter);
     function updateFilter(e) {
-        FilterBusstops(e.target.value);
+        SearchFilterList(busstopList, e.target.value);
     }
 </script>

@@ -93,7 +93,7 @@ const inputValidationHelper = function (input) {
 }
 
 const selectValidationHelper = function (select) {
-    if (select.selectedIndex !== 0) {
+    if (select.selectedIndex > 0) {
         select.classList.remove('is-invalid');
         select.classList.add('is-valid');
         return true;

@@ -51,21 +51,41 @@ function SelectTransportData(transportId) {
         editTransInterface.imei.value = editedTransport.imei;
     });
     document.getElementById('show-transport-location-button').onclick = function () {
-        SelectTransportFeature(transportId);
+        SelectTransportFeature(editedTransport.imei);
     };
 }
 
-function SelectTransportFeature(transportFeatureID) {
-    const transportFeature = transportVectorSource.getFeatureById(transportFeatureID);
-    if (!transportFeature) return;
-    mapSelectInteraction.getFeatures().clear();
-    mapSelectInteraction.getFeatures().push(transportFeature);
-    mapSelectInteraction.dispatchEvent({
-        type: 'select',
-        selected: [transportFeature],
-        deselected: []
-    });
-    PanToFeature(transportFeature);
+function SelectTransportFeature(imei) {
+    let features = transportVectorSource.getFeatures();
+    for (let i = 0; i < features.length; i++) {
+        if (features[i].get('imei') === imei) {
+            features[i].set('selected', true);
+            let deselected = [];
+            if (mapSelectInteraction.getFeatures().getLength() > 0)
+                deselected = [mapSelectInteraction.getFeatures().item(0)];
+            mapSelectInteraction.getFeatures().clear();
+            mapSelectInteraction.getFeatures().push(features[i]);
+            mapSelectInteraction.dispatchEvent({
+                type: 'select',
+                selected: [features[i]],
+                deselected: deselected,
+            });
+            PanToFeature(features[i]);
+            return features[i];
+        }
+    }
+    return null;
+}
+
+function UnselectTransportFeature(imei) {
+    let features = transportVectorSource.getFeatures();
+    for (let i = 0; i < features.length; i++) {
+        if (features[i].get('imei') === imei) {
+            features[i].set('selected', false);
+            return features[i];
+        }
+    }
+    return null;
 }
 
 function GetSelectedTransport(transportId) {
@@ -122,10 +142,10 @@ function EditTransport() {
         'new_transport_type': new_transport_type,
         'route': editTransInterface.route.value,
     };
-    APIPutRequest(transport_data, transportAPI["main"]).then(function () {
+    APIPutRequest(transport_data, transportAPI.main).then(function () {
         try {
+            document.getElementById('transport-selected').classList.add('d-none');
             FillTransportList().then(() => {
-                SelectTransportData(transport_id);
                 DisplayTransport();
                 alert('Транспорт сохранен!');
             });

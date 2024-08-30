@@ -27,25 +27,25 @@ function ClearTransportLayer() {
 }
 
 async function FillTransportList() {
-    await LoadTransport();
     const transportListContainer = document.getElementById('transport-list');
     if (transportListContainer) transportListContainer.innerHTML = '';
+    else return;
+    document.getElementById('search-transport-input').disabled = true;
+    document.getElementById('search-transport-input').value = '';
+    transportListContainer.innerHTML = '<div class="spinner-border text-warning m-auto" role="status"></div>';
+    await LoadTransport();
+    if (loadedTransport.length === 0) return;
+    let transportHTML = "";
     for (let i = 0; i < loadedTransport.length; i++) {
-        const transport = loadedTransport[i];
         // add button to view transport
-        const transportButton = document.createElement('button');
-        const transportButtonText = document.createTextNode(transport.name);
-        if (transportListContainer) {
-            transportButton.appendChild(transportButtonText);
-            if (transport.active)
-                transportButton.classList.add('btn', 'badge', 'text-bg-warning');
-            else
-                transportButton.classList.add('btn', 'badge', 'text-bg-secondary');
-            transportButton.onclick = function () { SelectTransportData(transport.id); };
-            transportListContainer.appendChild(transportButton);
-        }
+        let button = `
+            <button class="btn badge ${loadedTransport[i].active ? 'text-bg-warning' : 'text-bg-secondary'}"onclick=SelectTransportData("${loadedTransport[i].id}");>${loadedTransport[i].name}</button>`;
+        transportHTML += button;
     }
+    transportListContainer.innerHTML = transportHTML;
+    document.getElementById('search-transport-input').disabled = false;
 }
+
 
 async function LoadTransportPoints() {
     if (loadedTransport.length === 0) return;
@@ -91,22 +91,6 @@ async function DisplayTransport() {
 }
 
 // helper functions
-
-function SelectTransportFeature(imei) {
-    let features = transportVectorSource.getFeatures();
-    for (let i = 0; i < features.length; i++) {
-        if (features[i].get('imei') === imei)
-            features[i].set('selected', true);
-    }
-}
-
-function UnselectTransportFeature(imei) {
-    let features = transportVectorSource.getFeatures();
-    for (let i = 0; i < features.length; i++) {
-        if (features[i].get('imei') === imei)
-            features[i].set('selected', false);
-    }
-}
 
 function GetTransport(imei) {
     if (loadedTransport.length === 0) return;

@@ -15,6 +15,10 @@ const busstopAPI = {
     "main": "/api/v1/busstop/",
 }
 
+const dataAPI = {
+    "main": '/api/v1/data/',
+}
+
 async function APIGetRequest(APIAddress) {
     const url = host + APIAddress;
     let response = await fetch(url, {
@@ -30,14 +34,11 @@ async function APIGetRequest(APIAddress) {
 }
 
 async function APIPostRequest(data, APIAddress) {
-    if (typeof getCookie !== 'function') {
-        function getCookie() {
-            return null;
-        }
-    }
+    let cookie = null;
+    if (typeof getCookie === 'function') cookie = getCookie('csrftoken');
     const response = await fetch(APIAddress, {
         method: 'post', credentials: 'same-origin', headers: {
-            'X-CSRFToken': getCookie('csrftoken'), 'Accept': 'application/json', 'Content-Type': 'application/json'
+            'X-CSRFToken': cookie, 'Accept': 'application/json', 'Content-Type': 'application/json'
         }, body: JSON.stringify(data)
     });
     if (response.ok) {

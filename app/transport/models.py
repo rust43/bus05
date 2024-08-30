@@ -12,6 +12,9 @@ class TransportType(models.Model):
     def __str__(self):
         return f"{self.name}"
 
+    class Meta:
+        ordering = ["name"]
+
 
 class Transport(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -22,6 +25,9 @@ class Transport(models.Model):
     transport_type = models.ForeignKey(TransportType, on_delete=models.SET_NULL, null=True, blank=True)
     location = models.OneToOneField(MapObject, on_delete=models.SET_NULL, null=True, blank=True)
     route = models.ForeignKey(Route, related_name="transports", on_delete=models.SET_NULL, null=True, blank=True)
+
+    class Meta:
+        ordering = ["imei"]
 
 
 class TransportPoint(models.Model):

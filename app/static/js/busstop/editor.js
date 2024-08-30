@@ -63,7 +63,6 @@ function SaveBusStop() {
     };
     APIPutRequest(busstop_data, busstopAPI.main).then(function () {
         try {
-            document.getElementById('search-busstop-input').value = '';
             document.getElementById('busstop-data').classList.add('d-none');
             FillBusstopList().then(function () {
                 DisplayBusStops();

@@ -32,8 +32,8 @@ async function FillBusstopList() {
 }
 
 async function DisplayBusStops() {
-    busStopsVectorSource.clear();
     await LoadBusStops();
+    let features = [];
     if (loadedBusStops.length === 0) return;
     for (let i = 0; i < loadedBusStops.length; i++) {
         const busStop = loadedBusStops[i];
@@ -46,8 +46,10 @@ async function DisplayBusStops() {
         busStopFeature.set('type', 'busstop');
         busStopFeature.set('map_object_id', busStop.id);
         busStopFeature.set('busstop_name', busStop.name);
-        busStopsVectorSource.addFeature(busStopFeature);
+        features.push(busStopFeature);
     }
+    busStopsVectorSource.clear();
+    busStopsVectorSource.addFeatures(features);
 }
 
 DisplayBusStops();
