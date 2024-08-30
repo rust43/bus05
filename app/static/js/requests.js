@@ -30,6 +30,11 @@ async function APIGetRequest(APIAddress) {
 }
 
 async function APIPostRequest(data, APIAddress) {
+    if (typeof getCookie !== 'function') {
+        function getCookie() {
+            return null;
+        }
+    }
     const response = await fetch(APIAddress, {
         method: 'post', credentials: 'same-origin', headers: {
             'X-CSRFToken': getCookie('csrftoken'), 'Accept': 'application/json', 'Content-Type': 'application/json'

@@ -11,6 +11,8 @@ map.addLayer(transportVectorLayer);
 
 // var to keep loaded transport list
 let loadedTransport = null;
+let selectedTransportIMEI = null;
+let pauseTransportLoad = false;
 
 async function LoadTransport() {
     loadedTransport = await APIGetRequest(transportAPI.main);
@@ -57,9 +59,9 @@ async function LoadTransportPoints() {
 }
 
 async function DisplayTransport() {
-    transportVectorSource.clear();
     let pointList = await LoadTransportPoints();
     if (!pointList) return;
+    let features = [];
     for (let i = 0; i < pointList.length; i++) {
         const point = pointList[i];
         let coordinates = olFromLonLat([point["lon"], point["lat"]]);
@@ -71,6 +73,10 @@ async function DisplayTransport() {
         transportFeature.setId(transport.id);
         transportFeature.set('name', 'transport-' + transport.id);
         transportFeature.set('imei', transport.imei);
+        if (selectedTransportIMEI != null && selectedTransportIMEI == transport.imei)
+            transportFeature.set('selected', true);
+        else
+            transportFeature.set('selected', false);
         transportFeature.set('type', 'transport');
         transportFeature.set('transport_type', transport.transport_type);
         transportFeature.set('course', point["course"]);
@@ -78,11 +84,29 @@ async function DisplayTransport() {
         transportFeature.set('height', point.height);
         transportFeature.set('sats', point["sats"]);
         transportFeature.set('route', transport.route);
-        transportVectorSource.addFeature(transportFeature);
+        features.push(transportFeature);
     }
+    transportVectorSource.clear();
+    transportVectorSource.addFeatures(features);
 }
 
 // helper functions
+
+function SelectTransportFeature(imei) {
+    let features = transportVectorSource.getFeatures();
+    for (let i = 0; i < features.length; i++) {
+        if (features[i].get('imei') === imei)
+            features[i].set('selected', true);
+    }
+}
+
+function UnselectTransportFeature(imei) {
+    let features = transportVectorSource.getFeatures();
+    for (let i = 0; i < features.length; i++) {
+        if (features[i].get('imei') === imei)
+            features[i].set('selected', false);
+    }
+}
 
 function GetTransport(imei) {
     if (loadedTransport.length === 0) return;
@@ -115,5 +139,6 @@ function FillSelect(selectElement, valueList, valueNames = null) {
 const intervalLoader = setInterval(transportLoader, 5000);
 
 function transportLoader() {
-    DisplayTransport();
+    if (!pauseTransportLoad)
+        DisplayTransport();
 }

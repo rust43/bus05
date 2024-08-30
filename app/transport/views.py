@@ -60,8 +60,8 @@ class TransportPointAPIView(APIView):
     View to get last transport point for imei or for list of imes's.
     """
 
-    permission_classes = []
-    authentication_classes = []
+    permission_classes = ()
+    authentication_classes = ()
 
     @staticmethod
     def post(request, *args, **kwargs):

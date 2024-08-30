@@ -41,17 +41,6 @@ const mapStyleFunction = (() => {
                 height: 30,
             }),
         })];
-    styles['transport'] = [
-        new olStyle({
-            image: new olIconStyle({
-                color: "#ffffff",
-                crossOrigin: 'anonymous',
-                src: staticURL + '/pictures/bus-16.svg',
-                height: 16,
-                width: 16,
-            }),
-        }),
-    ];
     return function (feature) {
         const zoom = map.getView().getZoom();
         const featureType = feature.get('type');
@@ -62,7 +51,7 @@ const mapStyleFunction = (() => {
             if (zoom >= 15) return style;
             else return null;
         } else if (featureType === 'transport') {
-            return DrawTransportMarker(feature, style, 38);
+            return DrawTransportMarker(feature);
         }
         return style;
     };
@@ -113,17 +102,6 @@ const mapOverlayStyleFunction = (function () {
             }),
         })
     ];
-    styles['transport'] = [
-        new olStyle({
-            image: new olIconStyle({
-                color: "#ffffff",
-                crossOrigin: 'anonymous',
-                src: staticURL + '/pictures/bus-16.svg',
-                height: 20,
-                width: 20,
-            }),
-        }),
-    ];
     return function (feature) {
         const zoom = map.getView().getZoom();
         const featureType = feature.get('type');
@@ -133,7 +111,7 @@ const mapOverlayStyleFunction = (function () {
         } else if (featureType === 'busstop') {
             return DrawBusstopText(feature, style, 14);
         } else if (featureType === 'transport') {
-            return DrawTransportMarker(feature, style, 45, 45, true);
+            return DrawTransportMarker(feature);
         }
         return style;
     };
@@ -150,18 +128,27 @@ const mapSelectInteraction = new olSelectInteraction({
 map.addInteraction(mapSelectInteraction);
 
 mapSelectInteraction.on('select', (e) => {
-    if (e.selected.length === 0) {
-        if (e.deselected.length >= 1) {
-            if (e.deselected[0].get('type') === 'transport') ClearRouteLayer();
+    pauseTransportLoad = true;
+    if (e.deselected.length >= 1) {
+        console.log(e.deselected);
+        if (e.deselected[0].get('type') === 'transport') {
+            UnselectTransportFeature(selectedTransportIMEI);
+            selectedTransportIMEI = null;
         }
+    }
+    if (e.selected.length === 0) {
+        ClearRouteLayer();
         return;
     }
     const feature = e.selected[0];
     const type = feature.get('type');
     if (type === 'transport') {
         let routeID = feature.get('route');
+        selectedTransportIMEI = feature.get('imei');
+        feature.set('selected', true);
         DisplayRoute(routeID);
     }
+    pauseTransportLoad = false;
 });
 
 // Function for drawing arrows
@@ -215,22 +202,23 @@ function DrawArrows(feature, style, height, width, zoom) {
     return styles;
 }
 
-function DrawTransportMarker(feature, style, size, selected = false) {
+function DrawTransportMarker(feature) {
     const route = GetRoute(feature.get('route'));
     let coord = feature.getGeometry().getCoordinates()[0];
-    if (selected)
+    let selected = false;
+    if (feature.get('selected')) {
+        selected = true;
         coord = 1e10;
+    }
     let routeName = '...';
     if (route !== null)
         routeName = route.name;
-    let clonedStyle = style[0].clone();
-    clonedStyle.setZIndex(coord);
     return [
         new olStyle({
             image: new olIconStyle({
                 crossOrigin: 'anonymous',
                 src: staticURL + '/pictures/plate.png',
-                color: "#ffffff",
+                color: selected ? "#308c00" : "#ffffff",
                 width: 50,
                 height: 24,
                 anchor: [1.1, 0.5],
@@ -241,8 +229,8 @@ function DrawTransportMarker(feature, style, size, selected = false) {
             image: new olIconStyle({
                 crossOrigin: 'anonymous',
                 src: staticURL + '/pictures/marker-bus-38.svg',
-                width: size,
-                height: size,
+                width: selected ? 45 : 38,
+                height: selected ? 45 : 38,
                 anchor: [0.5, 0.6],
                 rotateWithView: true,
                 rotation: feature.get('course'),
@@ -251,13 +239,22 @@ function DrawTransportMarker(feature, style, size, selected = false) {
                 text: routeName,
                 font: 13 + 'px Calibri,sans-serif',
                 fill: new olFillStyle({
-                    color: '#308c00',
+                    color: selected ? '#ffffff' : "#308c00",
                 }),
                 offsetX: -35,
             }),
             zIndex: coord,
         }),
-        clonedStyle,
+        new olStyle({
+            image: new olIconStyle({
+                color: "#ffffff",
+                crossOrigin: 'anonymous',
+                src: staticURL + '/pictures/bus-16.svg',
+                height: selected ? 20 : 16,
+                width: selected ? 20 : 16,
+            }),
+            zIndex: coord,
+        }),
     ];
 }
 
