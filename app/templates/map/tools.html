@@ -1,21 +1,21 @@
 {% load static %}
-<div id="tools" class="w-100">
+<div id="tools-sidebar" class="w-100">
     <div class="d-flex flex-column">
-        <a class="btn btn-light rounded-0 w-100" onclick="selectToolSidebar('route-tools');">
+        <a class="btn btn-light rounded-0 w-100" onclick="SelectToolSidebar('route-tools');">
             <div class="d-flex align-items-center">
                 <span class="text-bg-violet fs-5 rounded"><i class="bi bi-sign-turn-right-fill m-2"></i></span>
                 <span class="ms-3">Маршруты</span>
                 <span class="ms-auto text-secondary"><i class="bi-caret-right-fill"></i></span>
             </div>
         </a>
-        <a class="btn btn-light rounded-0 w-100" onclick="selectToolSidebar('busstop-tools');">
+        <a class="btn btn-light rounded-0 w-100" onclick="SelectToolSidebar('busstop-tools');">
             <div class="d-flex align-items-center">
                 <span class="text-bg-secondary fs-5 rounded"><i class="bi bi-signpost-fill m-2"></i></span>
                 <span class="ms-3">Остановки</span>
                 <span class="ms-auto text-secondary"><i class="bi-caret-right-fill"></i></span>
             </div>
         </a>
-        <a class="btn btn-light rounded-0 w-100" onclick="selectToolSidebar('transport-tools');">
+        <a class="btn btn-light rounded-0 w-100" onclick="SelectToolSidebar('transport-tools');">
             <div class="d-flex align-items-center">
                 <span class="text-bg-warning fs-5 rounded"><i class="bi bi-bus-front-fill m-2"></i></span>
                 <span class="ms-3">Транспорт</span>
@@ -45,8 +45,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form action="/api/v1/data/" method="post" class="dropzone dz-clickable rounded-4 border m-5 p-0"
-                      id="file-import-dropzone">
+                <form action="/api/v1/data/" method="post" class="dropzone dz-clickable rounded-4 border m-5 p-0" id="file-import-dropzone">
                     {% csrf_token %}
                     <div class="dz-message" id="file-upload-start-message">
                         <h1>Выберите файл</h1>
@@ -57,8 +56,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="submit" form="file-import-dropzone" class="btn btn-success" id="upload-file">Загрузить
-                </button>
+                <button type="submit" form="file-import-dropzone" class="btn btn-success" id="upload-file">Загрузить</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
             </div>
         </div>
@@ -86,24 +84,24 @@
         maxFiles: 1,
         paramName: 'file',
         maxFilesize: 10, // MB
-
+    
         // The setting up of the dropzone
         init: function () {
             this.hiddenFileInput.removeAttribute('multiple');
             let myDropzone = this;
             let submitButton = document.getElementById('upload-file');
-
+    
             submitButton.addEventListener('click', function (e) {
                 e.preventDefault();
                 e.stopPropagation();
                 myDropzone.processQueue();
             });
-
+    
             this.on('maxfilesexceeded', function (file) {
                 this.removeAllFiles();
                 this.addFile(file);
             });
-
+    
             this.on('complete', function () {
                 submitButton.classList.add('d-none');
                 LoadRoutes();

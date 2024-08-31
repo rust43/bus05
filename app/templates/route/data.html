@@ -2,26 +2,27 @@
 <div id="route-data" class="d-none">
     <div class="d-flex flex-column border-top">
         <span class="px-3 mt-2 mb-2">Данные маршрута</span>
-        <div class="px-3 mb-2">
+        <div class="px-3 mb-3">
             <label for="selected-route-name" class="form-label text-body-tertiary">Название маршрута</label>
             <input type="text" class="form-control" id="selected-route-name" required />
             <div class="invalid-feedback">Укажите название маршрута.</div>
         </div>
         <input type="hidden" id="selected-route-id" />
-        <div id="routeStops" class="px-3 mb-3">
-            <div class="d-flex flex-column">
-                <span class="form-label">Остановки маршрута</span>
-                <small class="text-body-secondary lh-sm mb-2">Направление A</small>
-                <div class="d-flex flex-wrap gap-2 mb-3" id="route-path-a-stops-container">
-                    <span class="badge text-bg-secondary">Отсутствуют</span>
-                </div>
-                <small class="text-body-secondary lh-sm mb-2">Направление B</small>
-                <div class="d-flex flex-wrap gap-2" id="route-path-b-stops-container">
-                    <span class="badge text-bg-secondary">Отсутствуют</span>
-                </div>
-            </div>
-        </div>
         <div>
+            <a class="btn btn-light rounded-0 w-100" onclick="">
+                <div class="d-flex align-items-center">
+                    <span class="text-bg-primary fs-5 rounded"><i class="bi bi-signpost-fill m-2"></i></span>
+                    <span class="text-start ms-3">Остановки в направлении A</span>
+                    <span class="ms-auto text-secondary"><i class="bi bi-caret-right-fill"></i></span>
+                </div>
+            </a>
+            <a class="btn btn-light rounded-0 w-100" onclick="">
+                <div class="d-flex align-items-center">
+                    <span class="text-bg-primary fs-5 rounded"><i class="bi bi-signpost-fill m-2"></i></span>
+                    <span class="text-start ms-3">Остановки в направлении B</span>
+                    <span class="ms-auto text-secondary"><i class="bi bi-caret-right-fill"></i></span>
+                </div>
+            </a>
             <a class="btn btn-light rounded-0 w-100" onclick="SelectRouteBusStopFeature('path-a');">
                 <div class="d-flex align-items-center">
                     <span class="text-bg-primary fs-5 rounded"><i class="bi bi-signpost-fill m-2"></i></span>
@@ -61,5 +62,19 @@
                 </div>
             </a>
         </div>
+    </div>
+</div>
+
+<div class="d-none">
+    <span class="form-label">Остановки маршрута в направлении A</span>
+    <div class="d-flex flex-wrap gap-2 mb-3" id="route-path-a-stops-list">
+        <span class="badge text-bg-secondary">Отсутствуют</span>
+    </div>
+</div>
+
+<div class="d-none">
+    <span class="form-label">Остановки маршрута в направлении B</span>
+    <div class="d-flex flex-wrap gap-2 mb-3" id="route-path-b-stops-list">
+        <span class="badge text-bg-secondary">Отсутствуют</span>
     </div>
 </div>

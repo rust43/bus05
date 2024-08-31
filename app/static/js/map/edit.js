@@ -137,3 +137,34 @@ function SearchFilterList(container, searchValue) {
         }
     }
 }
+
+let selectedSidebar;
+
+const editViewSidebars = {
+    "tools": document.getElementById('tools-sidebar'),
+    "route-tools": document.getElementById('route-tools-sidebar'),
+    "route-new": document.getElementById('route-new-sidebar'),
+    "route-list": document.getElementById('route-list-sidebar'),
+    "busstop-tools": document.getElementById('busstop-tools-sidebar'),
+    "busstop-new": document.getElementById('busstop-new-sidebar'),
+    "busstop-list": document.getElementById('busstop-list-sidebar'),
+    "transport-tools": document.getElementById('transport-tools-sidebar'),
+    "transport-new": document.getElementById('transport-new-sidebar'),
+    "transport-list": document.getElementById('transport-list-sidebar'),
+}
+
+function SelectToolSidebar(sidebar) {
+    DeleteNewBusStop();
+    ClearNewRoute();
+    for (const [name, element] of Object.entries(editViewSidebars)) {
+        element.classList.add('d-none');
+    }
+    if (sidebar !== '') {
+        editViewSidebars[sidebar].classList.remove('d-none');
+        selectToolSidebar = sidebar;
+    }
+    else {
+        editViewSidebars.tools.classList.remove('d-none');
+        selectToolSidebar = editViewSidebars.tools;
+    }
+}

@@ -13,6 +13,7 @@ async function LoadBusStops() {
 }
 
 async function FillBusstopList() {
+    document.getElementById('busstop-data').classList.add('d-none');
     const busstopListContainer = document.getElementById('busstop-list');
     if (busstopListContainer) busstopListContainer.innerHTML = '';
     else return;

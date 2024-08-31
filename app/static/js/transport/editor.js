@@ -32,7 +32,7 @@ function SelectTransportData(transportId) {
     if (transportId === '') return;
     ClearEditTransportForm();
     let editedTransport = GetSelectedTransport(transportId);
-    document.getElementById('transport-selected').classList.remove('d-none');
+    document.getElementById('transport-data').classList.remove('d-none');
     editTransInterface.name.value = editedTransport.name;
     editTransInterface.id.value = editedTransport.id;
     editTransInterface.plate.value = editedTransport.license_plate;
@@ -144,7 +144,7 @@ function EditTransport() {
     };
     APIPutRequest(transport_data, transportAPI.main).then(function () {
         try {
-            document.getElementById('transport-selected').classList.add('d-none');
+            document.getElementById('transport-data').classList.add('d-none');
             FillTransportList().then(() => {
                 DisplayTransport();
                 alert('Транспорт сохранен!');
@@ -160,7 +160,7 @@ async function DeleteTransport() {
     const transport_data = { 'transport_id': transportId };
     await APIDeleteRequest(transport_data, transportAPI.main).then(function () {
         try {
-            document.getElementById('transport-selected').classList.add('d-none');
+            document.getElementById('transport-data').classList.add('d-none');
             alert('Транспорт удален!');
             FillTransportList().then(() => {
                 DisplayTransport();

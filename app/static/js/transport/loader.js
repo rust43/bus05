@@ -27,6 +27,7 @@ function ClearTransportLayer() {
 }
 
 async function FillTransportList() {
+    document.getElementById('transport-data').classList.add('d-none');
     const transportListContainer = document.getElementById('transport-list');
     if (transportListContainer) transportListContainer.innerHTML = '';
     else return;

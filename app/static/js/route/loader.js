@@ -19,8 +19,8 @@ async function LoadRoutes() {
 LoadRoutes();
 
 async function FillRouteList() {
-    await LoadRoutes();
     document.getElementById('route-data').classList.add('d-none');
+    await LoadRoutes();
     const routeListContainer = document.getElementById('route-list');
     if (routeListContainer) routeListContainer.innerHTML = '';
     else return;

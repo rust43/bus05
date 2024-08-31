@@ -6,8 +6,8 @@ const routeInterface = {
     "nameInput": document.getElementById("route-name"),
     "pathAInput": document.getElementById('route-path-a'),
     "pathBInput": document.getElementById('route-path-b'),
-    "newPathABusContainer": document.getElementById('new-route-path-a-stops-container'),
-    "newPathBBusContainer": document.getElementById('new-route-path-b-stops-container'),
+    "newPathABusList": document.getElementById('new-route-path-a-stops-list'),
+    "newPathBBusList": document.getElementById('new-route-path-b-stops-list'),
 }
 
 // ---------------------------
@@ -121,8 +121,8 @@ function ClearNewRoute() {
             delete new_route_path_b_stops[prop];
         }
     }
-    FillBusStopsContainer(new_route_path_a_stops, routeInterface["newPathABusContainer"], true);
-    FillBusStopsContainer(new_route_path_b_stops, routeInterface["newPathBBusContainer"], true);
+    FillBusStopsContainer(new_route_path_a_stops, routeInterface["newPathABusList"], true);
+    FillBusStopsContainer(new_route_path_b_stops, routeInterface["newPathBBusList"], true);
 }
 
 function RouteFormValidation() {
@@ -252,8 +252,8 @@ function AddNewRouteBusstop(BusStopFeature, PathDirection) {
         if (new_route_path_a_stops) delete new_route_path_a_stops[BusStopFeature.get('map_object_id')];
         new_route_path_b_stops[BusStopFeature.get('map_object_id')] = BusStopFeature.get('busstop_name');
     }
-    FillBusStopsContainer(new_route_path_a_stops, routeInterface["newPathABusContainer"], true);
-    FillBusStopsContainer(new_route_path_b_stops, routeInterface["newPathBBusContainer"], true);
+    FillBusStopsContainer(new_route_path_a_stops, routeInterface["newPathABusList"], true);
+    FillBusStopsContainer(new_route_path_b_stops, routeInterface["newPathBBusList"], true);
 }
 
 // ----------------------------------
@@ -275,7 +275,7 @@ function SaveNewRoute() {
         'name': routeInterface["nameInput"].value,
         'geojson_data': geoJSONdata,
         'path_a_stops': new_route_path_a_stops,
-        'path_b_stops': new_route_path_b_stops
+        'path_b_stops': new_route_path_b_stops,
     };
     APIPostRequest(route_data, routeAPI["main"]).then(function () {
         alert('Маршрут сохранен!');
@@ -295,6 +295,6 @@ function DeleteNewRouteBusStop(busStopId) {
     if (new_route_path_b_stops) {
         delete new_route_path_b_stops[busStopId];
     }
-    FillBusStopsContainer(new_route_path_a_stops, routeInterface["newPathABusContainer"], true);
-    FillBusStopsContainer(new_route_path_b_stops, routeInterface["newPathBBusContainer"], true);
+    FillBusStopsContainer(new_route_path_a_stops, routeInterface["newPathABusList"], true);
+    FillBusStopsContainer(new_route_path_b_stops, routeInterface["newPathBBusList"], true);
 }

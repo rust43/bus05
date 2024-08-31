@@ -5,8 +5,8 @@
 let editedRoute = null;
 let edit_route_path_a_stops = null;
 let edit_route_path_b_stops = null;
-let PathABusStopListContainer = null;
-let PathBBusStopListContainer = null;
+let pathABusStopList = null;
+let pathBBusStopList = null;
 
 //
 // Route save functions
@@ -95,11 +95,11 @@ function SelectRouteData(routeId) {
     edit_route_path_a_stops = ConvertBusStopsToDict(editedRoute.path_a_stops);
     edit_route_path_b_stops = ConvertBusStopsToDict(editedRoute.path_b_stops);
 
-    PathABusStopListContainer = document.getElementById('route-path-a-stops-container');
-    PathBBusStopListContainer = document.getElementById('route-path-b-stops-container');
+    pathABusStopList = document.getElementById('route-path-a-stops-list');
+    pathBBusStopList = document.getElementById('route-path-b-stops-list');
 
-    FillBusStopsContainer(edit_route_path_a_stops, PathABusStopListContainer, false);
-    FillBusStopsContainer(edit_route_path_b_stops, PathBBusStopListContainer, false);
+    FillBusStopsContainer(edit_route_path_a_stops, pathABusStopList, false);
+    FillBusStopsContainer(edit_route_path_b_stops, pathBBusStopList, false);
 
     document.getElementById('show-route-path-a').onclick = function () {
         EditPathFeature(editedRoute.path_a.line.id);
@@ -145,8 +145,8 @@ function FillBusStopsContainer(stopsDict, container, newRoute) {
 function DeleteRouteBusStop(busStopId) {
     delete edit_route_path_a_stops[busStopId];
     delete edit_route_path_b_stops[busStopId];
-    FillBusStopsContainer(edit_route_path_a_stops, PathABusStopListContainer, false);
-    FillBusStopsContainer(edit_route_path_b_stops, PathBBusStopListContainer, false);
+    FillBusStopsContainer(edit_route_path_a_stops, pathABusStopList, false);
+    FillBusStopsContainer(edit_route_path_b_stops, pathBBusStopList, false);
 }
 
 function SelectRouteBusStopFeature(PathDirection) {
@@ -165,8 +165,8 @@ function AddRouteBusstop(BusStopFeature, PathDirection) {
         delete edit_route_path_a_stops[BusStopFeature.get('map_object_id')];
         edit_route_path_b_stops[BusStopFeature.get('map_object_id')] = BusStopFeature.get('busstop_name');
     }
-    FillBusStopsContainer(edit_route_path_a_stops, PathABusStopListContainer, false);
-    FillBusStopsContainer(edit_route_path_b_stops, PathBBusStopListContainer, false);
+    FillBusStopsContainer(edit_route_path_a_stops, pathABusStopList, false);
+    FillBusStopsContainer(edit_route_path_b_stops, pathBBusStopList, false);
 }
 
 //
