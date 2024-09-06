@@ -1,25 +1,29 @@
 {% load static %}
-<div class="additional-sidebar w-0 col-sm-3 col-lg-2" id="additional-sidebar">
-    <div class="d-flex flex-column border-start h-100">
-        <div class="mb-auto" id="additional-sidebar-container"></div>
-        <a class="btn btn-light rounded-0 w-100 d-flex align-items-center mb-3 text-secondary" onclick="ToggleAdditionalSidebar();">
-            <span class="fs-5 me-3"><i class="bi bi-arrow-bar-left"></i></span>
-            <span>Скрыть</span>
-        </a>
+<div id="additional-sidebar" class="additional-sidebar w-0 col-sm-3 col-lg-2 d-flex flex-column border-start h-100">
+    <div id="additional-sidebar-container" class="additional-sidebar-container">
+        {% include 'map/as_route-data.html' %}
     </div>
+    <a id="additional-sidebar-toggler" class="d-none btn btn-light rounded-0 w-100 d-flex align-items-center text-secondary text-wrap" onclick="ToggleSidebar();">
+        <span class="fs-5 me-3"><i class="bi bi-arrow-bar-right"></i></span>
+        <span>Основная панель</span>
+    </a>
+    <a class="btn btn-light rounded-0 w-100 d-flex align-items-center mb-3 text-secondary" onclick="ToggleAdditionalSidebar();">
+        <span class="fs-5 me-3"><i class="bi bi-arrow-bar-left"></i></span>
+        <span>Скрыть</span>
+    </a>
 </div>
 
 <script>
     const additionalSidebar = document.getElementById('additional-sidebar');
+    const additionalSidebarContainer = document.getElementById('additional-sidebar-container');
     let additionalSidebarVisible = false;
     function ToggleAdditionalSidebar() {
-        mapContainer = document.getElementById('map-container');
-        mapContainer.classList.toggle('col-sm-8');
-        mapContainer.classList.toggle('col-lg-9');
-        mapContainer.classList.toggle('col-sm-5');
-        mapContainer.classList.toggle('col-lg-6');
+        const mapContainer = document.getElementById('map-container');
         additionalSidebar.classList.toggle('w-0');
         additionalSidebar.classList.toggle('additional-sidebar-show');
         additionalSidebarVisible = !additionalSidebarVisible;
+        if (!sidebarVisible) {
+            document.getElementById('sidebar-toggler').classList.toggle('sidebar-toggler-visible');
+        }
     }
 </script>

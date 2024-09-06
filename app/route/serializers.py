@@ -5,6 +5,7 @@ from route.functions import parse_point
 
 from .models import BusStop
 from .models import Route
+from .models import RouteType
 
 
 class BusStopSerializer(serializers.ModelSerializer):
@@ -49,21 +50,29 @@ class BusStopSimpleSerializer(serializers.ModelSerializer):
         fields = ["id", "name"]
 
 
+class RouteTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RouteType
+        fields = ["id", "name"]
+
+
 class RouteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Route
-        fields = ["id", "name", "path_a", "path_b", "path_a_stops", "path_b_stops"]
+        fields = ["id", "name", "route_type", "path_a", "path_b", "path_a_stops", "path_b_stops"]
 
     id = serializers.UUIDField()
     path_a = MapObjectSerializer(many=False)
     path_b = MapObjectSerializer(many=False)
     path_a_stops = BusStopSimpleSerializer(many=True, required=False)
     path_b_stops = BusStopSimpleSerializer(many=True, required=False)
+    route_type = RouteTypeSerializer(many=False)
 
     def create(self, validated_data):
         try:
             route_id = validated_data["id"]
             name = validated_data["name"]
+            route_type = validated_data["route_type"]
             path_a = validated_data["path_a"]
             path_b = validated_data["path_b"]
             path_a_stops = validated_data["path_a_stops"]
@@ -112,6 +121,7 @@ class RouteSerializer(serializers.ModelSerializer):
             route.path_b_stops.add(busstop)
         # setting new name
         route.name = name
+        route.route_type = route_type
         # setting new paths
         if route.path_a:
             route.path_a.delete()

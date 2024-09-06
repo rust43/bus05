@@ -8,13 +8,26 @@ let edit_route_path_b_stops = null;
 let pathABusStopList = null;
 let pathBBusStopList = null;
 
+const editRouteInterface = {
+    "id": document.getElementById('selected-route-id'),
+    "type": document.getElementById('selected-route-type'),
+    "name": document.getElementById("selected-route-name"),
+    "typeChk": document.getElementById("selected-route-type-chk"),
+    "typeSelect": document.getElementById('selected-route-type-select'),
+    "typeField": document.getElementById("selected-route-type-field"),
+}
+
 //
 // Route save functions
 //
 
 function SaveRoute() {
     if (editedRoute === null) return;
-    let route_name = document.getElementById('selected-route-name').value;
+    if (!RouteEditFormValidation()) {
+        alert('Проверьте данные редактируемого маршрута!');
+        return;
+    }
+    let route_name = editRouteInterface.name;
     let route_path_a = routeVectorSource.getFeatureById(editedRoute.path_a.line.id);
     let route_path_b = routeVectorSource.getFeatureById(editedRoute.path_b.line.id);
     if (route_path_a === null || route_path_b === null) {
@@ -27,13 +40,23 @@ function SaveRoute() {
         features,
         { dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857' }
     );
+    let route_type;
+    let new_route_type = false;
+    if (editRouteInterface.typeChk.checked) {
+        route_type = editRouteInterface.typeInput.value;
+        new_route_type = true;
+    } else {
+        route_type = editRouteInterface.typeSelect.value;
+    }
     const route_data = {
         'name': route_name,
         'geojson_data': geoJSONdata,
         'path_a_stops': edit_route_path_a_stops,
-        'path_b_stops': edit_route_path_b_stops
+        'path_b_stops': edit_route_path_b_stops,
+        'route_type': route_type,
+        'new_route_type': new_route_type,
     };
-    APIPutRequest(route_data, routeAPI["main"]).then(function () {
+    APIPutRequest(route_data, routeAPI.main).then(function () {
         alert('Изменения сохранены!');
         try {
             LoadRoutes().then(function () {
@@ -83,23 +106,38 @@ function EditPathFeature(pathFeatureId) {
     // PanToFeature(pathFeature);
 }
 
+function ClearEditRouteForm() {
+    inputClearHelper(editRouteInterface.id);
+    inputClearHelper(editRouteInterface.name);
+    inputClearHelper(editRouteInterface.type);
+    editRouteInterface.typeField.classList.add('d-none');
+    editRouteInterface.typeChk.checked = false;
+    editRouteInterface.typeSelect.disabled = false;
+    selectClearHelper(editRouteInterface.typeSelect);
+}
+
 function SelectRouteData(routeId) {
     if (routeId === '') return;
+    ClearEditRouteForm();
     DisplayRoute(routeId);
     editedRoute = GetSelectedRoute(routeId);
-
     document.getElementById('route-data').classList.remove('d-none');
-    document.getElementById('selected-route-name').value = editedRoute.name;
-    document.getElementById('selected-route-id').value = editedRoute.id;
+    editRouteInterface.name.value = editedRoute.name;
+    editRouteInterface.id.value = editedRoute.id;
 
-    edit_route_path_a_stops = ConvertBusStopsToDict(editedRoute.path_a_stops);
-    edit_route_path_b_stops = ConvertBusStopsToDict(editedRoute.path_b_stops);
+    FillRouteTypeSelect(editRouteInterface.typeSelect).then(() => {
+        if (editedRoute.route_type !== null)
+            editRouteInterface.typeSelect.value = editedRoute.route_type.id;
+    });
 
-    pathABusStopList = document.getElementById('route-path-a-stops-list');
-    pathBBusStopList = document.getElementById('route-path-b-stops-list');
+    // edit_route_path_a_stops = ConvertBusStopsToDict(editedRoute.path_a_stops);
+    // edit_route_path_b_stops = ConvertBusStopsToDict(editedRoute.path_b_stops);
 
-    FillBusStopsContainer(edit_route_path_a_stops, pathABusStopList, false);
-    FillBusStopsContainer(edit_route_path_b_stops, pathBBusStopList, false);
+    // pathABusStopList = document.getElementById('route-path-a-stops-list');
+    // pathBBusStopList = document.getElementById('route-path-b-stops-list');
+
+    // FillBusStopsContainer(edit_route_path_a_stops, pathABusStopList, false);
+    // FillBusStopsContainer(edit_route_path_b_stops, pathBBusStopList, false);
 
     document.getElementById('show-route-path-a').onclick = function () {
         EditPathFeature(editedRoute.path_a.line.id);
@@ -107,7 +145,16 @@ function SelectRouteData(routeId) {
     document.getElementById('show-route-path-b').onclick = function () {
         EditPathFeature(editedRoute.path_b.line.id);
     };
+
+    ShowRouteBusstops(editedRoute);
 }
+
+RouteTypeChkListener(
+    editRouteInterface.typeChk,
+    editRouteInterface.typeField,
+    editRouteInterface.type,
+    editRouteInterface.typeSelect
+);
 
 function FillBusStopsContainer(stopsDict, container, newRoute) {
     container.innerHTML = '';
@@ -190,3 +237,25 @@ function GetSelectedRoute(routeId) {
     return null;
 }
 
+function ShowRouteBusstops(route, direction = 'a') {
+    document.getElementById('as_route-data').classList.remove('d-none');
+    document.getElementById('as_route-transport-name').innerText = route.name;
+    if (route.route_type !== null)
+        document.getElementById('as_route-transport-type').innerText = route.route_type.name;
+    if (!additionalSidebarVisible) {
+        ToggleAdditionalSidebar();
+    }
+}
+
+function RouteEditFormValidation() {
+    let result = true;
+    result *= inputValidationHelper(editRouteInterface.name);
+    if (editRouteInterface.typeChk.checked) {
+        result *= inputValidationHelper(editRouteInterface.type);
+        selectClearHelper(editRouteInterface.typeSelect);
+    } else {
+        result *= selectValidationHelper(editRouteInterface.typeSelect);
+        inputClearHelper(editRouteInterface.type);
+    }
+    return result;
+}

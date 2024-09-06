@@ -68,25 +68,27 @@
         {% include 'transport/new.html' %}
         {% include 'transport/list.html' %}
     </div>
-    <a class="btn btn-light text-secondary rounded-0 w-100 d-flex align-items-center mb-3" onclick="ToggleSidebar();">
+    <a class="btn btn-light text-secondary rounded-0 w-100 align-items-center mb-3 d-none d-md-flex" onclick="ToggleSidebar();">
         <span class="fs-5 me-3"><i class="bi bi-arrow-bar-left"></i></span>
         <span>Скрыть</span>
     </a>
     <div class="sidebar-toggler" id="sidebar-toggler">
-        <a class="btn btn-outline-secondary w-100 d-flex align-items-center" onclick="ToggleSidebar();">
+        <a class="btn bg-glass rounded-0 rounded-end text-secondary w-100 d-flex align-items-center" onclick="ToggleSidebar();">
             <span class="fs-5 me-3"><i class="bi bi-arrow-bar-right"></i></span>
-            <span>Отобразить</span>
+            <span>Отобразить основную панель</span>
         </a>
     </div>
 </div>
 
 <script>
+    let sidebarVisible = true;
     function ToggleSidebar() {
-        if (additionalSidebarVisible) {
-            ToggleAdditionalSidebar();
-            additionalSidebarVisible = true;
-        }
         document.getElementById('sidebar').classList.toggle('sidebar-hidden');
-        document.getElementById('sidebar-toggler').classList.toggle('sidebar-toggler-visible');
+        if (!additionalSidebarVisible) {
+            document.getElementById('sidebar-toggler').classList.toggle('sidebar-toggler-visible');
+        } else {
+            document.getElementById('additional-sidebar-toggler').classList.toggle('d-none');
+        }
+        sidebarVisible = !sidebarVisible;
     }
 </script>

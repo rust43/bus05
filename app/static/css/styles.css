@@ -51,12 +51,16 @@
 
 .sidebar-toggler {
     position: absolute;
-    bottom: 43px;
-    left: 7px;
+    bottom: 33px;
+    left: 0px;
     z-index: 1;
     visibility: hidden;
     opacity: 0;
     transition: visibility 0s, opacity 0.5s linear;
+}
+
+.sidebar-toggler>a:hover {
+    background: rgba(80, 80, 80, 0.2) !important;
 }
 
 .sidebar-toggler-visible {
@@ -149,10 +153,10 @@
     z-index: 1;
     opacity: 1;
     overflow: hidden;
-    transition: width 0.5s ease-in-out;
-    -webkit-transition: width 0.5s ease-in-out;
-    -moz-transition: width 0.5s ease-in-out;
-    -o-transition: width 0.5s ease-in-out;
+    transition: width 0.15s ease-in-out;
+    -webkit-transition: width 0.15s ease-in-out;
+    -moz-transition: width 0.15s ease-in-out;
+    -o-transition: width 0.15s ease-in-out;
     /* -webkit-transition: left 0.15s ease-in-out; */
     /* -moz-transition: left 0.15s ease-in-out; */
     /* -o-transition: left 0.15s ease-in-out; */
@@ -192,4 +196,94 @@
     max-height: 250px;
     border: #dee2e6 1px solid;
     border-radius: 10px;
+}
+
+.additional-sidebar-container {
+    margin-bottom: auto;
+    height: 100%;
+    overflow-y: scroll;
+    position: relative;
+}
+
+.route-legend {
+    width: 4px;
+    position: absolute;
+    left: 26px;
+    top: 28px;
+    bottom: 28px;
+    z-index: 2;
+    background-color: rgb(60, 179, 0);
+}
+
+.route-legend__title {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 69px;
+    border-bottom: 1px solid #dee2e6;
+    padding: 1rem;
+    box-shadow: none !important;
+}
+
+.route-legend__essential {
+    font-size: 10px;
+}
+
+.route-busstops__items {
+    position: relative;
+    list-style: none;
+    padding-left: 0;
+    overflow-y: scroll;
+}
+
+.route-busstops__item {
+    position: relative;
+    border-bottom: 1px solid #eee;
+    padding: 15px 0 15px 56px;
+    line-height: 16px;
+    display: flex;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.route-busstops__item:hover {
+    background-color: #f6f6f6;
+}
+
+.route-busstops__items>.route-busstops__item:first-child {
+    height: 12px;
+    width: 12px;
+}
+
+.route-busstops__bullet {
+    position: absolute;
+    background-color: rgb(60, 179, 0);
+    border-color: rgb(60, 179, 0);
+    border-width: 2px;
+    border-style: solid;
+    border-radius: 50%;
+    height: 8px;
+    width: 8px;
+    left: 24px;
+    top: 50%;
+    z-index: 3;
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+
+.route-busstops__link {
+    text-decoration: none;
+    word-wrap: break-word;
+    min-width: 0;
+    display: inline-block;
+    font-size: 14px;
+    line-height: 16px;
+    color: #000;
+}
+
+.route-busstops__item:first-of-type>.route-busstops__bullet,
+.route-busstops__item:last-of-type>.route-busstops__bullet {
+    width: 16px;
+    height: 16px;
+    left: 20px
 }

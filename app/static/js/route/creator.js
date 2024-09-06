@@ -8,6 +8,10 @@ const routeInterface = {
     "pathBInput": document.getElementById('route-path-b'),
     "newPathABusList": document.getElementById('new-route-path-a-stops-list'),
     "newPathBBusList": document.getElementById('new-route-path-b-stops-list'),
+    "typeInput": document.getElementById('new-route-type'),
+    "typeSelect": document.getElementById('new-route-type-select'),
+    "typeInputField": document.getElementById("new-route-type-input"),
+    "typeChk": document.getElementById("new-route-type-chk"),
 }
 
 // ---------------------------
@@ -94,10 +98,24 @@ const setRouteFeature = function (routeName, feature) {
     }
 };
 
+async function FillNewRouteForm() {
+    await FillRouteTypeSelect(routeInterface.typeSelect);
+}
+
+async function FillRouteTypeSelect(selectElement) {
+    await APIGetRequest(routeAPI.type).then((TypesList) => {
+        FillSelect(selectElement, TypesList, ["id", "name"]);
+    });
+}
+
 function ClearNewRoute() {
     CancelDraw();
     routeInterface["nameInput"].value = '';
     routeInterface["nameInput"].classList.remove('is-valid');
+    inputClearHelper(routeInterface.typeInput);
+    routeInterface.typeChk.checked = false;
+    routeInterface.typeInputField.classList.add('d-none');
+    selectClearHelper(routeInterface.typeSelect);
     if (feature_path_a !== null) {
         newRouteVectorSource.removeFeature(feature_path_a);
         routeInvalidation('route-path-a');
@@ -130,6 +148,13 @@ function RouteFormValidation() {
     result *= validationHelper(routeInterface["nameInput"]);
     result *= validationHelper(routeInterface["pathAInput"]);
     result *= validationHelper(routeInterface["pathBInput"]);
+    if (routeInterface.typeChk.checked) {
+        result *= inputValidationHelper(routeInterface.typeInput);
+        selectClearHelper(routeInterface.typeSelect);
+    } else {
+        result *= selectValidationHelper(routeInterface.typeSelect);
+        inputClearHelper(routeInterface.typeInput);
+    }
     return result;
 }
 
@@ -271,17 +296,28 @@ function SaveNewRoute() {
         features,
         { dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857' }
     );
+    let route_type;
+    let new_route_type = false;
+    if (routeInterface.typeChk.checked) {
+        route_type = routeInterface.typeInput.value;
+        new_route_type = true;
+    } else {
+        route_type = routeInterface.typeSelect.value;
+    }
     const route_data = {
         'name': routeInterface["nameInput"].value,
         'geojson_data': geoJSONdata,
         'path_a_stops': new_route_path_a_stops,
         'path_b_stops': new_route_path_b_stops,
+        'route_type': route_type,
+        'new_route_type': new_route_type,
     };
     APIPostRequest(route_data, routeAPI["main"]).then(function () {
-        alert('Маршрут сохранен!');
         try {
             ClearNewRoute();
             LoadRoutes();
+            FillNewRouteForm();
+            alert('Маршрут сохранен!');
         } catch (err) {
             alert('Ошибка при загрузке новых маршрутов!');
         }
@@ -298,3 +334,24 @@ function DeleteNewRouteBusStop(busStopId) {
     FillBusStopsContainer(new_route_path_a_stops, routeInterface["newPathABusList"], true);
     FillBusStopsContainer(new_route_path_b_stops, routeInterface["newPathBBusList"], true);
 }
+
+function RouteTypeChkListener(chkEl, inputParent, inputEl, selectEl) {
+    chkEl.addEventListener("change", (event) => {
+        if (event.currentTarget.checked) {
+            inputParent.classList.remove("d-none");
+            inputEl.disabled = false;
+            selectEl.disabled = true;
+        } else {
+            inputParent.classList.add("d-none");
+            inputEl.disabled = true;
+            selectEl.disabled = false;
+        }
+    });
+}
+
+RouteTypeChkListener(
+    routeInterface.typeChk,
+    routeInterface.typeInputField,
+    routeInterface.typeInput,
+    routeInterface.typeSelect,
+);

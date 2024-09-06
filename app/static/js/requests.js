@@ -1,7 +1,8 @@
 // api endpoints definition
 
 const routeAPI = {
-    "main": "/api/v1/route/"
+    "main": "/api/v1/route",
+    "type": "/api/v1/route/type",
 }
 
 const transportAPI = {

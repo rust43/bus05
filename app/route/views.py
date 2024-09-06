@@ -7,8 +7,10 @@ from route.functions import consolidate_import
 from route.functions import parse_geojson
 from route.models import BusStop
 from route.models import Route
+from route.models import RouteType
 from route.serializers import BusStopSerializer
 from route.serializers import RouteSerializer
+from route.serializers import RouteTypeSerializer
 
 
 class RouteApiView(APIView):
@@ -41,8 +43,18 @@ class RouteApiView(APIView):
         geojson = request.data.get("geojson_data")
         map_data = parse_geojson(geojson)["new"]
 
+        route_type = request.data.get("route_type")
+        new_route_type = request.data.get("new_route_type")
+        if new_route_type:
+            route_type = RouteType.objects.create(name=route_type)
+        else:
+            try:
+                route_type = RouteType.objects.get(pk=route_type)
+            except RouteType.DoesNotExist:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+
         if map_data:
-            route = Route(name=name)
+            route = Route(name=name, route_type=route_type)
             # path data parse
             for path, line in map_data:
                 if "path-a" in str(path.name):
@@ -78,10 +90,24 @@ class RouteApiView(APIView):
         geojson = request.data.get("geojson_data")
         path_a_stops = request.data.get("path_a_stops")
         path_b_stops = request.data.get("path_b_stops")
+
+        route_type = request.data.get("route_type")
+        new_route_type = request.data.get("new_route_type")
+        if new_route_type:
+            route_type = RouteType.objects.create(name=route_type)
+        else:
+            try:
+                route_type = RouteType.objects.get(pk=route_type)
+            except RouteType.DoesNotExist:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+
         map_data = parse_geojson(geojson)
         if map_data:
             for route_data in map_data.items():
-                route = Route.objects.get(pk=route_data[0])
+                try:
+                    route = Route.objects.get(pk=route_data[0])
+                except Route.DoesNotExist:
+                    Response(status=status.HTTP_400_BAD_REQUEST)
                 for path, line in route_data[1]:
                     if "path-a" in str(path.name):
                         if route.path_a:
@@ -96,6 +122,7 @@ class RouteApiView(APIView):
                         line.save()
                         route.path_b = path
                 route.name = name
+                route.route_type = route_type
                 route.save()
                 # busstop data parse
                 route.path_a_stops.clear()
@@ -263,3 +290,14 @@ class DataApiView(APIView):
         if imported_routes:
             imported_routes.save()
         return Response(status=status.HTTP_200_OK)
+
+
+class RouteTypeAPIView(APIView):
+    authentication_classes = ()
+    permission_classes = ()
+
+    @staticmethod
+    def get(request):
+        type_list = RouteType.objects.all()
+        serializer = RouteTypeSerializer(type_list, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

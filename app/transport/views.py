@@ -128,8 +128,7 @@ class TransportApiView(APIView):
             route = Route.objects.get(pk=route)
         except Route.DoesNotExist:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-
-        transport = Transport(
+        Transport.objects.create(
             imei=imei,
             name=name,
             license_plate=license_plate,
@@ -137,8 +136,6 @@ class TransportApiView(APIView):
             transport_type=transport_type,
             route=route,
         )
-        transport.save()
-
         return Response(status=status.HTTP_201_CREATED)
 
     @staticmethod

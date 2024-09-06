@@ -1,28 +1,32 @@
 {% load static %}
 <div id="route-data" class="d-none">
     <div class="d-flex flex-column border-top">
-        <span class="px-3 mt-2 mb-2">Данные маршрута</span>
-        <div class="px-3 mb-3">
-            <label for="selected-route-name" class="form-label text-body-tertiary">Название маршрута</label>
-            <input type="text" class="form-control" id="selected-route-name" required />
-            <div class="invalid-feedback">Укажите название маршрута.</div>
+        <div id="route-selected-data" class="px-3 d-flex flex-column">
+            <span class="my-3">Данные маршрута</span>
+            <div class="mb-3">
+                <label for="selected-route-name" class="form-label text-body-tertiary">Название маршрута</label>
+                <input type="text" class="form-control" id="selected-route-name" required />
+                <div class="invalid-feedback">Укажите название маршрута.</div>
+            </div>
+            <div class="mb-3">
+                <label for="selected-route-type-select" class="form-label">Тип транспорта маршрута</label>
+                <select class="form-select" id="selected-route-type-select" required>
+                    <option value="" selected disabled>Выберите тип транспорта маршрута</option>
+                </select>
+                <div class="invalid-feedback">Укажите тип транспорта маршрута.</div>
+            </div>
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="selected-route-type-chk" />
+                <label class="form-check-label" for="selected-route-type-chk">Создать новый тип транспорта</label>
+            </div>
+            <div class="mb-3 d-none" id="selected-route-type-field">
+                <label for="selected-route-type" class="form-label">Тип транспорта маршрута</label>
+                <input type="text" class="form-control" id="selected-route-type" required disabled />
+                <div class="invalid-feedback">Укажите тип транспорта маршрута.</div>
+            </div>
+            <input type="hidden" id="selected-route-id" />
         </div>
-        <input type="hidden" id="selected-route-id" />
         <div>
-            <a class="btn btn-light rounded-0 w-100" onclick="">
-                <div class="d-flex align-items-center">
-                    <span class="text-bg-primary fs-5 rounded"><i class="bi bi-signpost-fill m-2"></i></span>
-                    <span class="text-start ms-3">Остановки в направлении A</span>
-                    <span class="ms-auto text-secondary"><i class="bi bi-caret-right-fill"></i></span>
-                </div>
-            </a>
-            <a class="btn btn-light rounded-0 w-100" onclick="">
-                <div class="d-flex align-items-center">
-                    <span class="text-bg-primary fs-5 rounded"><i class="bi bi-signpost-fill m-2"></i></span>
-                    <span class="text-start ms-3">Остановки в направлении B</span>
-                    <span class="ms-auto text-secondary"><i class="bi bi-caret-right-fill"></i></span>
-                </div>
-            </a>
             <a class="btn btn-light rounded-0 w-100" onclick="SelectRouteBusStopFeature('path-a');">
                 <div class="d-flex align-items-center">
                     <span class="text-bg-primary fs-5 rounded"><i class="bi bi-signpost-fill m-2"></i></span>

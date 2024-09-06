@@ -128,10 +128,10 @@ async function SaveNewTransport() {
     };
     APIPostRequest(transport_data, transportAPI.main).then(function () {
         try {
-            alert('Транспорт сохранен!');
             FillNewTransportForm();
             LoadTransport().then(function () {
                 DisplayTransport();
+                alert('Транспорт сохранен!');
             });
         } catch (err) {
             alert('Ошибка при сохранении нового транспорта!');
