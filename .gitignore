@@ -42,12 +42,7 @@ app/static/js/*
 !app/static/js/requests.js
 !app/static/js/django-csrf.js
 !app/static/js/mobile-fullscreen.js
+!app/static/js/custom_elements/
 
 # pictures
-!app/static/pictures/
-app/static/pictures/*
-!app/static/pictures/arrow.png
-!app/static/pictures/bus-16.svg
-!app/static/pictures/bus-24.svg
-!app/static/pictures/marker-bus-38.svg
-!app/static/pictures/plate.png
+app/static/pictures/

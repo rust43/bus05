@@ -13,22 +13,7 @@
                 <input type="text" class="form-control" id="route-name" required />
                 <div class="invalid-feedback">Укажите название маршрута.</div>
             </div>
-            <div class="mb-3">
-                <label for="new-route-type-select" class="form-label">Тип транспорта маршрута</label>
-                <select class="form-select" id="new-route-type-select" required>
-                    <option value="" selected disabled>Выберите тип транспорта маршрута</option>
-                </select>
-                <div class="invalid-feedback">Укажите тип транспорта маршрута.</div>
-            </div>
-            <div class="mb-3 form-check">
-                <input type="checkbox" class="form-check-input" id="new-route-type-chk" />
-                <label class="form-check-label" for="new-route-type-chk">Создать новый тип транспорта</label>
-            </div>
-            <div class="mb-3 d-none" id="new-route-type-input">
-                <label for="new-route-type" class="form-label">Тип транспорта маршрута</label>
-                <input type="text" class="form-control" id="new-route-type" required disabled />
-                <div class="invalid-feedback">Укажите тип транспорта маршрута.</div>
-            </div>
+            <div id="route-type"></div>
             <div id="routeStops" class="mb-3">
                 <div class="d-flex flex-column">
                     <span class="form-label">Остановки маршрута</span>

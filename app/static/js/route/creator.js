@@ -3,23 +3,20 @@
 // interface elements dict
 
 const routeInterface = {
-    "nameInput": document.getElementById("route-name"),
-    "pathAInput": document.getElementById('route-path-a'),
-    "pathBInput": document.getElementById('route-path-b'),
-    "newPathABusList": document.getElementById('new-route-path-a-stops-list'),
-    "newPathBBusList": document.getElementById('new-route-path-b-stops-list'),
-    "typeInput": document.getElementById('new-route-type'),
-    "typeSelect": document.getElementById('new-route-type-select'),
-    "typeInputField": document.getElementById("new-route-type-input"),
-    "typeChk": document.getElementById("new-route-type-chk"),
-}
+    nameInput: document.getElementById('route-name'),
+    pathAInput: document.getElementById('route-path-a'),
+    pathBInput: document.getElementById('route-path-b'),
+    newPathABusList: document.getElementById('new-route-path-a-stops-list'),
+    newPathBBusList: document.getElementById('new-route-path-b-stops-list'),
+    routeType: document.getElementById('route-type')
+};
 
 // ---------------------------
 // Route map layers definition
 // ---------------------------
 
 const newRouteVectorSource = new olVectorSource({ wrapX: false });
-let newRouteVectorLayer = new olVectorLayer({ source: newRouteVectorSource, style: mapStyleFunction, className: 'newRouteVectorLayer' });
+let newRouteVectorLayer = new olVectorLayer({ source: newRouteVectorSource, style: mapStyleFunction });
 map.addLayer(newRouteVectorLayer);
 
 // ----------------------------
@@ -30,6 +27,28 @@ let feature_path_a = null;
 let feature_path_b = null;
 let new_route_path_a_stops = {};
 let new_route_path_b_stops = {};
+
+async function FillNewRouteForm() {
+    await FillRouteTypeSelect();
+}
+
+async function FillRouteTypeSelect() {
+    await APIGetRequest(routeAPI.type).then((data) => {
+        let routeTypeSelect = bs_select_new(
+            'route-type',
+            'Тип транспорта маршрута',
+            '',
+            'text',
+            data,
+            true,
+            'Укажите тип транспорта маршрута',
+            'Данный тип транспорта уже указан'
+        );
+        routeInterface.routeType.innerHTML = '';
+        routeInterface.routeType.replaceWith(routeTypeSelect);
+        routeInterface.routeType = document.getElementById('route-type');
+    });
+}
 
 // ---------------------------
 // Route map draw functions
@@ -60,7 +79,9 @@ function StartDraw(vectorSource) {
     map.removeInteraction(mapDrawInteraction);
     map.removeInteraction(mapSnapInteraction);
     mapDrawInteraction = new olDrawInteraction({
-        source: vectorSource, type: 'LineString', pixelTolerance: 50
+        source: vectorSource,
+        type: 'LineString',
+        pixelTolerance: 50
     });
     mapSnapInteraction = new olSnapInteraction({ source: vectorSource });
 }
@@ -88,44 +109,30 @@ const setRouteFeature = function (routeName, feature) {
     if (routeName === 'route-path-a') {
         if (feature_path_a !== null) newRouteVectorSource.removeFeature(feature_path_a);
         feature_path_a = feature;
-        routeInterface["pathAInput"].value = 'set';
-        validationHelper(routeInterface["pathAInput"]);
+        routeInterface.pathAInput.value = 'set';
+        validationHelper(routeInterface.pathAInput);
     } else if (routeName === 'route-path-b') {
         if (feature_path_b !== null) newRouteVectorSource.removeFeature(feature_path_b);
         feature_path_b = feature;
-        routeInterface["pathBInput"].value = 'set';
-        validationHelper(routeInterface["pathBInput"]);
+        routeInterface.pathBInput.value = 'set';
+        validationHelper(routeInterface.pathBInput);
     }
 };
 
-async function FillNewRouteForm() {
-    await FillRouteTypeSelect(routeInterface.typeSelect);
-}
-
-async function FillRouteTypeSelect(selectElement) {
-    await APIGetRequest(routeAPI.type).then((TypesList) => {
-        FillSelect(selectElement, TypesList, ["id", "name"]);
-    });
-}
-
 function ClearNewRoute() {
     CancelDraw();
-    routeInterface["nameInput"].value = '';
-    routeInterface["nameInput"].classList.remove('is-valid');
-    inputClearHelper(routeInterface.typeInput);
-    routeInterface.typeChk.checked = false;
-    routeInterface.typeInputField.classList.add('d-none');
-    selectClearHelper(routeInterface.typeSelect);
+    routeInterface.nameInput.value = '';
+    routeInterface.nameInput.classList.remove('is-valid');
     if (feature_path_a !== null) {
         newRouteVectorSource.removeFeature(feature_path_a);
         routeInvalidation('route-path-a');
-        routeInterface["pathAInput"].value = '';
+        routeInterface.pathAInput.value = '';
         feature_path_a = null;
     }
     if (feature_path_b !== null) {
         newRouteVectorSource.removeFeature(feature_path_b);
         routeInvalidation('route-path-b');
-        routeInterface["pathBInput"].value = '';
+        routeInterface.pathBInput.value = '';
         feature_path_b = null;
     }
     selectedFeature = null;
@@ -139,15 +146,15 @@ function ClearNewRoute() {
             delete new_route_path_b_stops[prop];
         }
     }
-    FillBusStopsContainer(new_route_path_a_stops, routeInterface["newPathABusList"], true);
-    FillBusStopsContainer(new_route_path_b_stops, routeInterface["newPathBBusList"], true);
+    FillBusStopsContainer(new_route_path_a_stops, routeInterface['newPathABusList'], true);
+    FillBusStopsContainer(new_route_path_b_stops, routeInterface['newPathBBusList'], true);
 }
 
 function RouteFormValidation() {
     let result = true;
-    result *= validationHelper(routeInterface["nameInput"]);
-    result *= validationHelper(routeInterface["pathAInput"]);
-    result *= validationHelper(routeInterface["pathBInput"]);
+    result *= validationHelper(routeInterface['nameInput']);
+    result *= validationHelper(routeInterface['pathAInput']);
+    result *= validationHelper(routeInterface['pathBInput']);
     if (routeInterface.typeChk.checked) {
         result *= inputValidationHelper(routeInterface.typeInput);
         selectClearHelper(routeInterface.typeSelect);
@@ -170,8 +177,8 @@ const validationHelper = function (input) {
     }
 };
 
-routeInterface["nameInput"].onchange = function () {
-    validationHelper(routeInterface["nameInput"]);
+routeInterface['nameInput'].onchange = function () {
+    validationHelper(routeInterface['nameInput']);
 };
 
 // ----------------------------------
@@ -184,13 +191,13 @@ function RemoveSelectedNewRouteFeature() {
     if (name === 'route-path-a') {
         newRouteVectorSource.removeFeature(feature_path_a);
         routeInvalidation('route-path-a');
-        routeInterface["pathAInput"].value = '';
+        routeInterface['pathAInput'].value = '';
         feature_path_a = null;
         selectedFeature = null;
     } else if (name === 'route-path-b') {
         newRouteVectorSource.removeFeature(feature_path_b);
         routeInvalidation('route-path-b');
-        routeInterface["pathBInput"].value = '';
+        routeInterface['pathBInput'].value = '';
         feature_path_b = null;
         selectedFeature = null;
     }
@@ -206,7 +213,7 @@ const removeLastPoint = function (evt) {
     if (evt.keyCode !== 8) return;
     if (mapDrawInteraction === null) return;
     mapDrawInteraction.removeLastPoint();
-}
+};
 document.addEventListener('keydown', removeLastPoint, false);
 
 const continueDrawRouteFeature = function (evt) {
@@ -239,7 +246,7 @@ const continueDrawRouteFeature = function (evt) {
         });
     });
     map.getInteractions().extend([mapDrawInteraction, mapSnapInteraction]);
-}
+};
 document.addEventListener('keydown', continueDrawRouteFeature, false);
 
 // ----------------------------------
@@ -277,8 +284,8 @@ function AddNewRouteBusstop(BusStopFeature, PathDirection) {
         if (new_route_path_a_stops) delete new_route_path_a_stops[BusStopFeature.get('map_object_id')];
         new_route_path_b_stops[BusStopFeature.get('map_object_id')] = BusStopFeature.get('busstop_name');
     }
-    FillBusStopsContainer(new_route_path_a_stops, routeInterface["newPathABusList"], true);
-    FillBusStopsContainer(new_route_path_b_stops, routeInterface["newPathBBusList"], true);
+    FillBusStopsContainer(new_route_path_a_stops, routeInterface['newPathABusList'], true);
+    FillBusStopsContainer(new_route_path_b_stops, routeInterface['newPathBBusList'], true);
 }
 
 // ----------------------------------
@@ -292,10 +299,10 @@ function SaveNewRoute() {
     }
     let features = [feature_path_a, feature_path_b];
     let geoJSONwriter = new olGeoJSON();
-    let geoJSONdata = geoJSONwriter.writeFeatures(
-        features,
-        { dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857' }
-    );
+    let geoJSONdata = geoJSONwriter.writeFeatures(features, {
+        dataProjection: 'EPSG:4326',
+        featureProjection: 'EPSG:3857'
+    });
     let route_type;
     let new_route_type = false;
     if (routeInterface.typeChk.checked) {
@@ -305,14 +312,14 @@ function SaveNewRoute() {
         route_type = routeInterface.typeSelect.value;
     }
     const route_data = {
-        'name': routeInterface["nameInput"].value,
-        'geojson_data': geoJSONdata,
-        'path_a_stops': new_route_path_a_stops,
-        'path_b_stops': new_route_path_b_stops,
-        'route_type': route_type,
-        'new_route_type': new_route_type,
+        name: routeInterface['nameInput'].value,
+        geojson_data: geoJSONdata,
+        path_a_stops: new_route_path_a_stops,
+        path_b_stops: new_route_path_b_stops,
+        route_type: route_type,
+        new_route_type: new_route_type
     };
-    APIPostRequest(route_data, routeAPI["main"]).then(function () {
+    APIPostRequest(route_data, routeAPI['main']).then(function () {
         try {
             ClearNewRoute();
             LoadRoutes();
@@ -331,27 +338,6 @@ function DeleteNewRouteBusStop(busStopId) {
     if (new_route_path_b_stops) {
         delete new_route_path_b_stops[busStopId];
     }
-    FillBusStopsContainer(new_route_path_a_stops, routeInterface["newPathABusList"], true);
-    FillBusStopsContainer(new_route_path_b_stops, routeInterface["newPathBBusList"], true);
+    FillBusStopsContainer(new_route_path_a_stops, routeInterface['newPathABusList'], true);
+    FillBusStopsContainer(new_route_path_b_stops, routeInterface['newPathBBusList'], true);
 }
-
-function RouteTypeChkListener(chkEl, inputParent, inputEl, selectEl) {
-    chkEl.addEventListener("change", (event) => {
-        if (event.currentTarget.checked) {
-            inputParent.classList.remove("d-none");
-            inputEl.disabled = false;
-            selectEl.disabled = true;
-        } else {
-            inputParent.classList.add("d-none");
-            inputEl.disabled = true;
-            selectEl.disabled = false;
-        }
-    });
-}
-
-RouteTypeChkListener(
-    routeInterface.typeChk,
-    routeInterface.typeInputField,
-    routeInterface.typeInput,
-    routeInterface.typeSelect,
-);

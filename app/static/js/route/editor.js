@@ -9,13 +9,13 @@ let pathABusStopList = null;
 let pathBBusStopList = null;
 
 const editRouteInterface = {
-    "id": document.getElementById('selected-route-id'),
-    "type": document.getElementById('selected-route-type'),
-    "name": document.getElementById("selected-route-name"),
-    "typeChk": document.getElementById("selected-route-type-chk"),
-    "typeSelect": document.getElementById('selected-route-type-select'),
-    "typeField": document.getElementById("selected-route-type-field"),
-}
+    id: document.getElementById('selected-route-id'),
+    type: document.getElementById('selected-route-type'),
+    name: document.getElementById('selected-route-name'),
+    typeChk: document.getElementById('selected-route-type-chk'),
+    typeSelect: document.getElementById('selected-route-type-select'),
+    typeField: document.getElementById('selected-route-type-field')
+};
 
 //
 // Route save functions
@@ -31,15 +31,15 @@ function SaveRoute() {
     let route_path_a = routeVectorSource.getFeatureById(editedRoute.path_a.line.id);
     let route_path_b = routeVectorSource.getFeatureById(editedRoute.path_b.line.id);
     if (route_path_a === null || route_path_b === null) {
-        alert("Укажите направления маршрута!");
+        alert('Укажите направления маршрута!');
         return;
     }
     let features = [route_path_a, route_path_b];
     let geoJSONwriter = new olGeoJSON();
-    let geoJSONdata = geoJSONwriter.writeFeatures(
-        features,
-        { dataProjection: 'EPSG:4326', featureProjection: 'EPSG:3857' }
-    );
+    let geoJSONdata = geoJSONwriter.writeFeatures(features, {
+        dataProjection: 'EPSG:4326',
+        featureProjection: 'EPSG:3857'
+    });
     let route_type;
     let new_route_type = false;
     if (editRouteInterface.typeChk.checked) {
@@ -49,12 +49,12 @@ function SaveRoute() {
         route_type = editRouteInterface.typeSelect.value;
     }
     const route_data = {
-        'name': route_name,
-        'geojson_data': geoJSONdata,
-        'path_a_stops': edit_route_path_a_stops,
-        'path_b_stops': edit_route_path_b_stops,
-        'route_type': route_type,
-        'new_route_type': new_route_type,
+        name: route_name,
+        geojson_data: geoJSONdata,
+        path_a_stops: edit_route_path_a_stops,
+        path_b_stops: edit_route_path_b_stops,
+        route_type: route_type,
+        new_route_type: new_route_type
     };
     APIPutRequest(route_data, routeAPI.main).then(function () {
         alert('Изменения сохранены!');
@@ -74,7 +74,7 @@ function SaveRoute() {
 
 function DeleteRoute() {
     let routeId = document.getElementById('selected-route-id').value;
-    const route_data = { 'route_id': routeId };
+    const route_data = { route_id: routeId };
     APIDeleteRequest(route_data, routeAPI.main).then(function () {
         try {
             FillRouteList().then(() => {
@@ -126,8 +126,7 @@ function SelectRouteData(routeId) {
     editRouteInterface.id.value = editedRoute.id;
 
     FillRouteTypeSelect(editRouteInterface.typeSelect).then(() => {
-        if (editedRoute.route_type !== null)
-            editRouteInterface.typeSelect.value = editedRoute.route_type.id;
+        if (editedRoute.route_type !== null) editRouteInterface.typeSelect.value = editedRoute.route_type.id;
     });
 
     // edit_route_path_a_stops = ConvertBusStopsToDict(editedRoute.path_a_stops);
@@ -148,13 +147,6 @@ function SelectRouteData(routeId) {
 
     ShowRouteBusstops(editedRoute);
 }
-
-RouteTypeChkListener(
-    editRouteInterface.typeChk,
-    editRouteInterface.typeField,
-    editRouteInterface.type,
-    editRouteInterface.typeSelect
-);
 
 function FillBusStopsContainer(stopsDict, container, newRoute) {
     container.innerHTML = '';
@@ -231,8 +223,7 @@ function ConvertBusStopsToDict(stopsArray) {
 
 function GetSelectedRoute(routeId) {
     for (let i = 0; i < loadedRoutes.length; i++) {
-        if (loadedRoutes[i].id === routeId)
-            return loadedRoutes[i];
+        if (loadedRoutes[i].id === routeId) return loadedRoutes[i];
     }
     return null;
 }
@@ -240,8 +231,7 @@ function GetSelectedRoute(routeId) {
 function ShowRouteBusstops(route, direction = 'a') {
     document.getElementById('as_route-data').classList.remove('d-none');
     document.getElementById('as_route-transport-name').innerText = route.name;
-    if (route.route_type !== null)
-        document.getElementById('as_route-transport-type').innerText = route.route_type.name;
+    if (route.route_type !== null) document.getElementById('as_route-transport-type').innerText = route.route_type.name;
     if (!additionalSidebarVisible) {
         ToggleAdditionalSidebar();
     }

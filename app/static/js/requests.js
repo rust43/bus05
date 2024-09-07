@@ -1,30 +1,33 @@
 // api endpoints definition
 
 const routeAPI = {
-    "main": "/api/v1/route",
-    "type": "/api/v1/route/type",
-}
+    main: '/api/v1/route',
+    type: '/api/v1/route/type'
+};
 
 const transportAPI = {
-    "main": "/api/v1/transport/",
-    "imei": "/api/v1/transport/imei/",
-    "type": "/api/v1/transport/type/",
-    "point": "/api/v1/transport/point/"
-}
+    main: '/api/v1/transport',
+    imei: '/api/v1/transport/imei',
+    type: '/api/v1/transport/type',
+    point: '/api/v1/transport/point'
+};
 
 const busstopAPI = {
-    "main": "/api/v1/busstop/",
-}
+    main: '/api/v1/busstop'
+};
 
 const dataAPI = {
-    "main": '/api/v1/data/',
-}
+    main: '/api/v1/data'
+};
 
 async function APIGetRequest(APIAddress) {
     const url = host + APIAddress;
     let response = await fetch(url, {
-        method: 'get', credentials: 'same-origin', headers: {
-            'Accept': 'application/json', 'Content-Type': 'application/json'
+        method: 'get',
+        credentials: 'same-origin',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
         }
     });
     if (response.ok) {
@@ -38,9 +41,14 @@ async function APIPostRequest(data, APIAddress) {
     let cookie = null;
     if (typeof getCookie === 'function') cookie = getCookie('csrftoken');
     const response = await fetch(APIAddress, {
-        method: 'post', credentials: 'same-origin', headers: {
-            'X-CSRFToken': cookie, 'Accept': 'application/json', 'Content-Type': 'application/json'
-        }, body: JSON.stringify(data)
+        method: 'post',
+        credentials: 'same-origin',
+        headers: {
+            'X-CSRFToken': cookie,
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
     });
     if (response.ok) {
         try {
@@ -55,9 +63,14 @@ async function APIPostRequest(data, APIAddress) {
 
 async function APIPutRequest(data, APIAddress) {
     const response = await fetch(APIAddress, {
-        method: 'put', credentials: 'same-origin', headers: {
-            'X-CSRFToken': getCookie('csrftoken'), 'Accept': 'application/json', 'Content-Type': 'application/json'
-        }, body: JSON.stringify(data)
+        method: 'put',
+        credentials: 'same-origin',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
     });
     if (response.ok) {
         return true;
@@ -68,9 +81,14 @@ async function APIPutRequest(data, APIAddress) {
 
 async function APIDeleteRequest(data, APIAddress) {
     const response = await fetch(APIAddress, {
-        method: 'delete', credentials: 'same-origin', headers: {
-            'X-CSRFToken': getCookie('csrftoken'), 'Accept': 'application/json', 'Content-Type': 'application/json'
-        }, body: JSON.stringify(data)
+        method: 'delete',
+        credentials: 'same-origin',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            Accept: 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
     });
     if (response.ok) {
         return true;
