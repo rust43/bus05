@@ -22,10 +22,8 @@ const mapSelectFunction = function () {
     mapOverlay.setPosition(undefined);
     const feature = mapSelectInteraction.getFeatures().item(0);
     if (selectedFeature !== null) {
-        if (selectedFeature.get('type') === 'new-path')
-            UnselectNewRouteFeature(selectedFeature.get('name'));
-        else if (selectedFeature.get('type') === 'new-busstop')
-            UnselectNewBusStopFeature(selectedFeature.get('name'));
+        if (selectedFeature.get('type') === 'new-path') unselectNewRouteFeature(selectedFeature.get('name'));
+        else if (selectedFeature.get('type') === 'new-busstop') UnselectNewBusStopFeature(selectedFeature.get('name'));
         selectedFeature = null;
     }
     if (!feature) return;
@@ -33,7 +31,7 @@ const mapSelectFunction = function () {
     const type = selectedFeature.get('type');
     const name = selectedFeature.get('name');
     if (type === 'new-path') {
-        SelectNewRouteFeature(name);
+        selectNewRouteFeature(name);
         map.addInteraction(mapModifyInteraction);
     } else if (type === 'new-busstop') {
         SelectNewBusStopFeature(name);
@@ -89,12 +87,15 @@ function hexToRGB(hex, alpha) {
     const r = parseInt(hex.slice(1, 3), 16);
     const g = parseInt(hex.slice(3, 5), 16);
     const b = parseInt(hex.slice(5, 7), 16);
-    if (alpha) return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + alpha + ')'; else return 'rgb(' + r + ', ' + g + ', ' + b + ')';
+    if (alpha) return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + alpha + ')';
+    else return 'rgb(' + r + ', ' + g + ', ' + b + ')';
 }
 
 function rgbToHex(rgb) {
-    let r = rgb.split(',')[0], g = rgb.split(',')[1], b = rgb.split(',')[2];
-    return '#' + (1 << 24 | r << 16 | g << 8 | b).toString(16).slice(1);
+    let r = rgb.split(',')[0],
+        g = rgb.split(',')[1],
+        b = rgb.split(',')[2];
+    return '#' + ((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1);
 }
 
 //
@@ -141,29 +142,27 @@ function SearchFilterList(container, searchValue) {
 let selectedSidebar;
 
 const editViewSidebars = {
-    "tools": document.getElementById('tools-sidebar'),
-    "route-tools": document.getElementById('route-tools-sidebar'),
-    "route-new": document.getElementById('route-new-sidebar'),
-    "route-list": document.getElementById('route-list-sidebar'),
-    "busstop-tools": document.getElementById('busstop-tools-sidebar'),
-    "busstop-new": document.getElementById('busstop-new-sidebar'),
-    "busstop-list": document.getElementById('busstop-list-sidebar'),
-    "transport-tools": document.getElementById('transport-tools-sidebar'),
-    "transport-new": document.getElementById('transport-new-sidebar'),
-    "transport-list": document.getElementById('transport-list-sidebar'),
-}
+    tools: document.getElementById('tools-sidebar'),
+    'route-tools': document.getElementById('route-tools-sidebar'),
+    'route-new': document.getElementById('route-new-sidebar'),
+    'route-list': document.getElementById('route-list-sidebar'),
+    'busstop-tools': document.getElementById('busstop-tools-sidebar'),
+    'busstop-new': document.getElementById('busstop-new-sidebar'),
+    'busstop-list': document.getElementById('busstop-list-sidebar'),
+    'transport-tools': document.getElementById('transport-tools-sidebar'),
+    'transport-new': document.getElementById('transport-new-sidebar'),
+    'transport-list': document.getElementById('transport-list-sidebar')
+};
 
 function SelectToolSidebar(sidebar) {
     DeleteNewBusStop();
-    ClearNewRoute();
     for (const [name, element] of Object.entries(editViewSidebars)) {
         element.classList.add('d-none');
     }
     if (sidebar !== '') {
         editViewSidebars[sidebar].classList.remove('d-none');
         selectToolSidebar = sidebar;
-    }
-    else {
+    } else {
         editViewSidebars.tools.classList.remove('d-none');
         selectToolSidebar = editViewSidebars.tools;
     }

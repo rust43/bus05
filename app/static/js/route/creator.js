@@ -1,16 +1,5 @@
 // Draw interactions for new route
 
-// interface elements dict
-
-const routeInterface = {
-    nameInput: document.getElementById('route-name'),
-    pathAInput: document.getElementById('route-path-a'),
-    pathBInput: document.getElementById('route-path-b'),
-    newPathABusList: document.getElementById('new-route-path-a-stops-list'),
-    newPathBBusList: document.getElementById('new-route-path-b-stops-list'),
-    routeType: document.getElementById('route-type')
-};
-
 // ---------------------------
 // Route map layers definition
 // ---------------------------
@@ -25,16 +14,62 @@ map.addLayer(newRouteVectorLayer);
 
 let feature_path_a = null;
 let feature_path_b = null;
-let new_route_path_a_stops = {};
-let new_route_path_b_stops = {};
+let path_a_stops = {};
+let path_b_stops = {};
 
-async function FillNewRouteForm() {
+// interface elements dict
+
+const routeInterface = {
+    name: document.getElementById('name'),
+    pathA: document.getElementById('path-a'),
+    pathB: document.getElementById('path-b'),
+    pathAFlag: document.getElementById('path-a-flag'),
+    pathBFlag: document.getElementById('path-b-flag'),
+    pathAStops: document.getElementById('stops-a'),
+    pathBStops: document.getElementById('stops-b'),
+    typeDiv: () => {
+        return document.getElementById('route-type');
+    },
+    typeSelect: () => {
+        return document.getElementById('route-type-select');
+    },
+    typeInput: () => {
+        return document.getElementById('route-type-input');
+    }
+};
+
+const clearNewRouteForm = () => {
+    cancelDraw();
+    selectedFeature = null;
+    inputClearHelper(routeInterface.name);
+    featureDrawClearHelper(
+        feature_path_a,
+        newRouteVectorSource,
+        routeInterface.pathA,
+        routeInterface.pathAFlag,
+        routeInvalidation
+    );
+    featureDrawClearHelper(
+        feature_path_b,
+        newRouteVectorSource,
+        routeInterface.pathB,
+        routeInterface.pathBFlag,
+        routeInvalidation
+    );
+    feature_path_a = null;
+    feature_path_b = null;
+    clearDict(path_a_stops);
+    clearDict(path_b_stops);
+};
+
+const fillNewRouteForm = async () => {
+    clearNewRouteForm();
     await FillRouteTypeSelect();
-}
+};
 
 async function FillRouteTypeSelect() {
     await APIGetRequest(routeAPI.type).then((data) => {
-        let routeTypeSelect = bs_select_new(
+        const routeTypeSelect = bs_select_new(
             'route-type',
             'Тип транспорта маршрута',
             '',
@@ -44,9 +79,9 @@ async function FillRouteTypeSelect() {
             'Укажите тип транспорта маршрута',
             'Данный тип транспорта уже указан'
         );
-        routeInterface.routeType.innerHTML = '';
-        routeInterface.routeType.replaceWith(routeTypeSelect);
-        routeInterface.routeType = document.getElementById('route-type');
+        const routeTypeDiv = routeInterface.typeDiv();
+        routeTypeDiv.innerHTML = '';
+        routeTypeDiv.replaceWith(routeTypeSelect);
     });
 }
 
@@ -54,131 +89,69 @@ async function FillRouteTypeSelect() {
 // Route map draw functions
 // ---------------------------
 
-function DrawRoute(routeName) {
-    StartDraw(newRouteVectorSource);
-    mapDrawInteraction.on('drawend', function (evt) {
-        const feature = evt.feature;
+const drawRoute = (routeName) => {
+    startDraw(newRouteVectorSource, drawTypes.line);
+    mapDrawInteraction.on('drawend', function (e) {
+        const feature = e.feature;
         feature.set('name', routeName);
         feature.set('type', 'new-path');
         routeValidation(routeName, feature);
-        CancelDraw();
+        cancelDraw();
     });
     map.getInteractions().extend([mapDrawInteraction, mapSnapInteraction]);
-}
-
-function CancelDraw() {
-    map.removeInteraction(mapDrawInteraction);
-    map.removeInteraction(mapSnapInteraction);
-    map.addInteraction(mapSelectInteraction);
-}
-
-function StartDraw(vectorSource) {
-    // removing interactions before draw
-    map.removeInteraction(mapSelectInteraction);
-    map.removeInteraction(mapModifyInteraction);
-    map.removeInteraction(mapDrawInteraction);
-    map.removeInteraction(mapSnapInteraction);
-    mapDrawInteraction = new olDrawInteraction({
-        source: vectorSource,
-        type: 'LineString',
-        pixelTolerance: 50
-    });
-    mapSnapInteraction = new olSnapInteraction({ source: vectorSource });
-}
+};
 
 // ------------------------------
 // Route map validation functions
 // ------------------------------
 
-const routeValidation = function (routeName, feature) {
-    const flag = document.getElementById(routeName + '-flag');
+const routeValidation = (routeName, feature) => {
+    flag = document.getElementById(routeName + '-flag');
+    if (flag === null) return;
     flag.classList.remove('text-bg-danger');
     flag.classList.add('text-bg-success');
     flag.innerText = 'Указано';
     setRouteFeature(routeName, feature);
 };
 
-const routeInvalidation = function (routeName) {
-    const flag = document.getElementById(routeName + '-flag');
+const routeInvalidation = (flag) => {
+    if (flag === null) return;
     flag.classList.remove('text-bg-success');
     flag.classList.add('text-bg-danger');
     flag.innerText = 'Не указано';
 };
 
-const setRouteFeature = function (routeName, feature) {
-    if (routeName === 'route-path-a') {
+const setRouteFeature = (routeName, feature) => {
+    if (routeName === 'path-a') {
         if (feature_path_a !== null) newRouteVectorSource.removeFeature(feature_path_a);
         feature_path_a = feature;
-        routeInterface.pathAInput.value = 'set';
-        validationHelper(routeInterface.pathAInput);
-    } else if (routeName === 'route-path-b') {
+        routeInterface.pathA.value = 'set';
+        validationHelper(routeInterface.pathA);
+    } else if (routeName === 'path-b') {
         if (feature_path_b !== null) newRouteVectorSource.removeFeature(feature_path_b);
         feature_path_b = feature;
-        routeInterface.pathBInput.value = 'set';
-        validationHelper(routeInterface.pathBInput);
+        routeInterface.pathB.value = 'set';
+        validationHelper(routeInterface.pathB);
     }
 };
-
-function ClearNewRoute() {
-    CancelDraw();
-    routeInterface.nameInput.value = '';
-    routeInterface.nameInput.classList.remove('is-valid');
-    if (feature_path_a !== null) {
-        newRouteVectorSource.removeFeature(feature_path_a);
-        routeInvalidation('route-path-a');
-        routeInterface.pathAInput.value = '';
-        feature_path_a = null;
-    }
-    if (feature_path_b !== null) {
-        newRouteVectorSource.removeFeature(feature_path_b);
-        routeInvalidation('route-path-b');
-        routeInterface.pathBInput.value = '';
-        feature_path_b = null;
-    }
-    selectedFeature = null;
-    for (var prop in new_route_path_a_stops) {
-        if (new_route_path_a_stops.hasOwnProperty(prop)) {
-            delete new_route_path_a_stops[prop];
-        }
-    }
-    for (var prop in new_route_path_b_stops) {
-        if (new_route_path_b_stops.hasOwnProperty(prop)) {
-            delete new_route_path_b_stops[prop];
-        }
-    }
-    FillBusStopsContainer(new_route_path_a_stops, routeInterface['newPathABusList'], true);
-    FillBusStopsContainer(new_route_path_b_stops, routeInterface['newPathBBusList'], true);
-}
 
 function RouteFormValidation() {
     let result = true;
-    result *= validationHelper(routeInterface['nameInput']);
-    result *= validationHelper(routeInterface['pathAInput']);
-    result *= validationHelper(routeInterface['pathBInput']);
-    if (routeInterface.typeChk.checked) {
-        result *= inputValidationHelper(routeInterface.typeInput);
-        selectClearHelper(routeInterface.typeSelect);
-    } else {
-        result *= selectValidationHelper(routeInterface.typeSelect);
-        inputClearHelper(routeInterface.typeInput);
-    }
+    result *= validationHelper(routeInterface.name);
+    result *= validationHelper(routeInterface.pathA);
+    result *= validationHelper(routeInterface.pathB);
+    // if (routeInterface.typeChk.checked) {
+    //     result *= inputValidationHelper(routeInterface.typeInput);
+    //     selectClearHelper(routeInterface.typeSelect);
+    // } else {
+    //     result *= selectValidationHelper(routeInterface.typeSelect);
+    //     inputClearHelper(routeInterface.typeInput);
+    // }
     return result;
 }
 
-const validationHelper = function (input) {
-    if (input && input.value) {
-        input.classList.remove('is-invalid');
-        input.classList.add('is-valid');
-        return true;
-    } else {
-        input.classList.remove('is-valid');
-        input.classList.add('is-invalid');
-        return false;
-    }
-};
-
-routeInterface['nameInput'].onchange = function () {
-    validationHelper(routeInterface['nameInput']);
+routeInterface.name.onchange = function () {
+    validationHelper(routeInterface.name);
 };
 
 // ----------------------------------
@@ -191,33 +164,33 @@ function RemoveSelectedNewRouteFeature() {
     if (name === 'route-path-a') {
         newRouteVectorSource.removeFeature(feature_path_a);
         routeInvalidation('route-path-a');
-        routeInterface['pathAInput'].value = '';
+        inputClearHelper(routeInterface.pathA);
         feature_path_a = null;
         selectedFeature = null;
     } else if (name === 'route-path-b') {
         newRouteVectorSource.removeFeature(feature_path_b);
         routeInvalidation('route-path-b');
-        routeInterface['pathBInput'].value = '';
+        inputValidationHelper(routeInterface.pathB);
         feature_path_b = null;
         selectedFeature = null;
     }
 }
 
-const deleteNewRouteFeature = function (evt) {
-    if (evt.keyCode !== 46) return;
+const deleteNewRouteFeature = (e) => {
+    if (e.keyCode !== 46) return;
     RemoveSelectedNewRouteFeature();
 };
 document.addEventListener('keydown', deleteNewRouteFeature, false);
 
-const removeLastPoint = function (evt) {
-    if (evt.keyCode !== 8) return;
+const removeLastPoint = (e) => {
+    if (e.keyCode !== 8) return;
     if (mapDrawInteraction === null) return;
     mapDrawInteraction.removeLastPoint();
 };
 document.addEventListener('keydown', removeLastPoint, false);
 
-const continueDrawRouteFeature = function (evt) {
-    if (evt.keyCode !== 16) return;
+const continueDrawRouteFeature = (e) => {
+    if (e.keyCode !== 16) return;
     if (mapSelectInteraction === null) return;
     let feature = mapSelectInteraction.getFeatures().item(0);
     if (!feature) return;
@@ -229,14 +202,14 @@ const continueDrawRouteFeature = function (evt) {
     if (type === 'new-path') vectorSource = newRouteVectorSource;
     else vectorSource = routeVectorSource;
     vectorSource.removeFeature(feature);
-    StartDraw(vectorSource);
+    startDraw(vectorSource, drawTypes.line);
     mapDrawInteraction.extend(feature);
-    mapDrawInteraction.on('drawend', function (evt) {
-        feature = evt.feature;
+    mapDrawInteraction.on('drawend', function (e) {
+        feature = e.feature;
         feature.set('name', routeName);
         feature.set('type', type);
         if (type === 'new-path') routeValidation(routeName, feature);
-        CancelDraw();
+        cancelDraw();
         mapSelectInteraction.getFeatures().clear();
         mapSelectInteraction.getFeatures().push(feature);
         mapSelectInteraction.dispatchEvent({
@@ -253,28 +226,30 @@ document.addEventListener('keydown', continueDrawRouteFeature, false);
 // Route map select feature functions
 // ----------------------------------
 
-function SelectNewRouteFeature(routeName) {
-    const flag = document.getElementById(routeName + '-flag');
+const selectNewRouteFeature = (routeName) => {
+    flag = document.getElementById(routeName + '-flag');
+    if (flag === null) return;
     flag.classList.remove('text-bg-success');
     flag.classList.add('text-bg-primary');
     flag.innerText = 'Выбрано';
-}
+};
 
-function UnselectNewRouteFeature(routeName) {
-    const flag = document.getElementById(routeName + '-flag');
+const unselectNewRouteFeature = (routeName) => {
+    flag = document.getElementById(routeName + '-flag');
+    if (flag === null) return;
     flag.classList.remove('text-bg-primary');
     flag.classList.add('text-bg-success');
     flag.innerText = 'Указано';
-}
+};
 
-function SelectNewRouteBusStopFeature(PathDirection) {
-    CancelDraw();
-    if (PathDirection === 'path-a') {
+const selectNewRouteBusStopFeature = (direction) => {
+    cancelDraw();
+    if (direction === 'path-a') {
         editMode = 'new-route-add-busstop-path-a';
-    } else if (PathDirection === 'path-b') {
+    } else if (direction === 'path-b') {
         editMode = 'new-route-add-busstop-path-b';
     }
-}
+};
 
 function AddNewRouteBusstop(BusStopFeature, PathDirection) {
     if (PathDirection === 'path-a') {

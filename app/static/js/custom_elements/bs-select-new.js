@@ -1,3 +1,15 @@
+/**
+ * Return select with input for new option
+ * @param {String} id id for new div
+ * @param {String} selectLabel label for select
+ * @param {String} inputLabel label for input
+ * @param {String} inputType type of input
+ * @param {JSON} options dict of options
+ * @param {boolean} [required=false] select is required
+ * @param {String} [errorSelectText = null] error text for select
+ * @param {String} [errorInputText=null] error text for input
+ * @return {HTMLDivElement} div with select
+ */
 const bs_select_new = (
     id,
     selectLabel,

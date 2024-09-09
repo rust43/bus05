@@ -3,40 +3,28 @@
 // interface elements dict
 
 const newTransInterface = {
-    "nameInput": document.getElementById("new-transport-name"),
-    "plateInput": document.getElementById("new-transport-plate"),
-    "typeInput": document.getElementById('new-transport-type'),
-    "imeiSelect": document.getElementById('new-transport-imei'),
-    "routeSelect": document.getElementById('new-transport-route'),
-    "typeSelect": document.getElementById('new-transport-type-select'),
-    "typeInputField": document.getElementById("new-transport-type-input"),
-    "typeChk": document.getElementById("new-transport-type-chk"),
-    "activeChk": document.getElementById("new-transport-active-chk")
-}
+    nameInput: document.getElementById('new-transport-name'),
+    plateInput: document.getElementById('new-transport-plate'),
+    typeInput: document.getElementById('new-transport-type'),
+    imeiSelect: document.getElementById('new-transport-imei'),
+    routeSelect: document.getElementById('new-transport-route'),
+    typeSelect: document.getElementById('new-transport-type-select'),
+    typeInputField: document.getElementById('new-transport-type-input'),
+    typeChk: document.getElementById('new-transport-type-chk'),
+    activeChk: document.getElementById('new-transport-active-chk')
+};
 
 function ClearNewTransportForm() {
     inputClearHelper(newTransInterface.nameInput);
     inputClearHelper(newTransInterface.plateInput);
     inputClearHelper(newTransInterface.typeInput);
-    newTransInterface.typeInputField.classList.add("d-none");
+    newTransInterface.typeInputField.classList.add('d-none');
     newTransInterface.typeChk.checked = false;
     newTransInterface.activeChk.checked = false;
     newTransInterface.typeSelect.disabled = false;
     selectClearHelper(newTransInterface.imeiSelect);
     selectClearHelper(newTransInterface.routeSelect);
     selectClearHelper(newTransInterface.typeSelect);
-}
-
-const inputClearHelper = function (input) {
-    input.value = "";
-    input.classList.remove("is-valid");
-    input.classList.remove("is-invalid");
-}
-
-const selectClearHelper = function (select) {
-    select.selectedIndex = 0;
-    select.classList.remove("is-valid");
-    select.classList.remove("is-invalid");
 }
 
 async function FillNewTransportForm() {
@@ -54,13 +42,13 @@ async function FillTransportIMEISelect(selectElement) {
 
 async function FillTransportRouteSelect(selectElement) {
     await APIGetRequest(routeAPI.main).then((RouteList) => {
-        FillSelect(selectElement, RouteList, ["id", "name"]);
+        FillSelect(selectElement, RouteList, ['id', 'name']);
     });
 }
 
 async function FillTransportTypeSelect(selectElement) {
     await APIGetRequest(transportAPI.type).then((TypesList) => {
-        FillSelect(selectElement, TypesList, ["id", "name"]);
+        FillSelect(selectElement, TypesList, ['id', 'name']);
     });
 }
 
@@ -90,7 +78,7 @@ const inputValidationHelper = function (input) {
         input.classList.add('is-invalid');
         return false;
     }
-}
+};
 
 const selectValidationHelper = function (select) {
     if (select.selectedIndex > 0) {
@@ -102,7 +90,7 @@ const selectValidationHelper = function (select) {
         select.classList.add('is-invalid');
         return false;
     }
-}
+};
 
 async function SaveNewTransport() {
     if (!TransportCreateFormValidation()) {
@@ -118,13 +106,13 @@ async function SaveNewTransport() {
         transport_type = newTransInterface.typeSelect.value;
     }
     const transport_data = {
-        'imei': newTransInterface.imeiSelect.value,
-        'name': newTransInterface.nameInput.value,
-        'license_plate': newTransInterface.plateInput.value,
-        'active': newTransInterface.activeChk.checked,
-        'transport_type': transport_type,
-        'new_transport_type': new_transport_type,
-        'route': newTransInterface.routeSelect.value,
+        imei: newTransInterface.imeiSelect.value,
+        name: newTransInterface.nameInput.value,
+        license_plate: newTransInterface.plateInput.value,
+        active: newTransInterface.activeChk.checked,
+        transport_type: transport_type,
+        new_transport_type: new_transport_type,
+        route: newTransInterface.routeSelect.value
     };
     APIPostRequest(transport_data, transportAPI.main).then(function () {
         try {
@@ -140,13 +128,13 @@ async function SaveNewTransport() {
 }
 
 function TransportTypeChkListener(chkEl, inputParent, inputEl, selectEl) {
-    chkEl.addEventListener("change", (event) => {
+    chkEl.addEventListener('change', (event) => {
         if (event.currentTarget.checked) {
-            inputParent.classList.remove("d-none");
+            inputParent.classList.remove('d-none');
             inputEl.disabled = false;
             selectEl.disabled = true;
         } else {
-            inputParent.classList.add("d-none");
+            inputParent.classList.add('d-none');
             inputEl.disabled = true;
             selectEl.disabled = false;
         }
