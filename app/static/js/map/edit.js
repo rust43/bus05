@@ -39,9 +39,9 @@ const mapSelectFunction = function () {
     } else if (type === 'busstop') {
         // ShowBusStopPopup(selectedFeature);
         if (editMode === 'new-route-add-busstop-path-a') {
-            AddNewRouteBusstop(feature, 'path-a');
+            addNewRouteBusstop(feature, 'path-a');
         } else if (editMode === 'new-route-add-busstop-path-b') {
-            AddNewRouteBusstop(feature, 'path-b');
+            addNewRouteBusstop(feature, 'path-b');
         } else if (editMode === 'route-add-busstop-path-a') {
             AddRouteBusstop(feature, 'path-a');
         } else if (editMode === 'route-add-busstop-path-b') {
@@ -143,15 +143,15 @@ let selectedSidebar;
 
 const editViewSidebars = {
     tools: document.getElementById('tools-sidebar'),
-    'route-tools': document.getElementById('route-tools-sidebar'),
-    'route-new': document.getElementById('route-new-sidebar'),
-    'route-list': document.getElementById('route-list-sidebar'),
-    'busstop-tools': document.getElementById('busstop-tools-sidebar'),
-    'busstop-new': document.getElementById('busstop-new-sidebar'),
-    'busstop-list': document.getElementById('busstop-list-sidebar'),
-    'transport-tools': document.getElementById('transport-tools-sidebar'),
-    'transport-new': document.getElementById('transport-new-sidebar'),
-    'transport-list': document.getElementById('transport-list-sidebar')
+    route_tools: document.getElementById('route-tools-sidebar'),
+    route_new: document.getElementById('route-new-sidebar'),
+    route_list: document.getElementById('route-list-sidebar'),
+    busstop_tools: document.getElementById('busstop-tools-sidebar'),
+    busstop_new: document.getElementById('busstop-new-sidebar'),
+    busstop_list: document.getElementById('busstop-list-sidebar'),
+    transport_tools: document.getElementById('transport-tools-sidebar'),
+    transport_new: document.getElementById('transport-new-sidebar'),
+    transport_list: document.getElementById('transport-list-sidebar')
 };
 
 function SelectToolSidebar(sidebar) {

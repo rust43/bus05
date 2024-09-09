@@ -1,4 +1,4 @@
-// Draw interactions for new route
+// New Route creator file
 
 // ---------------------------
 // Route map layers definition
@@ -64,10 +64,10 @@ const clearNewRouteForm = () => {
 
 const fillNewRouteForm = async () => {
     clearNewRouteForm();
-    await FillRouteTypeSelect();
+    await fillRouteTypeSelect();
 };
 
-async function FillRouteTypeSelect() {
+const fillRouteTypeSelect = async () => {
     await APIGetRequest(routeAPI.type).then((data) => {
         const routeTypeSelect = bs_select_new(
             'route-type',
@@ -83,7 +83,7 @@ async function FillRouteTypeSelect() {
         routeTypeDiv.innerHTML = '';
         routeTypeDiv.replaceWith(routeTypeSelect);
     });
-}
+};
 
 // ---------------------------
 // Route map draw functions
@@ -135,7 +135,7 @@ const setRouteFeature = (routeName, feature) => {
     }
 };
 
-function RouteFormValidation() {
+const routeFormValidation = () => {
     let result = true;
     result *= validationHelper(routeInterface.name);
     result *= validationHelper(routeInterface.pathA);
@@ -148,7 +148,7 @@ function RouteFormValidation() {
     //     inputClearHelper(routeInterface.typeInput);
     // }
     return result;
-}
+};
 
 routeInterface.name.onchange = function () {
     validationHelper(routeInterface.name);
@@ -158,27 +158,27 @@ routeInterface.name.onchange = function () {
 // Route map delete feature functions
 // ----------------------------------
 
-function RemoveSelectedNewRouteFeature() {
+const removeSelectedNewRouteFeature = () => {
     if (selectedFeature === null) return;
     let name = selectedFeature.get('name');
-    if (name === 'route-path-a') {
+    if (name === 'path-a') {
         newRouteVectorSource.removeFeature(feature_path_a);
-        routeInvalidation('route-path-a');
+        routeInvalidation('path-a');
         inputClearHelper(routeInterface.pathA);
         feature_path_a = null;
         selectedFeature = null;
-    } else if (name === 'route-path-b') {
+    } else if (name === 'path-b') {
         newRouteVectorSource.removeFeature(feature_path_b);
-        routeInvalidation('route-path-b');
+        routeInvalidation('path-b');
         inputValidationHelper(routeInterface.pathB);
         feature_path_b = null;
         selectedFeature = null;
     }
-}
+};
 
 const deleteNewRouteFeature = (e) => {
     if (e.keyCode !== 46) return;
-    RemoveSelectedNewRouteFeature();
+    removeSelectedNewRouteFeature();
 };
 document.addEventListener('keydown', deleteNewRouteFeature, false);
 
@@ -251,24 +251,34 @@ const selectNewRouteBusStopFeature = (direction) => {
     }
 };
 
-function AddNewRouteBusstop(BusStopFeature, PathDirection) {
-    if (PathDirection === 'path-a') {
-        if (new_route_path_b_stops) delete new_route_path_b_stops[BusStopFeature.get('map_object_id')];
-        new_route_path_a_stops[BusStopFeature.get('map_object_id')] = BusStopFeature.get('busstop_name');
-    } else if (PathDirection === 'path-b') {
-        if (new_route_path_a_stops) delete new_route_path_a_stops[BusStopFeature.get('map_object_id')];
-        new_route_path_b_stops[BusStopFeature.get('map_object_id')] = BusStopFeature.get('busstop_name');
+const showNewRouteBusStops = (direction) => {
+    if (direction === 'path-a') {
+        fillASRouteData(direction, selectNewRouteBusStopFeature, 'Остановки в направлении А', path_a_stops);
+    } else if (direction === 'path-b') {
+        fillASRouteData(direction, selectNewRouteBusStopFeature, 'Остановки в направлении B', path_b_stops);
     }
-    FillBusStopsContainer(new_route_path_a_stops, routeInterface['newPathABusList'], true);
-    FillBusStopsContainer(new_route_path_b_stops, routeInterface['newPathBBusList'], true);
-}
+    if (!additionalSidebarVisible) toggleAdditionalSidebar();
+};
+
+const addNewRouteBusstop = (busstopFeature, direction) => {
+    const name = busstopFeature.get('busstop_name');
+    const map_id = busstopFeature.get('map_object_id');
+    if (direction === 'path-a') {
+        if (path_b_stops) delete path_b_stops[busstopFeature.get('map_object_id')];
+        path_a_stops[map_id] = name;
+    } else if (direction === 'path-b') {
+        if (path_a_stops) delete path_a_stops[busstopFeature.get('map_object_id')];
+        path_b_stops[map_id] = name;
+    }
+    ASRouteAddBusstop(name);
+};
 
 // ----------------------------------
 // Route map save functions
 // ----------------------------------
 
 function SaveNewRoute() {
-    if (!RouteFormValidation()) {
+    if (!routeFormValidation()) {
         alert('Проверьте данные нового маршрута!');
         return;
     }

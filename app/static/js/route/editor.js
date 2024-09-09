@@ -125,7 +125,7 @@ function SelectRouteData(routeId) {
     editRouteInterface.name.value = editedRoute.name;
     editRouteInterface.id.value = editedRoute.id;
 
-    FillRouteTypeSelect(editRouteInterface.typeSelect).then(() => {
+    fillRouteTypeSelect(editRouteInterface.typeSelect).then(() => {
         if (editedRoute.route_type !== null) editRouteInterface.typeSelect.value = editedRoute.route_type.id;
     });
 
@@ -233,7 +233,7 @@ function ShowRouteBusstops(route, direction = 'a') {
     document.getElementById('as_route-transport-name').innerText = route.name;
     if (route.route_type !== null) document.getElementById('as_route-transport-type').innerText = route.route_type.name;
     if (!additionalSidebarVisible) {
-        ToggleAdditionalSidebar();
+        toggleAdditionalSidebar();
     }
 }
 

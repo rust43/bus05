@@ -201,7 +201,7 @@
 .additional-sidebar-container {
     margin-bottom: auto;
     height: 100%;
-    overflow-y: scroll;
+    overflow-y: hidden;
     position: relative;
 }
 
@@ -233,7 +233,7 @@
     position: relative;
     list-style: none;
     padding-left: 0;
-    overflow-y: scroll;
+    margin-bottom: 0;
 }
 
 .route-busstops__item {
