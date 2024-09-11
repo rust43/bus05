@@ -1,85 +1,92 @@
 {% load static %}
-<div id="as_route-data" class="d-none h-100">
-    <div class="route-legend__title sticky-top bg-white">
-        <h2 class="fs-6 fw-medium mb-0">
-            <span id="as_route-transport-type" class="d-none"></span>
-            <span id="as_route-transport-name"></span>
-        </h2>
-        <div id="route-legend__essential" class="route-legend__essential">
-            <span id="route-legend__start">ЦУМ</span>
-            <span class="text-secondary" class="ms-1 me-1"><i class="bi bi-caret-right-fill"></i></span>
-            <span id="route-legend__end">Киргу</span>
-        </div>
+<div id="as-route-data" class="d-none h-100">
+  <div class="route-legend-title sticky-top bg-white">
+    <h2 class="fs-6 fw-medium mb-0">
+      <span id="as-route-transport-type" class="d-none"></span>
+      <span id="as-route-transport-name"></span>
+    </h2>
+    <div id="route-legend-essential" class="route-legend-essential">
+      <span id="route-legend-start">ЦУМ</span>
+      <span class="text-secondary" class="ms-1 me-1"><i class="bi bi-caret-right-fill"></i></span>
+      <span id="route-legend-end">Киргу</span>
     </div>
-    <div class="p-3 border-bottom">
-        <span class="fw-medium fs-6">Список остановок</span>
-    </div>
-    <div class="overflow-y-scroll">
-        <ul id="route-busstops__items" class="route-busstops__items">
-            <div id="route-legend" class="route-legend"></div>
-        </ul>
-    </div>
-    <div class="mt-auto">
-        <a id="as_add_new_busstop" class="btn btn-light rounded-0 w-100">
-            <div class="d-flex align-items-center">
-                <span class="text-bg-primary fs-5 rounded"><i class="bi bi-plus-circle-fill m-2"></i></span>
-                <span class="ms-3 text-start">Добавить остановку</span>
-            </div>
-        </a>
-    </div>
+  </div>
+  <div class="p-3 border-bottom">
+    <span class="fw-medium fs-6">Список остановок</span>
+  </div>
+  <div class="overflow-y-scroll">
+    <ul id="route-busstops-items" class="route-busstops-items">
+      <div id="route-legend" class="route-legend"></div>
+    </ul>
+  </div>
+  <div class="mt-auto">
+    <a id="as-add-new-busstop" class="btn btn-light rounded-0 w-100">
+      <div class="d-flex align-items-center">
+        <span class="text-bg-primary fs-5 rounded"><i class="bi bi-plus-circle-fill m-2"></i></span>
+        <span class="ms-3 text-start">Добавить остановку</span>
+      </div>
+    </a>
+  </div>
 </div>
 
 <script>
-    let selectedDirection = null;
-    const ASRouteInterface = {
-        data: document.getElementById('as_route-data'),
-        name: document.getElementById('as_route-transport-name'),
-        type: document.getElementById('as_route-transport-type'),
-        essential: document.getElementById('route-legend__essential'),
-        start: document.getElementById('route-legend__start'),
-        end: document.getElementById('route-legend__end'),
-        items: document.getElementById('route-busstops__items'),
-        button: document.getElementById('as_add_new_busstop')
+  const asRouteInterface = {
+    data: document.getElementById('as-route-data'),
+    name: document.getElementById('as-route-transport-name'),
+    type: document.getElementById('as-route-transport-type'),
+    essential: document.getElementById('route-legend-essential'),
+    start: document.getElementById('route-legend-start'),
+    end: document.getElementById('route-legend-end'),
+    items: document.getElementById('route-busstops-items'),
+    button: document.getElementById('as-add-new-busstop')
+  };
+  
+  const asFillRouteData = function (direction, callback, name, busstops = null, type = null) {
+    selectedDirection = direction;
+    asRouteInterface.data.classList.remove('d-none');
+    asRouteInterface.data.classList.add('d-flex');
+    asRouteInterface.data.classList.add('flex-column');
+    asRouteClearBusstops();
+    if (busstops) {
+      for (const [id, name] of Object.entries(busstops)) {
+        asRouteAddBusstop(name);
+      }
+    }
+    asRouteInterface.name.innerText = name;
+    if (type) {
+      asRouteInterface.type.classList.remove('d-none');
+      asRouteInterface.type.innerText = type;
+    } else {
+      asRouteInterface.type.classList.add('d-none');
+    }
+    asRouteInterface.essential.classList.add('d-none');
+    asRouteInterface.button.onclick = () => {
+      callback(direction);
     };
-    const fillASRouteData = (direction, callback, name, busstops = null, type = null) => {
-        selectedDirection = direction;
-        ASRouteInterface.data.classList.remove('d-none');
-        ASRouteInterface.data.classList.add('d-flex');
-        ASRouteInterface.data.classList.add('flex-column');
-        ASRouteClearBusstops();
-        if (busstops) {
-            for (const [id, name] of Object.entries(busstops)) {
-                ASRouteAddBusstop(name);
-            }
-        }
-        ASRouteInterface.name.innerText = name;
-        if (type) {
-            ASRouteInterface.type.classList.remove('d-none');
-            ASRouteInterface.type.innerText = type;
-        } else {
-            ASRouteInterface.type.classList.add('d-none');
-        }
-        ASRouteInterface.essential.classList.add('d-none');
-        ASRouteInterface.button.onclick = () => {
-            callback(direction);
-        };
+  };
+  
+  const asRouteClearBusstops = function () {
+    let list = asRouteInterface.items;
+    while (list.childNodes.length > 2) {
+      list.removeChild(list.lastChild);
+    }
+  };
+  
+  const asRouteAddBusstop = function (name, busstopFeature) {
+    let item = document.createElement('li');
+    item.classList.add('route-busstops-item');
+    let bullet = document.createElement('div');
+    bullet.classList.add('route-busstops-bullet');
+    let link = document.createElement('a');
+    link.classList.add('route-busstops-link');
+    link.classList.add('stretched-link');
+    link.innerText = name;
+    link.onclick = function () {
+      selectFeature(busstopFeature);
+      panToFeature(busstopFeature);
     };
-    const ASRouteClearBusstops = () => {
-        let list = ASRouteInterface.items;
-        while (list.childNodes.length > 2) {
-            list.removeChild(list.lastChild);
-        }
-    };
-    const ASRouteAddBusstop = (name) => {
-        let item = document.createElement('li');
-        item.classList.add('route-busstops__item');
-        let bullet = document.createElement('div');
-        bullet.classList.add('route-busstops__bullet');
-        let link = document.createElement('a');
-        link.classList.add('route-busstops__link');
-        link.innerText = name;
-        item.appendChild(bullet);
-        item.append(link);
-        ASRouteInterface.items.appendChild(item);
-    };
+    item.appendChild(bullet);
+    item.append(link);
+    asRouteInterface.items.appendChild(item);
+  };
 </script>

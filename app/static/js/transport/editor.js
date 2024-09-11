@@ -3,17 +3,17 @@
 // interface elements dict
 
 const editTransInterface = {
-    "id": document.getElementById('selected-transport-id'),
-    "type": document.getElementById('selected-transport-type'),
-    "name": document.getElementById("selected-transport-name"),
-    "plate": document.getElementById("selected-transport-plate"),
-    "typeChk": document.getElementById("selected-transport-type-chk"),
-    "imei": document.getElementById('selected-transport-imei-select'),
-    "route": document.getElementById('selected-transport-route-select'),
-    "typeSel": document.getElementById('selected-transport-type-select'),
-    "typeField": document.getElementById("selected-transport-type-field"),
-    "activeChk": document.getElementById("selected-transport-active-chk")
-}
+    id: document.getElementById('selected-transport-id'),
+    type: document.getElementById('selected-transport-type'),
+    name: document.getElementById('selected-transport-name'),
+    plate: document.getElementById('selected-transport-plate'),
+    typeChk: document.getElementById('selected-transport-type-chk'),
+    imei: document.getElementById('selected-transport-imei-select'),
+    route: document.getElementById('selected-transport-route-select'),
+    typeSel: document.getElementById('selected-transport-type-select'),
+    typeField: document.getElementById('selected-transport-type-field'),
+    activeChk: document.getElementById('selected-transport-active-chk')
+};
 
 function ClearEditTransportForm() {
     inputClearHelper(editTransInterface.name);
@@ -53,39 +53,6 @@ function SelectTransportData(transportId) {
     document.getElementById('show-transport-location-button').onclick = function () {
         SelectTransportFeature(editedTransport.imei);
     };
-}
-
-function SelectTransportFeature(imei) {
-    let features = transportVectorSource.getFeatures();
-    for (let i = 0; i < features.length; i++) {
-        if (features[i].get('imei') === imei) {
-            features[i].set('selected', true);
-            let deselected = [];
-            if (mapSelectInteraction.getFeatures().getLength() > 0)
-                deselected = [mapSelectInteraction.getFeatures().item(0)];
-            mapSelectInteraction.getFeatures().clear();
-            mapSelectInteraction.getFeatures().push(features[i]);
-            mapSelectInteraction.dispatchEvent({
-                type: 'select',
-                selected: [features[i]],
-                deselected: deselected,
-            });
-            PanToFeature(features[i]);
-            return features[i];
-        }
-    }
-    return null;
-}
-
-function UnselectTransportFeature(imei) {
-    let features = transportVectorSource.getFeatures();
-    for (let i = 0; i < features.length; i++) {
-        if (features[i].get('imei') === imei) {
-            features[i].set('selected', false);
-            return features[i];
-        }
-    }
-    return null;
 }
 
 function GetSelectedTransport(transportId) {
@@ -133,14 +100,14 @@ function EditTransport() {
         transport_type = editTransInterface.typeSel.value;
     }
     const transport_data = {
-        'transport_id': transport_id,
-        'imei': editTransInterface.imei.value,
-        'name': editTransInterface.name.value,
-        'license_plate': editTransInterface.plate.value,
-        'active': editTransInterface.activeChk.checked,
-        'transport_type': transport_type,
-        'new_transport_type': new_transport_type,
-        'route': editTransInterface.route.value,
+        transport_id: transport_id,
+        imei: editTransInterface.imei.value,
+        name: editTransInterface.name.value,
+        license_plate: editTransInterface.plate.value,
+        active: editTransInterface.activeChk.checked,
+        transport_type: transport_type,
+        new_transport_type: new_transport_type,
+        route: editTransInterface.route.value
     };
     APIPutRequest(transport_data, transportAPI.main).then(function () {
         try {
@@ -157,7 +124,7 @@ function EditTransport() {
 
 async function DeleteTransport() {
     let transportId = editTransInterface.id.value;
-    const transport_data = { 'transport_id': transportId };
+    const transport_data = { transport_id: transportId };
     await APIDeleteRequest(transport_data, transportAPI.main).then(function () {
         try {
             document.getElementById('transport-data').classList.add('d-none');

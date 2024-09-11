@@ -215,7 +215,7 @@
     background-color: rgb(60, 179, 0);
 }
 
-.route-legend__title {
+.route-legend-title {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -225,18 +225,18 @@
     box-shadow: none !important;
 }
 
-.route-legend__essential {
+.route-legend-essential {
     font-size: 10px;
 }
 
-.route-busstops__items {
+.route-busstops-items {
     position: relative;
     list-style: none;
     padding-left: 0;
     margin-bottom: 0;
 }
 
-.route-busstops__item {
+.route-busstops-item {
     position: relative;
     border-bottom: 1px solid #eee;
     padding: 15px 0 15px 56px;
@@ -246,16 +246,16 @@
     font-size: 16px;
 }
 
-.route-busstops__item:hover {
+.route-busstops-item:hover {
     background-color: #f6f6f6;
 }
 
-.route-busstops__items>.route-busstops__item:first-child {
+.route-busstops-items>.route-busstops-item:first-child {
     height: 12px;
     width: 12px;
 }
 
-.route-busstops__bullet {
+.route-busstops-bullet {
     position: absolute;
     background-color: rgb(60, 179, 0);
     border-color: rgb(60, 179, 0);
@@ -271,7 +271,7 @@
     transform: translateY(-50%);
 }
 
-.route-busstops__link {
+.route-busstops-link {
     text-decoration: none;
     word-wrap: break-word;
     min-width: 0;
@@ -281,8 +281,8 @@
     color: #000;
 }
 
-.route-busstops__item:first-of-type>.route-busstops__bullet,
-.route-busstops__item:last-of-type>.route-busstops__bullet {
+.route-busstops-item:first-of-type>.route-busstops-bullet,
+.route-busstops-item:last-of-type>.route-busstops-bullet {
     width: 16px;
     height: 16px;
     left: 20px
