@@ -2,40 +2,49 @@
 // BusStop layer loader file
 //
 
-// Busstops layer definition
-let busStopsVectorSource = new olVectorSource({ wrapX: false });
-let busStopsVectorLayer = new olVectorLayer({ source: busStopsVectorSource, style: mapStyleFunction });
-
-// Adding Busstops layer
-map.addLayer(busStopsVectorLayer);
-
 const busstops = (function () {
+  // Busstops layer definition
+  let busStopsVectorSource = new olVectorSource({ wrapX: false });
+  let busStopsVectorLayer = new olVectorLayer({ source: busStopsVectorSource, style: mapStyleFunction });
+  // Adding Busstops layer
+  map.addLayer(busStopsVectorLayer);
   let loadedBusstops = [];
-
-  async function loadBusstops() {
-    loadedBusstops = await APIGetRequest(busstopAPI.main);
-  }
-  function count() {
-    return loadedBusstops.length;
-  }
 
   return {
     async load() {
-      await loadBusstops();
+      loadedBusstops = await APIGetRequest(busstopAPI.main);
+    },
+    displayFeatures() {
+      let features = createFeatures(loadedBusstops, 'busstop-', 'busstop_name', 'busstop');
+      busStopsVectorSource.clear();
+      busStopsVectorSource.addFeatures(features);
     },
     count() {
-      return count();
+      return loadedBusstops.length;
     },
     get() {
       return loadedBusstops;
+    },
+    getBusstop(busstopId) {
+      for (let i = 0; i < loadedBusstops.length; i++) {
+        if (loadedBusstops[i].id === busstopId) return loadedBusstops[i];
+      }
+      return null;
+    },
+    getFeature(busstopId) {
+      let busstop = this.getBusstop(busstopId);
+      let featureId = busstop.location.point.id;
+      return busStopsVectorSource.getFeatureById(featureId);
     }
   };
 })();
 
-busstops.load();
+busstops.load().then(() => {
+  busstops.displayFeatures();
+});
 
-const fillBusstopList = async function () {
-  if (busstops.count() === 0) return;
+const fillBusstopList = async function (refresh = false) {
+  if (busstops.count() === 0 || refresh) await busstops.load();
   let loadedBusstops = busstops.get();
   document.getElementById('busstop-data').classList.add('d-none');
   const busstopListContainer = document.getElementById('busstop-list');
@@ -57,29 +66,3 @@ const fillBusstopList = async function () {
   busstopListContainer.appendChild(fragment);
   document.getElementById('search-busstop-input').disabled = false;
 };
-
-const displayBusstops = async function () {
-  await busstops.load();
-  let loadedBusstops = busstops.get();
-  let features = [];
-  if (loadedBusstops.length === 0) return;
-  for (let i = 0; i < loadedBusstops.length; i++) {
-    const busStop = loadedBusstops[i];
-    let coordinates = new olPointGeometry(busStop.location.point.geom.coordinates);
-    coordinates = coordinates.transform('EPSG:4326', 'EPSG:3857');
-    const busStopFeature = new olFeature({
-      geometry: coordinates,
-      type: busStop.location.point.geom.type,
-      name: 'busstop-' + busStop.id
-    });
-    busStopFeature.setId(busStop.location.point.id);
-    busStopFeature.set('type', 'busstop');
-    busStopFeature.set('map_object_id', busStop.id);
-    busStopFeature.set('busstop_name', busStop.name);
-    features.push(busStopFeature);
-  }
-  busStopsVectorSource.clear();
-  busStopsVectorSource.addFeatures(features);
-};
-
-displayBusstops();

@@ -1,73 +1,73 @@
 {% load static %}
 <div id="route-new-sidebar" class="d-none">
-    <div class="d-flex flex-column">
-        <a class="btn btn-light rounded-0 w-100" onclick="clearNewRouteForm(); SelectToolSidebar('route_tools');">
-            <div class="d-flex align-items-center">
-                <span class="text-secondary fs-5 rounded"><i class="bi bi-arrow-left m-2"></i></span>
-                <span class="ms-3">Назад</span>
-            </div>
-        </a>
-        <div id="route-data" class="p-3">
-            <div id="route-name" class="mb-3">
-                <label for="name" class="form-label">Название маршрута</label>
-                <input type="text" class="form-control" id="name" autocomplete="off" required />
-                <div class="invalid-feedback">Укажите название маршрута.</div>
-            </div>
-            <div id="route-type"></div>
-            <div id="route-paths">
-                <div class="input-group has-validation mb-3">
-                    <span class="form-control">Направление А</span>
-                    <input type="hidden" id="path-a" />
-                    <span class="input-group-text text-bg-danger" id="path-a-flag">Не указано</span>
-                    <div class="invalid-feedback">Укажите направление маршрута в сторону A.</div>
-                </div>
-                <div class="input-group has-validation">
-                    <span class="form-control">Направление B</span>
-                    <input type="hidden" id="path-b" />
-                    <span class="input-group-text text-bg-danger" id="path-b-flag">Не указано</span>
-                    <div class="invalid-feedback">Укажите направление маршрута в сторону B.</div>
-                </div>
-            </div>
+  <div class="d-flex flex-column">
+    <a class="btn btn-light rounded-0 w-100" onclick="newRoute.clearForm(); SelectToolSidebar('route_tools');">
+      <div class="d-flex align-items-center">
+        <span class="text-secondary fs-5 rounded"><i class="bi bi-arrow-left m-2"></i></span>
+        <span class="ms-3">Назад</span>
+      </div>
+    </a>
+    <div id="route-data" class="p-3">
+      <div id="route-name" class="mb-3">
+        <label for="name" class="form-label">Название маршрута</label>
+        <input type="text" class="form-control" id="name" autocomplete="off" required />
+        <div class="invalid-feedback">Укажите название маршрута.</div>
+      </div>
+      <div id="route-type"></div>
+      <div id="route-paths">
+        <div class="input-group has-validation mb-3">
+          <span class="form-control">Направление А</span>
+          <input type="hidden" id="path-a" />
+          <span class="input-group-text text-bg-danger" id="path-a-flag">Не указано</span>
+          <div class="invalid-feedback">Укажите направление маршрута в сторону A.</div>
         </div>
-        <div>
-            <a class="btn btn-light rounded-0 w-100" onclick="showNewRouteBusStops('path-a');">
-                <div class="d-flex align-items-center">
-                    <span class="text-bg-primary fs-5 rounded"><i class="bi bi-signpost-fill m-2"></i></span>
-                    <span class="ms-3 text-start">Список остановок в направлении A</span>
-                </div>
-            </a>
-            <a class="btn btn-light rounded-0 w-100" onclick="showNewRouteBusStops('path-b');">
-                <div class="d-flex align-items-center">
-                    <span class="text-bg-primary fs-5 rounded"><i class="bi bi-signpost-fill m-2"></i></span>
-                    <span class="ms-3 text-start">Список остановок в направлении B</span>
-                </div>
-            </a>
+        <div class="input-group has-validation">
+          <span class="form-control">Направление B</span>
+          <input type="hidden" id="path-b" />
+          <span class="input-group-text text-bg-danger" id="path-b-flag">Не указано</span>
+          <div class="invalid-feedback">Укажите направление маршрута в сторону B.</div>
         </div>
-        <div>
-            <a class="btn btn-light rounded-0 w-100" onclick="drawRoute('path-a');">
-                <div class="d-flex align-items-center">
-                    <span class="text-bg-primary fs-5 rounded"><i class="bi bi-arrow-return-right m-2"></i></span>
-                    <span class="ms-3">Указать маршрут в сторону A</span>
-                </div>
-            </a>
-            <a class="btn btn-light rounded-0 w-100" onclick="drawRoute('path-b');">
-                <div class="d-flex align-items-center">
-                    <span class="text-bg-primary fs-5 rounded"><i class="bi bi-arrow-return-left m-2"></i></span>
-                    <span class="ms-3">Указать маршрут в сторону B</span>
-                </div>
-            </a>
-        </div>
-        <a class="btn btn-light rounded-0 w-100" onclick="clearNewRouteForm();">
-            <div class="d-flex align-items-center">
-                <span class="text-bg-danger fs-5 rounded"><i class="bi bi-x-square m-2"></i></span>
-                <span class="ms-3">Очистить</span>
-            </div>
-        </a>
-        <a class="btn btn-light rounded-0 w-100" onclick="SaveNewRoute();">
-            <div class="d-flex align-items-center">
-                <span class="text-bg-success fs-5 rounded"><i class="bi bi-floppy-fill m-2"></i></span>
-                <span class="ms-3">Сохранить</span>
-            </div>
-        </a>
+      </div>
     </div>
+    <div>
+      <a class="btn btn-light rounded-0 w-100" onclick="newRoute.showBusstops('path-a');">
+        <div class="d-flex align-items-center">
+          <span class="text-bg-primary fs-5 rounded"><i class="bi bi-signpost-fill m-2"></i></span>
+          <span class="ms-3 text-start">Список остановок в направлении A</span>
+        </div>
+      </a>
+      <a class="btn btn-light rounded-0 w-100" onclick="newRoute.showBusstops('path-b');">
+        <div class="d-flex align-items-center">
+          <span class="text-bg-primary fs-5 rounded"><i class="bi bi-signpost-fill m-2"></i></span>
+          <span class="ms-3 text-start">Список остановок в направлении B</span>
+        </div>
+      </a>
+    </div>
+    <div>
+      <a class="btn btn-light rounded-0 w-100" onclick="newRoute.drawRoute('path-a');">
+        <div class="d-flex align-items-center">
+          <span class="text-bg-primary fs-5 rounded"><i class="bi bi-arrow-return-right m-2"></i></span>
+          <span class="ms-3">Указать маршрут в сторону A</span>
+        </div>
+      </a>
+      <a class="btn btn-light rounded-0 w-100" onclick="newRoute.drawRoute('path-b');">
+        <div class="d-flex align-items-center">
+          <span class="text-bg-primary fs-5 rounded"><i class="bi bi-arrow-return-left m-2"></i></span>
+          <span class="ms-3">Указать маршрут в сторону B</span>
+        </div>
+      </a>
+    </div>
+    <a class="btn btn-light rounded-0 w-100" onclick="newRoute.clearForm();">
+      <div class="d-flex align-items-center">
+        <span class="text-bg-danger fs-5 rounded"><i class="bi bi-x-square m-2"></i></span>
+        <span class="ms-3">Очистить</span>
+      </div>
+    </a>
+    <a class="btn btn-light rounded-0 w-100" onclick="newRoute.saveNewRoute();">
+      <div class="d-flex align-items-center">
+        <span class="text-bg-success fs-5 rounded"><i class="bi bi-floppy-fill m-2"></i></span>
+        <span class="ms-3">Сохранить</span>
+      </div>
+    </a>
+  </div>
 </div>

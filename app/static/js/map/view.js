@@ -289,11 +289,11 @@ const drawBusstopText = function (feature, style, size) {
   return styles;
 };
 
-const panToFeature = (feature) => {
+const olPanToFeature = (feature) => {
   map.getView().fit(feature.getGeometry(), { duration: 500 });
 };
 
-const selectFeature = function (feature) {
+const olSelectFeature = function (feature) {
   mapSelectInteraction.getFeatures().clear();
   mapSelectInteraction.getFeatures().push(feature);
   mapSelectInteraction.dispatchEvent({ type: 'select', selected: [feature], deselected: [] });

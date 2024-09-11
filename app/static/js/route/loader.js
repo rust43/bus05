@@ -12,13 +12,9 @@ map.addLayer(routeVectorLayer);
 const routes = (function () {
   let loadedRoutes = null;
 
-  async function loadRoutes() {
-    loadedRoutes = await APIGetRequest(routeAPI.main);
-  }
-
   return {
     async load() {
-      await loadRoutes();
+      loadedRoutes = await APIGetRequest(routeAPI.main);
     },
     get() {
       return loadedRoutes;

@@ -49,7 +49,7 @@
     asRouteClearBusstops();
     if (busstops) {
       for (const [id, name] of Object.entries(busstops)) {
-        asRouteAddBusstop(name);
+        asRouteAddBusstop(id, name);
       }
     }
     asRouteInterface.name.innerText = name;
@@ -72,7 +72,7 @@
     }
   };
   
-  const asRouteAddBusstop = function (name, busstopFeature) {
+  const asRouteAddBusstop = function (busstopId, name) {
     let item = document.createElement('li');
     item.classList.add('route-busstops-item');
     let bullet = document.createElement('div');
@@ -81,9 +81,10 @@
     link.classList.add('route-busstops-link');
     link.classList.add('stretched-link');
     link.innerText = name;
-    link.onclick = function () {
-      selectFeature(busstopFeature);
-      panToFeature(busstopFeature);
+    let feature = busstops.getFeature(busstopId);
+    link.onclick = () => {
+      olSelectFeature(feature);
+      olPanToFeature(feature);
     };
     item.appendChild(bullet);
     item.append(link);

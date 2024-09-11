@@ -1,4 +1,5 @@
 from bus05.permissions import HasGroupPermission
+from django.core.exceptions import ValidationError
 from rest_framework import status
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
@@ -44,42 +45,39 @@ class RouteApiView(APIView):
         map_data = parse_geojson(geojson)["new"]
 
         route_type = request.data.get("route_type")
-        new_route_type = request.data.get("new_route_type")
-        if new_route_type:
+        try:
+            route_type = RouteType.objects.get(pk=route_type)
+        except (RouteType.DoesNotExist, ValidationError):
             route_type = RouteType.objects.create(name=route_type)
-        else:
-            try:
-                route_type = RouteType.objects.get(pk=route_type)
-            except RouteType.DoesNotExist:
-                return Response(status=status.HTTP_400_BAD_REQUEST)
 
-        if map_data:
-            route = Route(name=name, route_type=route_type)
-            # path data parse
-            for path, line in map_data:
-                if "path-a" in str(path.name):
-                    path.name = "route-" + str(route.id) + "-path-a"
-                    path.save()
-                    line.save()
-                    route.path_a = path
-                elif "path-b" in str(path.name):
-                    path.name = "route-" + str(route.id) + "-path-b"
-                    path.save()
-                    line.save()
-                    route.path_b = path
-                else:
-                    continue
-            route.save()
-            # busstop data parse
-            for busstop_data in path_a_stops:
-                busstop = BusStop.objects.get(pk=busstop_data)
-                route.path_a_stops.add(busstop)
-            for busstop_data in path_b_stops:
-                busstop = BusStop.objects.get(pk=busstop_data)
-                route.path_b_stops.add(busstop)
-            route.save()
-            return Response(status=status.HTTP_201_CREATED)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        if not map_data:
+            Response(status=status.HTTP_400_BAD_REQUEST)
+
+        route = Route(name=name, route_type=route_type)
+        # path data parse
+        for path, line in map_data:
+            if "path-a" in str(path.name):
+                path.name = "route-" + str(route.id) + "-path-a"
+                path.save()
+                line.save()
+                route.path_a = path
+            elif "path-b" in str(path.name):
+                path.name = "route-" + str(route.id) + "-path-b"
+                path.save()
+                line.save()
+                route.path_b = path
+            else:
+                continue
+        route.save()
+        # busstop data parse
+        for busstop_data in path_a_stops:
+            busstop = BusStop.objects.get(pk=busstop_data)
+            route.path_a_stops.add(busstop)
+        for busstop_data in path_b_stops:
+            busstop = BusStop.objects.get(pk=busstop_data)
+            route.path_b_stops.add(busstop)
+        route.save()
+        return Response(status=status.HTTP_201_CREATED)
 
     @staticmethod
     def put(request, *args, **kwargs):
@@ -92,56 +90,53 @@ class RouteApiView(APIView):
         path_b_stops = request.data.get("path_b_stops")
 
         route_type = request.data.get("route_type")
-        new_route_type = request.data.get("new_route_type")
-        if new_route_type:
+        try:
+            route_type = RouteType.objects.get(pk=route_type)
+        except (RouteType.DoesNotExist, ValidationError):
             route_type = RouteType.objects.create(name=route_type)
-        else:
-            try:
-                route_type = RouteType.objects.get(pk=route_type)
-            except RouteType.DoesNotExist:
-                return Response(status=status.HTTP_400_BAD_REQUEST)
 
         map_data = parse_geojson(geojson)
-        if map_data:
-            for route_data in map_data.items():
+        if not map_data:
+            Response(status=status.HTTP_400_BAD_REQUEST)
+
+        for route_data in map_data.items():
+            try:
+                route = Route.objects.get(pk=route_data[0])
+            except Route.DoesNotExist:
+                Response(status=status.HTTP_400_BAD_REQUEST)
+            for path, line in route_data[1]:
+                if "path-a" in str(path.name):
+                    if route.path_a:
+                        route.path_a.delete()
+                    path.save()
+                    line.save()
+                    route.path_a = path
+                elif "path-b" in str(path.name):
+                    if route.path_b:
+                        route.path_b.delete()
+                    path.save()
+                    line.save()
+                    route.path_b = path
+            route.name = name
+            route.route_type = route_type
+            route.save()
+            # busstop data parse
+            route.path_a_stops.clear()
+            for busstop_data in path_a_stops:
                 try:
-                    route = Route.objects.get(pk=route_data[0])
-                except Route.DoesNotExist:
-                    Response(status=status.HTTP_400_BAD_REQUEST)
-                for path, line in route_data[1]:
-                    if "path-a" in str(path.name):
-                        if route.path_a:
-                            route.path_a.delete()
-                        path.save()
-                        line.save()
-                        route.path_a = path
-                    elif "path-b" in str(path.name):
-                        if route.path_b:
-                            route.path_b.delete()
-                        path.save()
-                        line.save()
-                        route.path_b = path
-                route.name = name
-                route.route_type = route_type
-                route.save()
-                # busstop data parse
-                route.path_a_stops.clear()
-                for busstop_data in path_a_stops:
-                    try:
-                        busstop = BusStop.objects.get(pk=busstop_data)
-                    except BusStop.DoesNotExist:
-                        continue
-                    route.path_a_stops.add(busstop)
-                route.path_b_stops.clear()
-                for busstop_data in path_b_stops:
-                    try:
-                        busstop = BusStop.objects.get(pk=busstop_data)
-                    except BusStop.DoesNotExist:
-                        continue
-                    route.path_b_stops.add(busstop)
-                route.save()
-            return Response(status=status.HTTP_200_OK)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+                    busstop = BusStop.objects.get(pk=busstop_data)
+                except BusStop.DoesNotExist:
+                    continue
+                route.path_a_stops.add(busstop)
+            route.path_b_stops.clear()
+            for busstop_data in path_b_stops:
+                try:
+                    busstop = BusStop.objects.get(pk=busstop_data)
+                except BusStop.DoesNotExist:
+                    continue
+                route.path_b_stops.add(busstop)
+            route.save()
+        return Response(status=status.HTTP_200_OK)
 
     @staticmethod
     def delete(request, *args, **kwargs):
