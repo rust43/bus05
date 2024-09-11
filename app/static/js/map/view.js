@@ -141,7 +141,7 @@ mapSelectInteraction.on('select', (e) => {
     }
   }
   if (e.selected.length === 0) {
-    clearRouteLayer();
+    routes.clearLayer();
     return;
   }
   const feature = e.selected[0];
@@ -150,7 +150,7 @@ mapSelectInteraction.on('select', (e) => {
     let routeID = feature.get('route');
     selectedTransportIMEI = feature.get('imei');
     feature.set('selected', true);
-    displayRoute(routeID);
+    routes.displayRoute(routeID);
   }
   pauseTransportLoad = false;
 });
@@ -209,7 +209,7 @@ const drawArrows = function (feature, style, height, width, zoom) {
 };
 
 const drawTransportMarker = function (feature) {
-  const route = getRoute(feature.get('route'));
+  const route = routes.getRoute(feature.get('route'));
   let coord = feature.getGeometry().getCoordinates()[0];
   let selected = false;
   if (feature.get('selected')) {

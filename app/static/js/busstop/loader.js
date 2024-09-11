@@ -14,23 +14,28 @@ const busstops = (function () {
     async load() {
       loadedBusstops = await APIGetRequest(busstopAPI.main);
     },
+
     displayFeatures() {
       let features = createFeatures(loadedBusstops, 'busstop-', 'busstop_name', 'busstop');
       busStopsVectorSource.clear();
       busStopsVectorSource.addFeatures(features);
     },
+
     count() {
       return loadedBusstops.length;
     },
+
     get() {
       return loadedBusstops;
     },
+
     getBusstop(busstopId) {
       for (let i = 0; i < loadedBusstops.length; i++) {
         if (loadedBusstops[i].id === busstopId) return loadedBusstops[i];
       }
       return null;
     },
+
     getFeature(busstopId) {
       let busstop = this.getBusstop(busstopId);
       let featureId = busstop.location.point.id;
