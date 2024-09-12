@@ -27,10 +27,8 @@ const routeEdit = (function () {
         return;
       }
 
-      // let route_path_a = routeVectorSource.getFeatureById(editedRoute.path_a.line.id);
-      // let route_path_b = routeVectorSource.getFeatureById(editedRoute.path_b.line.id);
-      let route_path_a = routes.getRouteFeature(editedRoute.path_a.line.id, 'path-a');
-      let route_path_b = routes.getRouteFeature(editedRoute.path_b.line.id, 'path-b');
+      let route_path_a = routes.getPathFeature(editedRoute.path_a.line.id, 'path-a');
+      let route_path_b = routes.getPathFeature(editedRoute.path_b.line.id, 'path-b');
       if (route_path_a === null || route_path_b === null) {
         alert('Укажите направления маршрута!');
         return;
@@ -45,7 +43,7 @@ const routeEdit = (function () {
 
       let routeType = '';
       let select = this.interface(fields.typeSelect);
-      if (select.value === 'route-type-new') {
+      if (select.value === 'route-edit-type-new') {
         routeType = this.interface(fields.typeInput).value;
       } else {
         routeType = select.value;
@@ -60,8 +58,8 @@ const routeEdit = (function () {
       };
       APIPutRequest(route_data, routeAPI.main).then(function () {
         try {
-          routes.load().then(function () {
-            SelectRouteData(editedRoute.id);
+          fillRouteList().then(function () {
+            routeEdit.selectRouteData(editedRoute.id);
             alert('Изменения сохранены!');
           });
         } catch (err) {
@@ -74,7 +72,7 @@ const routeEdit = (function () {
       let result = true;
       result *= validationHelper(this.interface(fields.name));
       let select = this.interface(fields.typeSelect);
-      if (select.value === 'route-type-new') {
+      if (select.value === 'route-edit-type-new') {
         result *= validationHelper(this.interface(fields.typeInput));
       } else {
         result *= validationHelper(select);
@@ -84,7 +82,6 @@ const routeEdit = (function () {
 
     clearForm() {
       cancelDraw();
-      editedRoute = null;
       inputClearHelper(this.interface(fields.id));
       inputClearHelper(this.interface(fields.name));
       let typeSelect = this.interface(fields.typeSelect);
@@ -94,6 +91,9 @@ const routeEdit = (function () {
       }
       let typeInput = this.interface(fields.typeInput);
       if (typeInput) inputClearHelper(typeInput);
+      editedRoute = null;
+      clearDict(aStops);
+      clearDict(bStops);
       aStops = null;
       bStops = null;
     },
@@ -103,8 +103,15 @@ const routeEdit = (function () {
       this.clearForm();
       routes.displayRoute(routeId);
       editedRoute = routes.getRoute(routeId);
+
+      clearDict(aStops);
+      clearDict(bStops);
+      aStops = convertToDict(editedRoute.path_a_stops);
+      bStops = convertToDict(editedRoute.path_b_stops);
+
       this.interface(fields.name).value = editedRoute.name;
       this.interface(fields.id).value = editedRoute.id;
+
       await this.fillTypeSelect();
       if (editedRoute.route_type !== null) {
         this.interface(fields.typeSelect).value = editedRoute.route_type.id;
@@ -126,14 +133,10 @@ const routeEdit = (function () {
     },
 
     showBusstops(direction) {
-      let path_a_stops = editedRoute.path_a_stops;
-      let path_b_stops = editedRoute.path_b_stops;
-      path_a_stops = convertToDict(path_a_stops);
-      path_b_stops = convertToDict(path_b_stops);
       if (direction === 'path-a') {
-        asFillRouteData(direction, this.selectBusstop, 'Остановки в направлении А', path_a_stops);
+        asFillRouteData(direction, this.selectBusstop, 'Остановки в направлении А', aStops);
       } else if (direction === 'path-b') {
-        asFillRouteData(direction, this.selectBusstop, 'Остановки в направлении B', path_b_stops);
+        asFillRouteData(direction, this.selectBusstop, 'Остановки в направлении B', bStops);
       }
       if (!additionalSidebarVisible) toggleAdditionalSidebar();
     },
@@ -144,7 +147,7 @@ const routeEdit = (function () {
       APIDeleteRequest(route_data, routeAPI.main).then(function () {
         try {
           fillRouteList().then(() => {
-            document.getElementById('route-data').classList.add('d-none');
+            document.getElementById('route-edit-data').classList.add('d-none');
             alert('Маршрут удален!');
           });
         } catch (err) {
@@ -195,7 +198,7 @@ const routeEdit = (function () {
         if (aStops) delete aStops[object_id];
         bStops[object_id] = name;
       }
-      // asRouteAddBusstop(object_id, name);
+      asRouteAddBusstop(object_id, name);
     }
   };
 })();
@@ -233,13 +236,4 @@ function FillBusStopsContainer(stopsDict, container, newRoute) {
       container.appendChild(busstopBadge);
     }
   }
-}
-
-function ConvertBusStopsToDict(stopsArray) {
-  dict = {};
-  for (let i = 0; i < stopsArray.length; i++) {
-    let element = stopsArray[i];
-    dict[element.id] = element.name;
-  }
-  return dict;
 }
