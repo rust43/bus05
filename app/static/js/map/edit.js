@@ -37,14 +37,16 @@ const mapSelectFunction = function () {
     SelectNewBusStopFeature(name);
     map.addInteraction(mapModifyInteraction);
   } else if (type === 'busstop') {
-    if (editMode === 'new-route-add-busstop-path-a') {
+    if (editMode === 'route-new-add-busstop-path-a') {
       newRoute.addBusstop(feature, 'path-a');
-    } else if (editMode === 'new-route-add-busstop-path-b') {
+    } else if (editMode === 'route-new-add-busstop-path-b') {
       newRoute.addBusstop(feature, 'path-b');
-    } else if (editMode === 'route-add-busstop-path-a') {
-      AddRouteBusstop(feature, 'path-a');
-    } else if (editMode === 'route-add-busstop-path-b') {
-      AddRouteBusstop(feature, 'path-b');
+    } else if (editMode === 'route-edit-add-busstop-path-a') {
+      routeEdit.addBusstop(feature, 'path-a');
+      // AddRouteBusstop(feature, 'path-a');
+    } else if (editMode === 'route-edit-add-busstop-path-b') {
+      routeEdit.addBusstop(feature, 'path-b');
+      // AddRouteBusstop(feature, 'path-b');
     }
   }
   if (editMode === 'route-path-edit' || editMode === 'busstop-location-edit') {
@@ -131,19 +133,46 @@ function DownloadJSON(content, fileName, contentType) {
   link.click();
 }
 
-function SearchFilterList(container, searchValue) {
-  searchValue = searchValue.toLowerCase();
-  const childrens = container.children;
-  let applyFilter = false;
-  if (searchValue.length > 0) applyFilter = true;
-  for (let i = 0; i < childrens.length; i++) {
-    if (applyFilter && childrens[i].innerHTML.toLowerCase().indexOf(searchValue) < 0) {
-      childrens[i].classList.add('d-none');
-    } else {
-      childrens[i].classList.remove('d-none');
-    }
+const drawTypes = {
+  point: 'Point',
+  line: 'LineString'
+};
+
+const createFeatures = function (list, namePrefix, nameField, type) {
+  let features = [];
+  for (let i = 0; i < list.length; i++) {
+    const element = list[i];
+    let geometry = new olPointGeometry(element.location.point.geom.coordinates);
+    geometry = geometry.transform('EPSG:4326', 'EPSG:3857');
+    const feature = new olFeature({
+      geometry: geometry,
+      type: element.location.point.geom.type,
+      name: namePrefix + element.id
+    });
+    feature.setId(element.location.point.id);
+    feature.set('type', type);
+    feature.set('map_object_id', element.id);
+    feature.set(nameField, element.name);
+    features.push(feature);
   }
-}
+  return features;
+};
+
+const startDraw = (vectorSource, type) => {
+  // removing interactions before draw
+  map.removeInteraction(mapSelectInteraction);
+  map.removeInteraction(mapModifyInteraction);
+  map.removeInteraction(mapDrawInteraction);
+  map.removeInteraction(mapSnapInteraction);
+  mapDrawInteraction = new olDrawInteraction({ source: vectorSource, type: type, pixelTolerance: 50 });
+  mapSnapInteraction = new olSnapInteraction({ source: vectorSource });
+};
+
+const cancelDraw = () => {
+  map.removeInteraction(mapDrawInteraction);
+  map.removeInteraction(mapSnapInteraction);
+  map.addInteraction(mapSelectInteraction);
+};
 
 let selectedSidebar;
 

@@ -15,17 +15,15 @@ const newRoute = (function () {
   let path_a_stops = {};
   let path_b_stops = {};
   const fields = {
-    name: 'name',
-    pathA: 'path-a',
-    pathB: 'path-b',
-    pathAFlag: 'path-a-flag',
-    pathBFlag: 'path-b-flag',
-    pathAStops: 'stops-a',
-    pathBStops: 'stops-b',
-    typeDiv: 'route-type',
-    typeSelect: 'route-type-select',
-    typeField: 'route-type-field',
-    typeInput: 'route-type-input'
+    name: 'route-new-name',
+    pathA: 'route-new-path-a',
+    pathB: 'route-new-path-b',
+    pathAFlag: 'route-new-path-a-flag',
+    pathBFlag: 'route-new-path-b-flag',
+    typeDiv: 'route-new-type',
+    typeSelect: 'route-new-type-select',
+    typeField: 'route-new-type-field',
+    typeInput: 'route-new-type-input'
   };
 
   return {
@@ -50,9 +48,9 @@ const newRoute = (function () {
     selectBusstop(direction) {
       cancelDraw();
       if (direction === 'path-a') {
-        editMode = 'new-route-add-busstop-path-a';
+        editMode = 'route-new-add-busstop-path-a';
       } else if (direction === 'path-b') {
-        editMode = 'new-route-add-busstop-path-b';
+        editMode = 'route-new-add-busstop-path-b';
       }
     },
 
@@ -140,7 +138,7 @@ const newRoute = (function () {
     async fillTypeSelect() {
       await APIGetRequest(routeAPI.type).then((data) => {
         const routeTypeSelect = bs_select_new(
-          'route-type',
+          'route-new-type',
           'Тип транспорта маршрута',
           '',
           'text',
@@ -188,13 +186,13 @@ const newRoute = (function () {
       flag.innerText = 'Не указано';
     },
 
-    routeFormValidation() {
+    formValidation() {
       let result = true;
       result *= validationHelper(this.interface(fields.name));
       result *= validationHelper(this.interface(fields.pathA));
       result *= validationHelper(this.interface(fields.pathB));
       let select = this.interface(fields.typeSelect);
-      if (select.value === 'route-type-new') {
+      if (select.value === 'route-new-type-new') {
         result *= validationHelper(this.interface(fields.typeInput));
       } else {
         result *= validationHelper(select);
@@ -203,12 +201,12 @@ const newRoute = (function () {
     },
 
     setRouteFeature(routeName, feature) {
-      if (routeName === 'path-a') {
+      if (routeName === 'route-new-path-a') {
         if (path_a !== null) newRouteVectorSource.removeFeature(path_a);
         path_a = feature;
         this.interface(fields.pathA).value = 'set';
         validationHelper(this.interface(fields.pathA));
-      } else if (routeName === 'path-b') {
+      } else if (routeName === 'route-new-path-b') {
         if (path_b !== null) newRouteVectorSource.removeFeature(path_b);
         path_b = feature;
         this.interface(fields.pathB).value = 'set';
@@ -217,7 +215,7 @@ const newRoute = (function () {
     },
 
     async saveNewRoute() {
-      if (!this.routeFormValidation()) {
+      if (!this.formValidation()) {
         alert('Проверьте данные нового маршрута!');
         return;
       }
@@ -231,7 +229,7 @@ const newRoute = (function () {
 
       let route_type = '';
       let select = this.interface(fields.typeSelect);
-      if (select.value === 'route-type-new') {
+      if (select.value === 'route-new-type-new') {
         route_type = this.interface(fields.typeInput).value;
       } else {
         route_type = select.value;

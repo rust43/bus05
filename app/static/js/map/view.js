@@ -141,7 +141,7 @@ mapSelectInteraction.on('select', (e) => {
     }
   }
   if (e.selected.length === 0) {
-    routes.clearLayer();
+    // routes.clearLayer();
     return;
   }
   const feature = e.selected[0];
@@ -210,6 +210,7 @@ const drawArrows = function (feature, style, height, width, zoom) {
 
 const drawTransportMarker = function (feature) {
   const route = routes.getRoute(feature.get('route'));
+  if (route === null) return;
   let coord = feature.getGeometry().getCoordinates()[0];
   let selected = false;
   if (feature.get('selected')) {
@@ -217,7 +218,7 @@ const drawTransportMarker = function (feature) {
     coord = 1e10;
   }
   let routeName = '...';
-  if (route !== null) routeName = route.name;
+  routeName = route.name;
   return [
     new olStyle({
       image: new olIconStyle({

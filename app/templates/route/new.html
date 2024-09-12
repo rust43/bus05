@@ -7,24 +7,24 @@
         <span class="ms-3">Назад</span>
       </div>
     </a>
-    <div id="route-data" class="p-3">
-      <div id="route-name" class="mb-3">
-        <label for="name" class="form-label">Название маршрута</label>
-        <input type="text" class="form-control" id="name" autocomplete="off" required />
+    <div id="route-new-data" class="p-3">
+      <div class="mb-3">
+        <label for="route-new-name" class="form-label">Название маршрута</label>
+        <input type="text" class="form-control" id="route-new-name" autocomplete="off" required />
         <div class="invalid-feedback">Укажите название маршрута.</div>
       </div>
-      <div id="route-type"></div>
-      <div id="route-paths">
+      <div id="route-new-type"></div>
+      <div id="route-new-paths">
         <div class="input-group has-validation mb-3">
           <span class="form-control">Направление А</span>
-          <input type="hidden" id="path-a" />
-          <span class="input-group-text text-bg-danger" id="path-a-flag">Не указано</span>
+          <input type="hidden" id="route-new-path-a" />
+          <span class="input-group-text text-bg-danger" id="route-new-path-a-flag">Не указано</span>
           <div class="invalid-feedback">Укажите направление маршрута в сторону A.</div>
         </div>
         <div class="input-group has-validation">
           <span class="form-control">Направление B</span>
-          <input type="hidden" id="path-b" />
-          <span class="input-group-text text-bg-danger" id="path-b-flag">Не указано</span>
+          <input type="hidden" id="route-new-path-b" />
+          <span class="input-group-text text-bg-danger" id="route-new-path-b-flag">Не указано</span>
           <div class="invalid-feedback">Укажите направление маршрута в сторону B.</div>
         </div>
       </div>
@@ -44,13 +44,13 @@
       </a>
     </div>
     <div>
-      <a class="btn btn-light rounded-0 w-100" onclick="newRoute.drawRoute('path-a');">
+      <a class="btn btn-light rounded-0 w-100" onclick="newRoute.drawRoute('route-new-path-a');">
         <div class="d-flex align-items-center">
           <span class="text-bg-primary fs-5 rounded"><i class="bi bi-arrow-return-right m-2"></i></span>
           <span class="ms-3">Указать маршрут в сторону A</span>
         </div>
       </a>
-      <a class="btn btn-light rounded-0 w-100" onclick="newRoute.drawRoute('path-b');">
+      <a class="btn btn-light rounded-0 w-100" onclick="newRoute.drawRoute('route-new-path-b');">
         <div class="d-flex align-items-center">
           <span class="text-bg-primary fs-5 rounded"><i class="bi bi-arrow-return-left m-2"></i></span>
           <span class="ms-3">Указать маршрут в сторону B</span>
