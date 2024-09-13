@@ -333,3 +333,23 @@ if (popupCloser) {
     return false;
   };
 }
+
+const createFeatures = function (list, namePrefix, nameField, type) {
+  let features = [];
+  for (let i = 0; i < list.length; i++) {
+    const element = list[i];
+    let geometry = new olPointGeometry(element.location.point.geom.coordinates);
+    geometry = geometry.transform('EPSG:4326', 'EPSG:3857');
+    const feature = new olFeature({
+      geometry: geometry,
+      type: element.location.point.geom.type,
+      name: namePrefix + element.id
+    });
+    feature.setId(element.location.point.id);
+    feature.set('type', type);
+    feature.set('map_object_id', element.id);
+    feature.set(nameField, element.name);
+    features.push(feature);
+  }
+  return features;
+};

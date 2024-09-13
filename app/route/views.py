@@ -48,6 +48,7 @@ class RouteApiView(APIView):
         try:
             route_type = RouteType.objects.get(pk=route_type)
         except (RouteType.DoesNotExist, ValidationError):
+            route_type = route_type.capitalize()
             route_type = RouteType.objects.create(name=route_type)
 
         if not map_data:
@@ -99,6 +100,7 @@ class RouteApiView(APIView):
         try:
             route_type = RouteType.objects.get(pk=route_type)
         except (RouteType.DoesNotExist, ValidationError):
+            route_type = route_type.capitalize()
             route_type = RouteType.objects.create(name=route_type)
 
         map_data = parse_geojson(geojson)
