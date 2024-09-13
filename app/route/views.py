@@ -71,10 +71,16 @@ class RouteApiView(APIView):
         route.save()
         # busstop data parse
         for busstop_data in path_a_stops:
-            busstop = BusStop.objects.get(pk=busstop_data)
+            try:
+                busstop = BusStop.objects.get(pk=busstop_data["id"])
+            except ValidationError:
+                continue
             route.path_a_stops.add(busstop)
         for busstop_data in path_b_stops:
-            busstop = BusStop.objects.get(pk=busstop_data)
+            try:
+                busstop = BusStop.objects.get(pk=busstop_data["id"])
+            except ValidationError:
+                continue
             route.path_b_stops.add(busstop)
         route.save()
         return Response(status=status.HTTP_201_CREATED)
@@ -124,14 +130,14 @@ class RouteApiView(APIView):
             route.path_a_stops.clear()
             for busstop_data in path_a_stops:
                 try:
-                    busstop = BusStop.objects.get(pk=busstop_data)
+                    busstop = BusStop.objects.get(pk=busstop_data["id"])
                 except BusStop.DoesNotExist:
                     continue
                 route.path_a_stops.add(busstop)
             route.path_b_stops.clear()
             for busstop_data in path_b_stops:
                 try:
-                    busstop = BusStop.objects.get(pk=busstop_data)
+                    busstop = BusStop.objects.get(pk=busstop_data["id"])
                 except BusStop.DoesNotExist:
                     continue
                 route.path_b_stops.add(busstop)

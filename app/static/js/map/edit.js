@@ -37,16 +37,14 @@ const mapSelectFunction = function () {
     SelectNewBusStopFeature(name);
     map.addInteraction(mapModifyInteraction);
   } else if (type === 'busstop') {
-    if (editMode === 'route-new-add-busstop-path-a') {
+    if (editMode === 'new-route-add-busstop-path-a') {
       newRoute.addBusstop(feature, 'path-a');
-    } else if (editMode === 'route-new-add-busstop-path-b') {
+    } else if (editMode === 'new-route-add-busstop-path-b') {
       newRoute.addBusstop(feature, 'path-b');
-    } else if (editMode === 'route-edit-add-busstop-path-a') {
-      routeEdit.addBusstop(feature, 'path-a');
-      // AddRouteBusstop(feature, 'path-a');
-    } else if (editMode === 'route-edit-add-busstop-path-b') {
-      routeEdit.addBusstop(feature, 'path-b');
-      // AddRouteBusstop(feature, 'path-b');
+    } else if (editMode === 'edit-route-add-busstop-path-a') {
+      editRoute.addBusstop(feature, 'path-a');
+    } else if (editMode === 'edit-route-add-busstop-path-b') {
+      editRoute.addBusstop(feature, 'path-b');
     }
   }
   if (editMode === 'route-path-edit' || editMode === 'busstop-location-edit') {
@@ -179,7 +177,7 @@ let selectedSidebar;
 const editViewSidebars = {
   tools: document.getElementById('tools-sidebar'),
   route_tools: document.getElementById('route-tools-sidebar'),
-  route_new: document.getElementById('route-new-sidebar'),
+  route_new: document.getElementById('new-route-sidebar'),
   route_list: document.getElementById('route-list-sidebar'),
   busstop_tools: document.getElementById('busstop-tools-sidebar'),
   busstop_new: document.getElementById('busstop-new-sidebar'),

@@ -1,15 +1,15 @@
 {% load static %}
-<div id="route-edit-data" class="d-none">
+<div id="edit-route-data" class="d-none">
   <div class="d-flex flex-column border-top">
     <div class="px-3 d-flex flex-column">
       <span class="my-3">Данные маршрута</span>
       <div class="mb-3">
-        <label for="route-edit-name" class="form-label text-body-tertiary">Название маршрута</label>
-        <input type="text" class="form-control" id="route-edit-name" required />
+        <label for="edit-route-name" class="form-label text-body-tertiary">Название маршрута</label>
+        <input type="text" class="form-control" id="edit-route-name" required />
         <div class="invalid-feedback">Укажите название маршрута.</div>
       </div>
-      <div id="route-edit-type"></div>
-      <input type="hidden" id="route-edit-id" />
+      <div id="edit-route-type"></div>
+      <input type="hidden" id="edit-route-id" />
     </div>
     {% comment %} <div>
       <a class="btn btn-light rounded-0 w-100" onclick="SelectRouteBusStopFeature('path-a');">
@@ -26,13 +26,13 @@
       </a>
     </div> {% endcomment %}
     <div>
-      <a class="btn btn-light rounded-0 w-100" onclick="routeEdit.showBusstops('path-a');">
+      <a class="btn btn-light rounded-0 w-100" onclick="editRoute.showBusstops('path-a');">
         <div class="d-flex align-items-center">
           <span class="text-bg-primary fs-5 rounded"><i class="bi bi-signpost-fill m-2"></i></span>
           <span class="ms-3 text-start">Список остановок в направлении A</span>
         </div>
       </a>
-      <a class="btn btn-light rounded-0 w-100" onclick="routeEdit.showBusstops('path-b');">
+      <a class="btn btn-light rounded-0 w-100" onclick="editRoute.showBusstops('path-b');">
         <div class="d-flex align-items-center">
           <span class="text-bg-primary fs-5 rounded"><i class="bi bi-signpost-fill m-2"></i></span>
           <span class="ms-3 text-start">Список остановок в направлении B</span>
@@ -40,25 +40,25 @@
       </a>
     </div>
     <div>
-      <a class="btn btn-light rounded-0 w-100" onclick="" id="route-edit-path-a">
+      <a class="btn btn-light rounded-0 w-100" onclick="" id="edit-route-path-a">
         <div class="d-flex align-items-center">
           <span class="text-bg-primary fs-5 rounded"><i class="bi bi-arrow-return-right m-2"></i></span>
           <span class="ms-3">Маршрут в сторону A</span>
         </div>
       </a>
-      <a class="btn btn-light rounded-0 w-100" onclick="" id="route-edit-path-b">
+      <a class="btn btn-light rounded-0 w-100" onclick="" id="edit-route-path-b">
         <div class="d-flex align-items-center">
           <span class="text-bg-primary fs-5 rounded"><i class="bi bi-arrow-return-left m-2"></i></span>
           <span class="ms-3">Маршрут в сторону B</span>
         </div>
       </a>
-      <a class="btn btn-light rounded-0 w-100" onclick="routeEdit.saveRoute();">
+      <a class="btn btn-light rounded-0 w-100" onclick="editRoute.saveRoute();">
         <div class="d-flex align-items-center">
           <span class="text-bg-success fs-5 rounded"><i class="bi bi-floppy-fill m-2"></i></span>
           <span class="ms-3">Сохранить</span>
         </div>
       </a>
-      <a class="btn btn-light rounded-0 w-100" onclick="routeEdit.deleteRoute();">
+      <a class="btn btn-light rounded-0 w-100" onclick="editRoute.deleteRoute();">
         <div class="d-flex align-items-center">
           <span class="text-bg-danger fs-5 rounded"><i class="bi bi-x-square m-2"></i></span>
           <span class="ms-3">Удалить</span>

@@ -12,18 +12,21 @@ const newRoute = (function () {
   // Vars for keep new route features
   let path_a = null;
   let path_b = null;
-  let path_a_stops = {};
-  let path_b_stops = {};
+  // let path_a_stops = {};
+  // let path_b_stops = {};
+  let path_a_stops = [];
+  let path_b_stops = [];
+
   const fields = {
-    name: 'route-new-name',
-    pathA: 'route-new-path-a',
-    pathB: 'route-new-path-b',
-    pathAFlag: 'route-new-path-a-flag',
-    pathBFlag: 'route-new-path-b-flag',
-    typeDiv: 'route-new-type',
-    typeSelect: 'route-new-type-select',
-    typeField: 'route-new-type-field',
-    typeInput: 'route-new-type-input'
+    name: 'new-route-name',
+    pathA: 'new-route-path-a',
+    pathB: 'new-route-path-b',
+    pathAFlag: 'new-route-path-a-flag',
+    pathBFlag: 'new-route-path-b-flag',
+    typeDiv: 'new-route-type',
+    typeSelect: 'new-route-type-select',
+    typeField: 'new-route-type-field',
+    typeInput: 'new-route-type-input'
   };
 
   return {
@@ -48,9 +51,9 @@ const newRoute = (function () {
     selectBusstop(direction) {
       cancelDraw();
       if (direction === 'path-a') {
-        editMode = 'route-new-add-busstop-path-a';
+        editMode = 'new-route-add-busstop-path-a';
       } else if (direction === 'path-b') {
-        editMode = 'route-new-add-busstop-path-b';
+        editMode = 'new-route-add-busstop-path-b';
       }
     },
 
@@ -58,21 +61,25 @@ const newRoute = (function () {
       const name = busstopFeature.get('busstop_name');
       const object_id = busstopFeature.get('map_object_id');
       if (direction === 'path-a') {
-        if (path_b_stops) delete path_b_stops[object_id];
-        path_a_stops[object_id] = name;
+        this.removeBusstop(object_id, path_b_stops);
+        path_a_stops.push({
+          id: object_id,
+          name: name
+        });
       } else if (direction === 'path-b') {
-        if (path_a_stops) delete path_a_stops[object_id];
-        path_b_stops[object_id] = name;
+        this.removeBusstop(object_id, path_a_stops);
+        path_b_stops.push({
+          id: object_id,
+          name: name
+        });
       }
       asRouteAddBusstop(object_id, name);
     },
 
-    removeBusstop(busstopId) {
-      if (path_a_stops) {
-        delete path_a_stops[busstopId];
-      }
-      if (path_b_stops) {
-        delete path_b_stops[busstopId];
+    removeBusstop(busstopId, stopList) {
+      for (let i = 0; i < stopList.length; i++) {
+        if (stopList[i].id === busstopId) stopList.splice(i, 1);
+        break;
       }
     },
 
@@ -138,7 +145,7 @@ const newRoute = (function () {
     async fillTypeSelect() {
       await APIGetRequest(routeAPI.type).then((data) => {
         const routeTypeSelect = bs_select_new(
-          'route-new-type',
+          'new-route-type',
           'Тип транспорта маршрута',
           '',
           'text',
@@ -192,7 +199,7 @@ const newRoute = (function () {
       result *= validationHelper(this.interface(fields.pathA));
       result *= validationHelper(this.interface(fields.pathB));
       let select = this.interface(fields.typeSelect);
-      if (select.value === 'route-new-type-new') {
+      if (select.value === 'new-route-type-new') {
         result *= validationHelper(this.interface(fields.typeInput));
       } else {
         result *= validationHelper(select);
@@ -201,12 +208,12 @@ const newRoute = (function () {
     },
 
     setRouteFeature(routeName, feature) {
-      if (routeName === 'route-new-path-a') {
+      if (routeName === 'new-route-path-a') {
         if (path_a !== null) newRouteVectorSource.removeFeature(path_a);
         path_a = feature;
         this.interface(fields.pathA).value = 'set';
         validationHelper(this.interface(fields.pathA));
-      } else if (routeName === 'route-new-path-b') {
+      } else if (routeName === 'new-route-path-b') {
         if (path_b !== null) newRouteVectorSource.removeFeature(path_b);
         path_b = feature;
         this.interface(fields.pathB).value = 'set';
@@ -229,7 +236,7 @@ const newRoute = (function () {
 
       let route_type = '';
       let select = this.interface(fields.typeSelect);
-      if (select.value === 'route-new-type-new') {
+      if (select.value === 'new-route-type-new') {
         route_type = this.interface(fields.typeInput).value;
       } else {
         route_type = select.value;

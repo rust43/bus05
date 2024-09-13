@@ -67,7 +67,7 @@ const routes = (function () {
 routes.load();
 
 const fillRouteList = async function () {
-  document.getElementById('route-edit-data').classList.add('d-none');
+  document.getElementById('edit-route-data').classList.add('d-none');
   await routes.load();
   let loadedRoutes = routes.get();
   const routeListContainer = document.getElementById('route-list');
@@ -82,7 +82,7 @@ const fillRouteList = async function () {
       routeButton.appendChild(routeButtonText);
       routeButton.classList.add('btn', 'badge', 'text-bg-success');
       routeButton.onclick = function () {
-        routeEdit.selectRouteData(route.id);
+        editRoute.selectRouteData(route.id);
       };
       routeListContainer.appendChild(routeButton);
     }

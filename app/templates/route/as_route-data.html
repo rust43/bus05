@@ -48,8 +48,8 @@
     asRouteInterface.data.classList.add('flex-column');
     asRouteClearBusstops();
     if (busstops) {
-      for (const [id, name] of Object.entries(busstops)) {
-        asRouteAddBusstop(id, name);
+      for (let i = 0; i < busstops.length; i++) {
+        asRouteAddBusstop(busstops[i].id, busstops[i].name);
       }
     }
     asRouteInterface.name.innerText = name;
