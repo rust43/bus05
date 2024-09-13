@@ -169,6 +169,7 @@ const editViewSidebars = {
 
 function SelectToolSidebar(sidebar) {
   DeleteNewBusStop();
+  additionalSidebar.hide();
   for (const [name, element] of Object.entries(editViewSidebars)) {
     element.classList.add('d-none');
   }

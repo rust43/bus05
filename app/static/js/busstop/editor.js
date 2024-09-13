@@ -5,9 +5,9 @@
 // vars for edit functions
 let editedBusstop = null;
 
-const selectBusstopData = (busStopId) => {
+const selectBusstopData = function (busStopId) {
   if (busStopId === '' || busStopId === null) return;
-  editedBusstop = getSelectedBusstop(busStopId);
+  editedBusstop = busstops.getBusstop(busStopId);
   document.getElementById('busstop-data').classList.remove('d-none');
   document.getElementById('selected-busstop-name').value = editedBusstop.name;
   document.getElementById('show-busstop-location-button').onclick = function () {
@@ -16,18 +16,12 @@ const selectBusstopData = (busStopId) => {
 };
 
 // Select function for busstop feature id
-const editBusstopFeature = function (busStopFeatureId) {
-  const busStopFeature = busStopsVectorSource.getFeatureById(busStopFeatureId);
-  if (!busStopFeature) return;
+const editBusstopFeature = function (busstopFeatureId) {
+  const busstopFeature = busstops.getFeature(busstopFeatureId);
+  if (!busstopFeature) return;
   editMode = 'busstop-location-edit';
-  mapSelectInteraction.getFeatures().clear();
-  mapSelectInteraction.getFeatures().push(busStopFeature);
-  mapSelectInteraction.dispatchEvent({
-    type: 'select',
-    selected: [busStopFeature],
-    deselected: []
-  });
-  panToFeature(busStopFeature);
+  olSelectFeature(busstopFeature);
+  olPanToFeature(busstopFeature);
 };
 
 //

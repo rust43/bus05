@@ -107,7 +107,7 @@ const newRoute = (function () {
       } else if (direction === 'path-b') {
         asFillRouteData(direction, this.selectBusstop, 'Остановки в направлении B', path_b_stops);
       }
-      if (!additionalSidebarVisible) toggleAdditionalSidebar();
+      if (!additionalSidebar.visible()) additionalSidebar.toggle();
     },
 
     clearForm() {
@@ -129,8 +129,8 @@ const newRoute = (function () {
       this.routeInvalidation(this.interface(fields.pathBFlag));
       path_a = null;
       path_b = null;
-      clearDict(path_a_stops);
-      clearDict(path_b_stops);
+      path_a_stops = [];
+      path_b_stops = [];
     },
 
     async fillForm() {

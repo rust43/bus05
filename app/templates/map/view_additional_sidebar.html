@@ -1,0 +1,49 @@
+{% load static %}
+<div id="additional-sidebar" class="additional-sidebar w-0 col-sm-3 col-lg-2 d-flex flex-column border-start h-100">
+  <div id="additional-sidebar-container" class="additional-sidebar-container"></div>
+  <a id="main-sidebar-toggler" class="d-none btn btn-light rounded-0 w-100 d-flex align-items-center text-secondary text-wrap" onclick="mainSidebar.toggle();">
+    <span class="fs-5 me-3"><i class="bi bi-arrow-bar-right"></i></span>
+    <span>Основная панель</span>
+  </a>
+  <a class="btn btn-light rounded-0 w-100 d-flex align-items-center mb-3 text-secondary" onclick="additionalSidebar.toggle();">
+    <span class="fs-5 me-3"><i class="bi bi-arrow-bar-left"></i></span>
+    <span>Скрыть</span>
+  </a>
+</div>
+
+<script>
+  const additionalSidebar = (function () {
+    let visible = false;
+    const elements = {
+      sidebar: 'additional-sidebar',
+      toggler: 'main-sidebar-toggler'
+    };
+    return {
+      interface(element) {
+        return document.getElementById(element);
+      },
+      visible() {
+        return visible;
+      },
+      hideToggler() {
+        this.interface(elements.toggler).classList.toggle('d-none');
+      },
+      hide() {
+        const sidebar = this.interface(elements.sidebar);
+        sidebar.classList.add('w-0');
+        sidebar.classList.remove('additional-sidebar-show');
+        visible = false;
+      },
+      toggle() {
+        const sidebar = this.interface(elements.sidebar);
+        sidebar.classList.toggle('w-0');
+        sidebar.classList.toggle('additional-sidebar-show');
+        if (mainSidebar.visible()) {
+          mainSidebar.hideToggler();
+          this.interface(elements.toggler).classList.toggle('d-none');
+        }
+        visible = !visible;
+      }
+    };
+  })();
+</script>

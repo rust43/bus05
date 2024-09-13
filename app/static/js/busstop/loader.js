@@ -36,10 +36,8 @@ const busstops = (function () {
       return null;
     },
 
-    getFeature(busstopId) {
-      let busstop = this.getBusstop(busstopId);
-      let featureId = busstop.location.point.id;
-      return busStopsVectorSource.getFeatureById(featureId);
+    getFeature(busstopFeatureId) {
+      return busStopsVectorSource.getFeatureById(busstopFeatureId);
     }
   };
 })();
@@ -63,7 +61,9 @@ const fillBusstopList = async function (refresh = false) {
     const busstop = loadedBusstops[i];
     let button = document.createElement('button');
     button.classList.add('btn', 'badge', 'text-bg-success');
-    button.onclick = selectBusstopData(busstop.id);
+    button.onclick = function () {
+      selectBusstopData(busstop.id);
+    };
     button.innerText = busstop.name;
     fragment.appendChild(button);
   }

@@ -47,7 +47,7 @@
     asRouteInterface.data.classList.add('d-flex');
     asRouteInterface.data.classList.add('flex-column');
     asRouteClearBusstops();
-    if (busstops) {
+    if (busstops && busstops !== undefined) {
       for (let i = 0; i < busstops.length; i++) {
         asRouteAddBusstop(busstops[i].id, busstops[i].name);
       }
@@ -81,8 +81,9 @@
     link.classList.add('route-busstops-link');
     link.classList.add('stretched-link');
     link.innerText = name;
-    let feature = busstops.getFeature(busstopId);
-    link.onclick = () => {
+    let busstop = busstops.getBusstop(busstopId);
+    let feature = busstops.getFeature(busstop.location.point.id);
+    link.onclick = function () {
       olSelectFeature(feature);
       olPanToFeature(feature);
     };

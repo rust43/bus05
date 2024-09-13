@@ -98,7 +98,7 @@ const editRoute = (function () {
 
     async selectRouteData(routeId) {
       if (routeId === '') return;
-      if (additionalSidebarVisible) toggleAdditionalSidebar();
+      if (additionalSidebar.visible()) additionalSidebar.toggle();
       this.clearForm();
       routes.displayRoute(routeId);
       editedRoute = routes.getRoute(routeId);
@@ -132,7 +132,7 @@ const editRoute = (function () {
       } else if (direction === 'path-b') {
         asFillRouteData(direction, this.selectBusstop, 'Остановки в направлении B', path_b_stops);
       }
-      if (!additionalSidebarVisible) toggleAdditionalSidebar();
+      if (!additionalSidebar.visible()) additionalSidebar.toggle();
     },
 
     deleteRoute() {

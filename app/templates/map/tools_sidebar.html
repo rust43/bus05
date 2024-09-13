@@ -1,0 +1,61 @@
+{% load static %}
+<div id="sidebar" class="col-12 col-sm-4 col-lg-3 sidebar d-flex flex-column">
+  {% include 'header.html' %}
+  <a href="#" class="d-flex align-items-center link-body-emphasis text-decoration-none px-3 py-2" onclick="SelectToolSidebar('tools');">
+    <span class="me-3 pe-none fs-3 text-primary"><i class="bi bi-tools"></i></span>
+    <span class="fs-4 text-secondary">Инструменты</span>
+  </a>
+  <div class="d-flex flex-column overflow-auto mb-auto">
+    {% include 'map/tools.html' %}
+    {% include 'map/hints.html' %}
+    {% include 'route/tools.html' %}
+    {% include 'route/new.html' %}
+    {% include 'route/list.html' %}
+    {% include 'busstop/tools.html' %}
+    {% include 'busstop/new.html' %}
+    {% include 'busstop/list.html' %}
+    {% include 'transport/tools.html' %}
+    {% include 'transport/new.html' %}
+    {% include 'transport/list.html' %}
+  </div>
+  <a class="btn btn-light text-secondary rounded-0 w-100 align-items-center mb-3 d-none d-md-flex" onclick="mainSidebar.toggle();">
+    <span class="fs-5 me-3"><i class="bi bi-arrow-bar-left"></i></span>
+    <span>Скрыть</span>
+  </a>
+  <div class="sidebar-toggler" id="sidebar-toggler">
+    <a class="btn bg-glass rounded-0 rounded-end text-secondary w-100 d-flex align-items-center" onclick="mainSidebar.toggle();">
+      <span class="fs-5 me-3"><i class="bi bi-arrow-bar-right"></i></span>
+      <span>Отобразить основную панель</span>
+    </a>
+  </div>
+</div>
+
+<script>
+  const mainSidebar = (function () {
+    let visible = false;
+    const elements = {
+      sidebar: 'sidebar',
+      toggler: 'sidebar-toggler'
+    };
+    return {
+      interface(element) {
+        return document.getElementById(element);
+      },
+      visible() {
+        return visible;
+      },
+      hideToggler() {
+        this.interface(elements.toggler).classList.toggle('sidebar-toggler-visible');
+      },
+      toggle() {
+        this.interface(elements.sidebar).classList.toggle('sidebar-hidden');
+        if (!additionalSidebar.visible()) {
+          this.hideToggler();
+        } else {
+          additionalSidebar.hideToggler();
+        }
+        visible = !visible;
+      }
+    };
+  })();
+</script>
