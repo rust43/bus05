@@ -17,6 +17,9 @@ class BusStop(models.Model):
     name = models.CharField(max_length=255)
     location = models.OneToOneField(MapObject, on_delete=models.SET_NULL, null=True, blank=True)
 
+    def __str__(self):
+        return f"{self.name}"
+
 
 class RouteType(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -35,6 +38,12 @@ class Route(models.Model):
     def __str__(self):
         return f"{self.name}"
 
+    def busstops_a_list(self):
+        return [route.busstop for route in BusStopOrderA.objects.filter(route=self).order_by("order")]
+
+    def busstops_b_list(self):
+        return [route.busstop for route in BusStopOrderB.objects.filter(route=self).order_by("order")]
+
     class Meta:
         ordering = ["name"]
 
@@ -42,8 +51,16 @@ class Route(models.Model):
 class BusStopOrderA(models.Model):
     route = models.ForeignKey(Route, on_delete=models.CASCADE)
     busstop = models.ForeignKey(BusStop, on_delete=models.CASCADE)
+    order = models.IntegerField()
+
+    class Meta:
+        ordering = ["order"]
 
 
 class BusStopOrderB(models.Model):
     route = models.ForeignKey(Route, on_delete=models.CASCADE)
     busstop = models.ForeignKey(BusStop, on_delete=models.CASCADE)
+    order = models.IntegerField()
+
+    class Meta:
+        ordering = ["order"]

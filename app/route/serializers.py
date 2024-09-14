@@ -1,9 +1,12 @@
+from django.core.exceptions import ValidationError
 from map.serializers import MapObjectSerializer
 from rest_framework import serializers
 from route.functions import parse_path
 from route.functions import parse_point
 
 from .models import BusStop
+from .models import BusStopOrderA
+from .models import BusStopOrderB
 from .models import Route
 from .models import RouteType
 
@@ -50,7 +53,27 @@ class BusStopSimpleSerializer(serializers.ModelSerializer):
         fields = ["id", "name"]
 
 
+class PathABusstopSerializer(serializers.ModelSerializer):
+    id = serializers.ReadOnlyField(source="busstop.id")
+    name = serializers.ReadOnlyField(source="busstop.name")
+
+    class Meta:
+        model = BusStopOrderA
+        fields = ["id", "name"]
+
+
+class PathBBusstopSerializer(serializers.ModelSerializer):
+    id = serializers.ReadOnlyField(source="busstop.id")
+    name = serializers.ReadOnlyField(source="busstop.name")
+
+    class Meta:
+        model = BusStopOrderB
+        fields = ["id", "name"]
+
+
 class RouteTypeSerializer(serializers.ModelSerializer):
+    id = serializers.UUIDField()
+
     class Meta:
         model = RouteType
         fields = ["id", "name"]
@@ -64,8 +87,22 @@ class RouteSerializer(serializers.ModelSerializer):
     id = serializers.UUIDField()
     path_a = MapObjectSerializer(many=False)
     path_b = MapObjectSerializer(many=False)
+    path_a_stops = PathABusstopSerializer(source="busstopordera_set", many=True, required=False)
+    path_b_stops = PathBBusstopSerializer(source="busstoporderb_set", many=True, required=False)
+    route_type = RouteTypeSerializer(many=False)
+
+
+class RouteImportSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Route
+        fields = ["id", "name", "route_type", "path_a", "path_b", "path_a_stops", "path_b_stops"]
+
+    id = serializers.UUIDField()
+    path_a = MapObjectSerializer(many=False)
+    path_b = MapObjectSerializer(many=False)
     path_a_stops = BusStopSimpleSerializer(many=True, required=False)
     path_b_stops = BusStopSimpleSerializer(many=True, required=False)
+
     route_type = RouteTypeSerializer(many=False)
 
     def create(self, validated_data):
@@ -105,22 +142,34 @@ class RouteSerializer(serializers.ModelSerializer):
             return None
         # parse path_a_stops
         route.path_a_stops.clear()
+        order = 0
         for stop in path_a_stops:
             try:
                 busstop = BusStop.objects.get(pk=stop["id"])
             except BusStop.DoesNotExist:
                 continue
-            route.path_a_stops.add(busstop)
+            route.path_a_stops.add(busstop, through_defaults={"order": order})
+            order += 1
         # parse path_b_stops
         route.path_b_stops.clear()
+        order = 0
         for stop in path_b_stops:
             try:
                 busstop = BusStop.objects.get(pk=stop["id"])
             except BusStop.DoesNotExist:
                 continue
-            route.path_b_stops.add(busstop)
+            route.path_b_stops.add(busstop, through_defaults={"order": order})
+            order += 1
         # setting new name
         route.name = name
+
+        try:
+            route_type = RouteType.objects.get(pk=route_type["id"])
+        except (RouteType.DoesNotExist, ValidationError):
+            route_type = route_type["name"]
+            route_type = route_type.capitalize()
+            route_type = RouteType.objects.create(name=route_type)
+
         route.route_type = route_type
         # setting new paths
         if route.path_a:

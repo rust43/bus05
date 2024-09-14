@@ -10,6 +10,7 @@ from route.models import BusStop
 from route.models import Route
 from route.models import RouteType
 from route.serializers import BusStopSerializer
+from route.serializers import RouteImportSerializer
 from route.serializers import RouteSerializer
 from route.serializers import RouteTypeSerializer
 
@@ -71,18 +72,22 @@ class RouteApiView(APIView):
                 continue
         route.save()
         # busstop data parse
+        order = 0
         for busstop_data in path_a_stops:
             try:
                 busstop = BusStop.objects.get(pk=busstop_data["id"])
             except ValidationError:
                 continue
-            route.path_a_stops.add(busstop)
+            route.path_a_stops.add(busstop, through_defaults={"order": order})
+            order += 1
+        order = 0
         for busstop_data in path_b_stops:
             try:
                 busstop = BusStop.objects.get(pk=busstop_data["id"])
             except ValidationError:
                 continue
-            route.path_b_stops.add(busstop)
+            route.path_b_stops.add(busstop, through_defaults={"order": order})
+            order += 1
         route.save()
         return Response(status=status.HTTP_201_CREATED)
 
@@ -280,7 +285,7 @@ class DataApiView(APIView):
             imported_busstops = None
             imported_busstops_valid = True
         if len(data["routes"]) > 0:
-            imported_routes = RouteSerializer(data=data["routes"], many=True)
+            imported_routes = RouteImportSerializer(data=data["routes"], many=True)
             imported_routes_valid = imported_routes.is_valid()
         else:
             imported_routes = None

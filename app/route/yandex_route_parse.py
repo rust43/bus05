@@ -1,5 +1,5 @@
-import sys
 import json
+import sys
 from uuid import uuid4
 
 # input_file_name = "100a.json"
@@ -34,11 +34,12 @@ def create_busstop(name, coordinates):
     return busstop
 
 
-def create_route(name, path_a_points, path_b_points, path_a_stops, path_b_stops):
+def create_route(name, route_type, path_a_points, path_b_points, path_a_stops, path_b_stops):
     route_id = str(uuid4())
     route = {
         "id": route_id,
         "name": name,
+        "route_type": {"id": str(uuid4()), "name": route_type},
         "path_a": {
             "id": str(uuid4()),
             "name": "route-" + route_id,
@@ -105,6 +106,7 @@ for feature in data["data"]["features"]:
 
 route = create_route(
     meta["name"],
+    meta["type"],
     path_a["points"],
     path_b["points"],
     path_a["busstops"],
@@ -117,4 +119,4 @@ data = {
 }
 
 with open(output_file_name, "w", encoding="utf-8") as json_file:
-    json.dump(data, json_file)
+    json.dump(data, json_file, ensure_ascii=False)
