@@ -1,7 +1,7 @@
 {% load static %}
 <div id="sidebar" class="col-12 col-sm-4 col-lg-3 sidebar d-flex flex-column">
   {% include 'header.html' %}
-  <a href="#" class="d-flex align-items-center link-body-emphasis text-decoration-none px-3 py-2" onclick="SelectToolSidebar('tools');">
+  <a href="#" class="d-flex align-items-center link-body-emphasis text-decoration-none px-3 py-2" onclick="sidebars.switch('tools');">
     <span class="me-3 pe-none fs-3 text-primary"><i class="bi bi-tools"></i></span>
     <span class="fs-4 text-secondary">Инструменты</span>
   </a>
@@ -55,6 +55,40 @@
           additionalSidebar.hideToggler();
         }
         visible = !visible;
+      }
+    };
+  })();
+</script>
+
+<script>
+  const sidebars = (function () {
+    let selected = '';
+    const sidebarsList = {
+      tools: document.getElementById('tools-sidebar'),
+      route_tools: document.getElementById('route-tools-sidebar'),
+      route_new: document.getElementById('new-route-sidebar'),
+      route_list: document.getElementById('route-list-sidebar'),
+      busstop_tools: document.getElementById('busstop-tools-sidebar'),
+      busstop_new: document.getElementById('busstop-new-sidebar'),
+      busstop_list: document.getElementById('busstop-list-sidebar'),
+      transport_tools: document.getElementById('transport-tools-sidebar'),
+      transport_new: document.getElementById('transport-new-sidebar'),
+      transport_list: document.getElementById('transport-list-sidebar')
+    };
+    return {
+      switch(sidebar) {
+        DeleteNewBusStop();
+        additionalSidebar.hide();
+        for (const [name, element] of Object.entries(sidebarsList)) {
+          element.classList.add('d-none');
+        }
+        if (sidebar !== '') {
+          selected = sidebarsList[sidebar];
+        } else {
+          selected = sidebarsList.tools;
+        }
+        selected.classList.remove('d-none');
+        selected = sidebar;
       }
     };
   })();

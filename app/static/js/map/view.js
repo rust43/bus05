@@ -210,24 +210,26 @@ const drawArrows = function (feature, style, height, width, zoom) {
 
 const drawTransportMarker = function (feature) {
   const route = routes.getRoute(feature.get('route'));
-  if (route === null) return;
+  let routeName = '...';
+  if (route !== null) {
+    routeName = route.name;
+  }
+  // else return;
   let coord = feature.getGeometry().getCoordinates()[0];
   let selected = false;
   if (feature.get('selected')) {
     selected = true;
     coord = 1e10;
   }
-  let routeName = '...';
-  routeName = route.name;
   return [
     new olStyle({
       image: new olIconStyle({
         crossOrigin: 'anonymous',
         src: staticURL + '/pictures/plate.png',
         color: selected ? '#308c00' : '#ffffff',
-        width: 50,
+        width: 30 + routeName.length * 6,
         height: 24,
-        anchor: [1.1, 0.5]
+        anchor: [1, 0.5]
       }),
       zIndex: coord
     }),
@@ -247,7 +249,7 @@ const drawTransportMarker = function (feature) {
         fill: new olFillStyle({
           color: selected ? '#ffffff' : '#308c00'
         }),
-        offsetX: -35
+        offsetX: -(routeName.length * 3 + 20)
       }),
       zIndex: coord
     }),

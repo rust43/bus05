@@ -1,69 +1,69 @@
 {% load static %}
 <div id="transport-new-sidebar" class="d-none">
-    <div class="d-flex flex-column">
-        <a class="btn btn-light rounded-0 w-100" onclick="SelectToolSidebar('transport_tools');">
-            <div class="d-flex align-items-center">
-                <span class="text-secondary fs-5 rounded"><i class="bi bi-arrow-left m-2"></i></span>
-                <span class="ms-3">Назад</span>
-            </div>
-        </a>
-        <div id="transport-new-data" class="p-3">
-            <div class="mb-3">
-                <label for="new-transport-imei" class="form-label">IMEI транспорта</label>
-                <select class="form-select" id="new-transport-imei" required>
-                    <option value="" selected disabled>Выберите IMEI транспорта</option>
-                </select>
-                <div class="invalid-feedback">Укажите IMEI транспорта.</div>
-            </div>
-            <div class="mb-3">
-                <label for="new-transport-route" class="form-label">Маршрут транспорта</label>
-                <select class="form-select" id="new-transport-route">
-                    <option value="" selected disabled>Выберите маршрут транспорта</option>
-                </select>
-                <div class="invalid-feedback">Укажите маршрут транспорта.</div>
-            </div>
-            <div class="mb-3">
-                <label for="new-transport-type-select" class="form-label">Тип транспорта</label>
-                <select class="form-select" id="new-transport-type-select" required>
-                    <option value="" selected disabled>Выберите тип транспорта</option>
-                </select>
-                <div class="invalid-feedback">Укажите тип транспорта.</div>
-            </div>
-            <div class="mb-3 form-check">
-                <input type="checkbox" class="form-check-input" id="new-transport-type-chk" />
-                <label class="form-check-label" for="new-transport-type-chk">Создать новый тип транспорта</label>
-            </div>
-            <div class="mb-3 d-none" id="new-transport-type-input">
-                <label for="new-transport-type" class="form-label">Тип транспорта</label>
-                <input type="text" class="form-control" id="new-transport-type" required disabled />
-                <div class="invalid-feedback">Укажите тип транспорта.</div>
-            </div>
-            <div class="mb-3">
-                <label for="new-transport-name" class="form-label">Название транспорта</label>
-                <input type="text" class="form-control" id="new-transport-name" required />
-                <div class="invalid-feedback">Укажите название транспорта.</div>
-            </div>
-            <div class="mb-3">
-                <label for="new-transport-plate" class="form-label">Гос. номер</label>
-                <input type="text" class="form-control" id="new-transport-plate" required />
-                <div class="invalid-feedback">Укажите гос. номер транспорта.</div>
-            </div>
-            <div class="mb-3 form-check">
-                <input type="checkbox" class="form-check-input" id="new-transport-active-chk" />
-                <label class="form-check-label" for="new-transport-active-chk">Транспорт активен (отображение на маршруте)</label>
-            </div>
-        </div>
-        <a class="btn btn-light rounded-0 w-100" onclick="ClearNewTransportForm();">
-            <div class="d-flex align-items-center">
-                <span class="text-bg-danger fs-5 rounded"><i class="bi bi-x-square m-2"></i></span>
-                <span class="ms-3">Очистить</span>
-            </div>
-        </a>
-        <a class="btn btn-light rounded-0 w-100" onclick="SaveNewTransport();">
-            <div class="d-flex align-items-center">
-                <span class="text-bg-success fs-5 rounded"><i class="bi bi-floppy-fill m-2"></i></span>
-                <span class="ms-3">Сохранить</span>
-            </div>
-        </a>
+  <div class="d-flex flex-column">
+    <a class="btn btn-light rounded-0 w-100" onclick="sidebars.switch('transport_tools');">
+      <div class="d-flex align-items-center">
+        <span class="text-secondary fs-5 rounded"><i class="bi bi-arrow-left m-2"></i></span>
+        <span class="ms-3">Назад</span>
+      </div>
+    </a>
+    <div id="transport-new-data" class="p-3">
+      <div class="mb-3">
+        <label for="new-transport-imei" class="form-label">IMEI транспорта</label>
+        <select class="form-select" id="new-transport-imei" required>
+          <option value="" selected disabled>Выберите IMEI транспорта</option>
+        </select>
+        <div class="invalid-feedback">Укажите IMEI транспорта.</div>
+      </div>
+      <div class="mb-3">
+        <label for="new-transport-route" class="form-label">Маршрут транспорта</label>
+        <select class="form-select" id="new-transport-route">
+          <option value="" selected disabled>Выберите маршрут транспорта</option>
+        </select>
+        <div class="invalid-feedback">Укажите маршрут транспорта.</div>
+      </div>
+      <div class="mb-3">
+        <label for="new-transport-type-select" class="form-label">Тип транспорта</label>
+        <select class="form-select" id="new-transport-type-select" required>
+          <option value="" selected disabled>Выберите тип транспорта</option>
+        </select>
+        <div class="invalid-feedback">Укажите тип транспорта.</div>
+      </div>
+      <div class="mb-3 form-check">
+        <input type="checkbox" class="form-check-input" id="new-transport-type-chk" />
+        <label class="form-check-label" for="new-transport-type-chk">Создать новый тип транспорта</label>
+      </div>
+      <div class="mb-3 d-none" id="new-transport-type-input">
+        <label for="new-transport-type" class="form-label">Тип транспорта</label>
+        <input type="text" class="form-control" id="new-transport-type" required disabled />
+        <div class="invalid-feedback">Укажите тип транспорта.</div>
+      </div>
+      <div class="mb-3">
+        <label for="new-transport-name" class="form-label">Название транспорта</label>
+        <input type="text" class="form-control" id="new-transport-name" required />
+        <div class="invalid-feedback">Укажите название транспорта.</div>
+      </div>
+      <div class="mb-3">
+        <label for="new-transport-plate" class="form-label">Гос. номер</label>
+        <input type="text" class="form-control" id="new-transport-plate" required />
+        <div class="invalid-feedback">Укажите гос. номер транспорта.</div>
+      </div>
+      <div class="mb-3 form-check">
+        <input type="checkbox" class="form-check-input" id="new-transport-active-chk" />
+        <label class="form-check-label" for="new-transport-active-chk">Транспорт активен (отображение на маршруте)</label>
+      </div>
     </div>
+    <a class="btn btn-light rounded-0 w-100" onclick="ClearNewTransportForm();">
+      <div class="d-flex align-items-center">
+        <span class="text-bg-danger fs-5 rounded"><i class="bi bi-x-square m-2"></i></span>
+        <span class="ms-3">Очистить</span>
+      </div>
+    </a>
+    <a class="btn btn-light rounded-0 w-100" onclick="SaveNewTransport();">
+      <div class="d-flex align-items-center">
+        <span class="text-bg-success fs-5 rounded"><i class="bi bi-floppy-fill m-2"></i></span>
+        <span class="ms-3">Сохранить</span>
+      </div>
+    </a>
+  </div>
 </div>

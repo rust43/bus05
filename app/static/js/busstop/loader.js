@@ -47,15 +47,17 @@ busstops.load().then(() => {
 });
 
 const fillBusstopList = async function (refresh = false) {
-  if (busstops.count() === 0 || refresh) await busstops.load();
-  let loadedBusstops = busstops.get();
-  document.getElementById('busstop-data').classList.add('d-none');
   const busstopListContainer = document.getElementById('busstop-list');
   if (busstopListContainer) busstopListContainer.innerHTML = '';
   else return;
+  busstopListContainer.innerHTML = '<div class="spinner-border text-success m-auto" role="status"></div>';
+
+  if (busstops.count() === 0 || refresh) await busstops.load();
+  let loadedBusstops = busstops.get();
+  document.getElementById('busstop-data').classList.add('d-none');
   document.getElementById('search-busstop-input').disabled = true;
   document.getElementById('search-busstop-input').value = '';
-  busstopListContainer.innerHTML = '<div class="spinner-border text-success m-auto" role="status"></div>';
+
   let fragment = document.createDocumentFragment();
   for (let i = 0; i < loadedBusstops.length; i++) {
     const busstop = loadedBusstops[i];

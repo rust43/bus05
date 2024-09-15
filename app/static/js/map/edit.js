@@ -151,33 +151,3 @@ const cancelDraw = () => {
   map.removeInteraction(mapSnapInteraction);
   map.addInteraction(mapSelectInteraction);
 };
-
-let selectedSidebar;
-
-const editViewSidebars = {
-  tools: document.getElementById('tools-sidebar'),
-  route_tools: document.getElementById('route-tools-sidebar'),
-  route_new: document.getElementById('new-route-sidebar'),
-  route_list: document.getElementById('route-list-sidebar'),
-  busstop_tools: document.getElementById('busstop-tools-sidebar'),
-  busstop_new: document.getElementById('busstop-new-sidebar'),
-  busstop_list: document.getElementById('busstop-list-sidebar'),
-  transport_tools: document.getElementById('transport-tools-sidebar'),
-  transport_new: document.getElementById('transport-new-sidebar'),
-  transport_list: document.getElementById('transport-list-sidebar')
-};
-
-function SelectToolSidebar(sidebar) {
-  DeleteNewBusStop();
-  additionalSidebar.hide();
-  for (const [name, element] of Object.entries(editViewSidebars)) {
-    element.classList.add('d-none');
-  }
-  if (sidebar !== '') {
-    editViewSidebars[sidebar].classList.remove('d-none');
-    selectToolSidebar = sidebar;
-  } else {
-    editViewSidebars.tools.classList.remove('d-none');
-    selectToolSidebar = editViewSidebars.tools;
-  }
-}
