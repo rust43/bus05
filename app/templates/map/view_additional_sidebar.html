@@ -1,6 +1,8 @@
 {% load static %}
 <div id="additional-sidebar" class="additional-sidebar w-0 col-sm-3 col-lg-2 d-flex flex-column border-start h-100">
-  <div id="additional-sidebar-container" class="additional-sidebar-container"></div>
+  <div id="additional-sidebar-container" class="additional-sidebar-container">
+    {% include 'route/as_route-data.html' %}
+  </div>
   <a id="main-sidebar-toggler" class="d-none btn btn-light rounded-0 w-100 d-flex align-items-center text-secondary text-wrap" onclick="mainSidebar.toggle();">
     <span class="fs-5 me-3"><i class="bi bi-arrow-bar-right"></i></span>
     <span>Основная панель</span>
@@ -40,7 +42,9 @@
         sidebar.classList.toggle('additional-sidebar-show');
         if (mainSidebar.visible()) {
           mainSidebar.hideToggler();
-          this.interface(elements.toggler).classList.toggle('d-none');
+          this.interface(elements.toggler).classList.add('d-none');
+        } else {
+          mainSidebar.showToggler();
         }
         visible = !visible;
       }

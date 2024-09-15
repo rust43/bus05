@@ -6,9 +6,9 @@
       <span id="as-route-transport-name"></span>
     </h2>
     <div id="route-legend-essential" class="route-legend-essential">
-      <span id="route-legend-start">ЦУМ</span>
+      <span id="route-legend-start"></span>
       <span class="text-secondary" class="ms-1 me-1"><i class="bi bi-caret-right-fill"></i></span>
-      <span id="route-legend-end">Киргу</span>
+      <span id="route-legend-end"></span>
     </div>
   </div>
   <div class="p-3 border-bottom">
@@ -47,10 +47,14 @@
     asRouteInterface.data.classList.add('d-flex');
     asRouteInterface.data.classList.add('flex-column');
     asRouteClearBusstops();
-    if (busstops && busstops !== undefined) {
+    asRouteInterface.start.innerText = '';
+    asRouteInterface.end.innerText = '';
+    if (busstops && busstops !== undefined && busstops.length > 0) {
       for (let i = 0; i < busstops.length; i++) {
         asRouteAddBusstop(busstops[i].id, busstops[i].name);
       }
+      asRouteInterface.start.innerText = busstops[0].name;
+      asRouteInterface.end.innerText = busstops[busstops.length - 1].name;
     }
     asRouteInterface.name.innerText = name;
     if (type) {
@@ -59,10 +63,14 @@
     } else {
       asRouteInterface.type.classList.add('d-none');
     }
-    asRouteInterface.essential.classList.add('d-none');
-    asRouteInterface.button.onclick = () => {
-      callback(direction);
-    };
+    //asRouteInterface.essential.classList.add('d-none');
+    if (callback) {
+      asRouteInterface.button.onclick = () => {
+        callback(direction);
+      };
+    } else {
+      asRouteInterface.button.classList.add('d-none');
+    }
   };
   
   const asRouteClearBusstops = function () {

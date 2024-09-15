@@ -13,6 +13,11 @@ const routes = (function () {
       loadedRoutes = await APIGetRequest(routeAPI.main);
     },
 
+    count() {
+      if (!loadedRoutes) return 0;
+      return loadedRoutes.length;
+    },
+
     clearLayer() {
       routeVectorSource.clear();
     },
@@ -60,31 +65,80 @@ const routes = (function () {
       routeFeature.set('type', 'path');
       routeFeature.set('map_object_id', route_id);
       routeVectorSource.addFeature(routeFeature);
+    },
+
+    selectRoute(routeId, direction = 'path-a') {
+      this.clearLayer();
+      let route = this.getRoute(routeId);
+      this.displayRoutePath(route.path_a.line.id, route.id, 'route-' + route.id + '-path-a', route.path_a.line.geom);
+      // let feature = this.getPathFeature(route.path_a.line.id);
+      // olSelectFeature(feature);
+      this.showBusstops(routeId, direction);
+    },
+
+    showBusstops(routeId, direction) {
+      let route = this.getRoute(routeId);
+      if (direction === 'path-a') {
+        asFillRouteData(direction, null, route.name, route.path_a_stops, route.route_type.name);
+      } else if (direction === 'path-b') {
+        asFillRouteData(direction, null, route.name, route.path_b_stops, route.route_type.name);
+      }
+      if (!additionalSidebar.visible()) additionalSidebar.toggle();
     }
   };
 })();
 
 routes.load();
 
-const fillRouteList = async function () {
-  document.getElementById('edit-route-data').classList.add('d-none');
-  await routes.load();
-  let loadedRoutes = routes.get();
+const fillRouteList = async function (refresh = false, edit = true, routeType = null) {
   const routeListContainer = document.getElementById('route-list');
   if (routeListContainer) routeListContainer.innerHTML = '';
   else return;
+  routeListContainer.innerHTML = '<div class="spinner-border text-success m-auto" role="status"></div>';
+  if (routes.count() === 0 || refresh) await routes.load();
+  let loadedRoutes = routes.get();
+
+  let data = document.getElementById('edit-route-data');
+  if (data) {
+    data.classList.add('d-none');
+  }
+
+  let fragment = document.createDocumentFragment();
+
   for (let i = 0; i < loadedRoutes.length; i++) {
     const route = loadedRoutes[i];
-    // add button to view route
-    const routeButton = document.createElement('button');
-    const routeButtonText = document.createTextNode(route.name);
-    if (routeListContainer) {
-      routeButton.appendChild(routeButtonText);
-      routeButton.classList.add('btn', 'badge', 'text-bg-success');
-      routeButton.onclick = function () {
-        editRoute.selectRouteData(route.id);
-      };
-      routeListContainer.appendChild(routeButton);
+    if (routeType !== null) {
+      if (route.route_type === null) continue;
+      if (route.route_type.name !== routeType) continue;
     }
+
+    let div = document.createElement('div');
+    div.classList.add('route-card', 'btn', 'btn-success');
+
+    let header = document.createElement('h5');
+    header.classList.add('route-card-name');
+    header.innerHTML = route.name;
+
+    let span = document.createElement('span');
+    span.classList.add('route-card-icon');
+
+    let img = document.createElement('i');
+    img.classList.add('bi', 'bi-bus-front-fill');
+
+    span.appendChild(img);
+    div.appendChild(header);
+    div.appendChild(span);
+
+    div.onclick = function () {
+      if (edit) {
+        editRoute.selectRouteData(route.id);
+      } else {
+        routes.selectRoute(route.id);
+      }
+    };
+
+    fragment.appendChild(div);
   }
+  routeListContainer.innerHTML = '';
+  routeListContainer.appendChild(fragment);
 };

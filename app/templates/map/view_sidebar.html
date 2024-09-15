@@ -6,7 +6,8 @@
   </div>
   <div id="content" class="d-flex flex-column overflow-auto mb-auto">
     {% include 'map/view_tools.html' %}
-    {% include 'busstop/list.html' %}
+    {% include 'busstop/view_list.html' %}
+    {% include 'route/view_list.html' %}
   </div>
   <div id="togglers">
     <a class="btn btn-light text-secondary rounded-0 w-100 align-items-center mb-3 d-none d-md-flex" onclick="mainSidebar.toggle();">
@@ -24,7 +25,7 @@
 
 <script>
   const mainSidebar = (function () {
-    let visible = false;
+    let visible = true;
     const elements = {
       sidebar: 'sidebar',
       toggler: 'sidebar-toggler'
@@ -37,14 +38,17 @@
         return visible;
       },
       hideToggler() {
-        this.interface(elements.toggler).classList.toggle('sidebar-toggler-visible');
+        this.interface(elements.toggler).classList.remove('sidebar-toggler-visible');
+      },
+      showToggler() {
+        this.interface(elements.toggler).classList.add('sidebar-toggler-visible');
       },
       toggle() {
         this.interface(elements.sidebar).classList.toggle('sidebar-hidden');
-        if (!additionalSidebar.visible()) {
-          this.hideToggler();
-        } else {
+        this.interface(elements.toggler).classList.toggle('sidebar-toggler-visible');
+        if (additionalSidebar.visible()) {
           additionalSidebar.hideToggler();
+          this.hideToggler();
         }
         visible = !visible;
       }
@@ -57,8 +61,8 @@
     let selected = '';
     const sidebarsList = {
       tools: document.getElementById('view-tools'),
-      busstop_list: document.getElementById('busstop-list-sidebar')
-      //route_list: document.getElementById('route-list-sidebar'),
+      busstop_list: document.getElementById('busstop-list-sidebar'),
+      route_list: document.getElementById('route-list-sidebar')
     };
     return {
       switch(sidebar) {

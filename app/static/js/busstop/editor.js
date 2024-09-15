@@ -43,8 +43,8 @@ const getSelectedBusstop = function (busStopId) {
 const saveBusstop = function () {
   if (editedBusstop === null) return;
   let name = document.getElementById('selected-busstop-name').value;
-  let location = busStopsVectorSource.getFeatureById(editedBusstop.location.point.id);
-  let features = [location];
+  let feature = busstops.getFeature(editedBusstop.location.point.id);
+  let features = [feature];
   let geoJSONwriter = new olGeoJSON();
   let geoJSONdata = geoJSONwriter.writeFeatures(features, {
     dataProjection: 'EPSG:4326',
@@ -57,8 +57,8 @@ const saveBusstop = function () {
   APIPutRequest(busstop_data, busstopAPI.main).then(function () {
     try {
       document.getElementById('busstop-data').classList.add('d-none');
-      fillBusstopList().then(function () {
-        displayBusStops();
+      fillBusstopList(true).then(function () {
+        busstops.displayFeatures();
       });
       alert('Изменения сохранены!');
     } catch (err) {
@@ -82,8 +82,8 @@ const deleteBusstop = function () {
     try {
       document.getElementById('busstop-data').classList.add('d-none');
       document.getElementById('search-busstop-input').value = '';
-      fillBusstopList().then(function () {
-        displayBusstops();
+      fillBusstopList(true).then(function () {
+        busstops.displayFeatures();
       });
     } catch (err) {
       alert('Ошибка при загрузке новых остановок!');

@@ -287,3 +287,21 @@
     height: 16px;
     left: 20px
 }
+
+.route-card {
+    display: flex !important;
+    flex-direction: column !important;
+    border-radius: 0;
+    padding: 0px !important;
+    min-width: 70px;
+}
+
+.route-card-name {
+    padding: 1rem 1rem 0.25rem 1rem;
+    margin-bottom: 0px;
+}
+
+.route-card-icon {
+    padding: 0.25rem;
+    width: fit-content;
+}

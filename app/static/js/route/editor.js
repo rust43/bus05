@@ -58,7 +58,7 @@ const editRoute = (function () {
       };
       APIPutRequest(route_data, routeAPI.main).then(function () {
         try {
-          fillRouteList().then(function () {
+          fillRouteList(true).then(function () {
             editRoute.selectRouteData(editedRoute.id);
             alert('Изменения сохранены!');
           });

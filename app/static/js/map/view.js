@@ -77,7 +77,7 @@ const mapOverlayStyleFunction = (function () {
   ];
   styles['path'] = [
     new olStyle({
-      stroke: new olStrokeStyle({ color: '#20c200', width: 4 })
+      stroke: new olStrokeStyle({ color: '#2f8c00', width: 4 })
     })
   ];
   styles['new-path'] = [
@@ -150,7 +150,7 @@ mapSelectInteraction.on('select', (e) => {
     let routeID = feature.get('route');
     selectedTransportIMEI = feature.get('imei');
     feature.set('selected', true);
-    routes.displayRoute(routeID);
+    routes.selectRoute(routeID);
   }
   pauseTransportLoad = false;
 });
@@ -213,8 +213,7 @@ const drawTransportMarker = function (feature) {
   let routeName = '...';
   if (route !== null) {
     routeName = route.name;
-  }
-  // else return;
+  } else return;
   let coord = feature.getGeometry().getCoordinates()[0];
   let selected = false;
   if (feature.get('selected')) {

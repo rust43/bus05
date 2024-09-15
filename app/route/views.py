@@ -135,19 +135,22 @@ class RouteApiView(APIView):
             route.save()
             # busstop data parse
             route.path_a_stops.clear()
+            order = 0
             for busstop_data in path_a_stops:
                 try:
                     busstop = BusStop.objects.get(pk=busstop_data["id"])
                 except BusStop.DoesNotExist:
                     continue
-                route.path_a_stops.add(busstop)
-            route.path_b_stops.clear()
+                route.path_a_stops.add(busstop, through_defaults={"order": order})
+                order += 1
+            order = 0
             for busstop_data in path_b_stops:
                 try:
                     busstop = BusStop.objects.get(pk=busstop_data["id"])
                 except BusStop.DoesNotExist:
                     continue
-                route.path_b_stops.add(busstop)
+                route.path_b_stops.add(busstop, through_defaults={"order": order})
+                order += 1
             route.save()
         return Response(status=status.HTTP_200_OK)
 
