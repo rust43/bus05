@@ -4,6 +4,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from route.models import Route
+from transport.functions import transport_direction
 from transport.models import Transport
 from transport.models import TransportPoint
 from transport.models import TransportType
@@ -183,3 +184,15 @@ class TransportApiView(APIView):
             return Response(status=status.HTTP_200_OK)
         except Transport.DoesNotExist:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class TransportDirectionAPIView(APIView):
+    permission_classes = ()
+    authentication_classes = ()
+
+    @staticmethod
+    def get(request):
+        transport = Transport.objects.get(imei=863051062933345)
+        direction = transport_direction(transport)
+        data = {"direction": direction}
+        return Response(data, status=status.HTTP_200_OK)

@@ -9,7 +9,8 @@ const transportAPI = {
   main: '/api/v1/transport',
   imei: '/api/v1/transport/imei',
   type: '/api/v1/transport/type',
-  point: '/api/v1/transport/point'
+  point: '/api/v1/transport/point',
+  direction: '/api/v1/transport/direction'
 };
 
 const busstopAPI = {

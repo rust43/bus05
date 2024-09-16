@@ -7,7 +7,7 @@
     <span class="fs-5 me-3"><i class="bi bi-arrow-bar-right"></i></span>
     <span>Основная панель</span>
   </a>
-  <a class="btn btn-light rounded-0 w-100 d-flex align-items-center mb-3 text-secondary" onclick="additionalSidebar.toggle();">
+  <a class="btn btn-light rounded-0 w-100 d-flex align-items-center mb-3 text-secondary" onclick="additionalSidebar.hide();">
     <span class="fs-5 me-3"><i class="bi bi-arrow-bar-left"></i></span>
     <span>Скрыть</span>
   </a>
@@ -35,6 +35,15 @@
         sidebar.classList.add('w-0');
         sidebar.classList.remove('additional-sidebar-show');
         visible = false;
+        if (!mainSidebar.visible()) {
+          mainSidebar.showToggler();
+        }
+      },
+      show() {
+        const sidebar = this.interface(elements.sidebar);
+        sidebar.classList.remove('w-0');
+        sidebar.classList.add('additional-sidebar-show');
+        visible = true;
       },
       toggle() {
         const sidebar = this.interface(elements.sidebar);
@@ -44,7 +53,8 @@
           mainSidebar.hideToggler();
           this.interface(elements.toggler).classList.add('d-none');
         } else {
-          mainSidebar.showToggler();
+          this.interface(elements.toggler).classList.remove('d-none');
+          mainSidebar.hideToggler();
         }
         visible = !visible;
       }

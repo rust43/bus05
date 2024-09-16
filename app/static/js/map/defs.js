@@ -58,6 +58,7 @@ const olPointGeometry = ol.geom.Point;
 const olCircleGeometry = ol.geom.Circle;
 const olPolygonGeometry = ol.geom.Polygon;
 const olLineStringGeometry = ol.geom.LineString;
+const olMultiLineStringGeometry = ol.geom.MultiLineString;
 
 // Sphere components
 const olGetArea = ol.sphere.getArea;
